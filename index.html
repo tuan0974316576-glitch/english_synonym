@@ -1,0 +1,1267 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>👻同義詞の鬼👻</title>
+<link rel="manifest" href="manifest.json">
+    <link rel="icon" type="image/png" href="icon.png">
+<link rel="apple-touch-icon" href="icon.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="theme-color" content="#0a9396">
+    
+<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+
+    <style>
+        /* --- 基礎設定 --- */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f0f2f5;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 20px;
+        }
+
+        h1 { color: #2c3e50; margin-bottom: 5px; }
+        p { color: #7f8c8d; margin-bottom: 20px; font-size: 0.9rem; }
+        
+        /* 狀態列 */
+        .info-panel {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            color: #34495e;
+            font-weight: bold;
+            background: white;
+            padding: 10px 25px;
+            border-radius: 50px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+
+        /* 用戶歡迎區 */
+        .user-panel {
+            background: #dff9fb; color: #2c3e50; 
+            padding: 5px 15px; border-radius: 20px; font-size: 0.9rem;
+            display: flex; gap: 10px; align-items: center;
+            border: 1px solid #b2bec3;
+        }
+        .logout-btn {
+            background: none; border: none; color: #e74c3c; 
+            cursor: pointer; text-decoration: underline; font-size: 0.85rem;
+        }
+
+        .stat-box { display: flex; align-items: center; gap: 6px; white-space: nowrap;}
+        .score-box { color: #2980b9; }
+        
+        #lives { color: #e74c3c; transition: all 0.3s; }
+        .low-health { animation: pulse-red 0.8s infinite; }
+
+        @keyframes pulse-red {
+            0% { text-shadow: 0 0 0 rgba(231, 76, 60, 0); transform: scale(1); }
+            50% { text-shadow: 0 0 10px rgba(231, 76, 60, 0.5); transform: scale(1.1); }
+            100% { text-shadow: 0 0 0 rgba(231, 76, 60, 0); transform: scale(1); }
+        }
+
+        /* --- 遊戲網格 --- */
+        .game-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            max-width: 680px;
+            width: 100%;
+        }
+
+        /* --- 卡片樣式 --- */
+        .card {
+            background-color: transparent;
+            height: 120px;
+            perspective: 1000px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .card-inner {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            text-align: center;
+            transition: transform 0.6s cubic-bezier(0.4, 0.2, 0.2, 1);
+            transform-style: preserve-3d;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border-radius: 12px;
+        }
+
+        .card.flipped .card-inner { transform: rotateY(180deg); }
+        .card.matched .card-inner { transform: rotateY(180deg); }
+        
+        .card-front, .card-back {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            -webkit-backface-visibility: hidden;
+            backface-visibility: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            border-radius: 12px;
+            padding: 5px;
+            box-sizing: border-box;
+        }
+
+        .card-back {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+            z-index: 2;
+            transition: font-size 0.3s ease;
+            font-family: 'Courier New', Courier, monospace; 
+            font-weight: bold;
+        }
+
+        .card-front {
+            background-color: white;
+            color: #333; 
+            transform: rotateY(180deg);
+            border: 2px solid #ddd; 
+            font-weight: bold;
+            z-index: 1;
+        }
+
+        .word-text { font-size: 1.1rem; margin-bottom: 8px; line-height: 1.2; }
+        .long-text { font-size: 0.9rem; }
+
+        .meaning-text {
+            font-size: 0.9rem;
+            opacity: 0; 
+            transform: translateY(10px);
+            transition: all 0.5s ease-out;
+            font-weight: bold;
+            color: inherit; 
+            margin-top: 5px;
+        }
+
+        /* --- 按鈕區域 --- */
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 30px;
+        }
+
+        button {
+            padding: 12px 30px;
+            font-size: 1rem; 
+            border: none; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            font-weight: bold; transition: transform 0.2s;
+            display: flex; align-items: center; gap: 8px;
+        }
+        button:hover { transform: translateY(-2px); }
+
+        .btn-restart { background: #34495e; color: white; }
+        .btn-study { background: #3498db; color: white; }
+        .btn-rank { background: #f1c40f; color: #2c3e50; }
+
+        /* --- 彈窗通用 --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(5px);
+            display: flex; /* 預設顯示，由 JS 控制 */
+            justify-content: center; align-items: center;
+            z-index: 1000;
+            opacity: 1; transition: opacity 0.3s;
+        }
+        .modal-overlay.hidden { display: none; opacity: 0; }
+
+        .modal-content {
+            background: white;
+            width: 90%; max-width: 500px;
+            max-height: 85vh;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            overflow-y: auto;
+            position: relative;
+            text-align: center;
+        }
+
+        .modal-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px; border-bottom: 2px solid #f0f0f0; padding-bottom: 10px;
+        }
+        .modal-title { font-size: 1.5rem; color: #333; font-weight: 800; }
+        .close-btn { font-size: 2rem; cursor: pointer; color: #999; line-height: 1; }
+        
+        /* 登入介面樣式 */
+        .login-box h2 { color: #2c3e50; margin-bottom: 10px; }
+        .login-box p { color: #7f8c8d; margin-bottom: 20px; }
+        .login-input {
+            padding: 15px; width: 80%; font-size: 1.1rem; border: 2px solid #ddd;
+            border-radius: 10px; margin-bottom: 15px; outline: none; text-align: center;
+        }
+        .login-input:focus { border-color: #3498db; }
+        .btn-login { background: #3498db; color: white; width: 100%; margin-top: 10px; justify-content: center;}
+
+        /* 排行榜表格 */
+        .rank-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+        .rank-table th { background: #f8f9fa; color: #7f8c8d; padding: 10px; font-size: 0.9rem; text-align: left; }
+        .rank-table td { padding: 12px 10px; border-bottom: 1px solid #eee; font-size: 1.1rem; text-align: left; }
+        .rank-row:nth-child(1) .rank-num { color: #f1c40f; font-weight: 900; font-size: 1.3rem; }
+        .rank-row:nth-child(2) .rank-num { color: #bdc3c7; font-weight: bold; }
+        .rank-row:nth-child(3) .rank-num { color: #e67e22; font-weight: bold; }
+        .rank-name { font-weight: bold; color: #2c3e50; }
+        .rank-score { font-family: 'Courier New', monospace; font-weight: bold; color: #2980b9; text-align: right !important; }
+
+        /* 溫習表樣式 */
+        .study-grid { display: grid; gap: 15px; text-align: left; }
+        .study-group { border: 1px solid #eee; border-radius: 12px; padding: 15px; background: #fafafa; border-left: 5px solid #ccc; }
+        .study-meaning { font-size: 1.1rem; font-weight: bold; color: #333; margin-bottom: 8px; }
+        .study-words { display: flex; flex-wrap: wrap; gap: 8px; }
+        .study-tag { background: white; padding: 6px 14px; border-radius: 20px; border: 1px solid #eee; font-size: 0.95rem; color: #555; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
+/* --- 單字點擊動畫 --- */
+        @keyframes pop-effect {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.15); background-color: #dff9fb; border-color: #3498db; box-shadow: 0 4px 10px rgba(52, 152, 219, 0.2); }
+            100% { transform: scale(1); }
+        }
+        
+        /* 這個 class 會由 JS 動態加入 */
+        .pop-active {
+            animation: pop-effect 0.3s ease-out;
+        }
+        /* 搜尋欄樣式 */
+/* --- 🔍 搜尋功能樣式 (新) --- */
+        .search-trigger-icon {
+            font-size: 1.5rem;
+            cursor: pointer;
+            margin-right: 15px; /* 與 X 按鈕保持距離 */
+            transition: transform 0.2s;
+        }
+        .search-trigger-icon:hover { transform: scale(1.2); }
+
+        .search-bar-wrapper {
+            max-height: 0; /* 預設隱藏 (高度為 0) */
+            overflow: hidden;
+            transition: max-height 0.3s ease-out; /* 滑動動畫 */
+            background: white;
+            border-bottom: 1px solid #eee;
+        }
+        
+        /* 當搜尋欄打開時的狀態 */
+        .search-bar-wrapper.open {
+            max-height: 70px; /* 打開的高度 */
+        }
+
+        .search-input {
+            width: 90%;
+            margin: 10px auto;
+            display: block;
+            padding: 10px 15px;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 50px;
+            outline: none;
+        }
+        .search-input:focus { border-color: #3498db; }
+        .search-input {
+            width: 100%;
+            padding: 12px 15px;
+            font-size: 1rem;
+            border: 2px solid #ddd;
+            border-radius: 50px;
+            box-sizing: border-box;
+            outline: none;
+            transition: border-color 0.3s;
+            background-color: #f8f9fa;
+        }
+        .search-input:focus {
+            border-color: #3498db;
+            background-color: #fff;
+            box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
+        }
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            20%, 60% { transform: translateX(-6px); }
+            40%, 80% { transform: translateX(6px); }
+        }
+        .shake { animation: shake 0.4s; }
+
+    </style>
+</head>
+<body>
+
+    <h1>👻同義詞の鬼👻</h1>
+    <p>It's Dope!Just Another Level!</p>
+    
+    <div class="info-panel">
+        <div class="user-panel" id="userPanel" style="display:none;">
+            👤 <span id="currentUserDisplay">Player</span>
+            <button class="logout-btn" onclick="logout()">登出</button>
+        </div>
+        <div class="stat-box">LEVEL <span id="level-display">1</span></div>
+        <div class="stat-box">⏱️ <span id="timer">100</span>s</div>
+        <div class="stat-box"> <span id="lives">10</span></div> 
+        <div class="stat-box score-box">🏆 Score: <span id="total-score">0</span></div>
+    </div>
+
+<div id="startOverlay" style="text-align: center; margin: 20px 0;">
+        <h2 style="color: #2c3e50; margin-bottom: 15px;">準備好接受挑戰了嗎？</h2>
+        <button onclick="startGameSession()" style="background: #e74c3c; color: white; padding: 15px 40px; font-size: 1.2rem; border-radius: 50px; border:none; cursor:pointer; box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4); font-weight:bold;">
+            ▶ 開始遊戲 (Start Game)
+        </button>
+    </div>
+
+    <div class="game-grid" id="gameGrid"></div>
+
+    <div class="action-buttons">
+        <div id="preGameButtons" style="display: flex; gap: 15px;">
+            <button class="btn-study" onclick="openStudyModal()">📖 溫習表</button>
+            <button class="btn-rank" onclick="openRankModal()">👑 排行榜</button>
+        </div>
+
+        <div id="inGameButtons" style="display: none; gap: 15px;">
+            <button class="btn-restart" onclick="backToLobby()">🏳️ 放棄 & 回主選單</button>
+        </div>
+    </div>
+
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content login-box">
+            <h2>👋 準備好做同義詞の鬼未？</h2>
+            <p>請輸入你的名字以開始遊戲<br>(如果是第一次，系統會自動註冊)</p>
+            <input type="text" id="loginNameInput" class="login-input" placeholder="例如: Tom A" maxlength="12">
+            <button class="btn-login" onclick="handleLogin()">開始遊戲 (Start)</button>
+            <p style="font-size: 0.8rem; margin-top: 15px; color: #95a5a6;">*請使用獨特的名字，不能與他人重複</p>
+        </div>
+    </div>
+
+    <div class="modal-overlay hidden" id="rankModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div class="modal-title">👻誰是鬼王?👻</div>
+                <div class="close-btn" onclick="closeModal('rankModal')">&times;</div>
+            </div>
+            
+            <div id="loadingRank">載入中...</div>
+            <table class="rank-table" id="rankTable">
+                <thead>
+                    <tr><th width="15%">#</th><th>Player</th><th style="text-align: right;">Score</th></tr>
+                </thead>
+                <tbody id="rankListBody"></tbody>
+            </table>
+        </div>
+    </div>
+
+<div class="modal-overlay hidden" id="studyModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <div style="display: flex; align-items: center;">
+                    <div class="modal-title">Reading 常考同義字</div>
+                </div>
+                <div style="display: flex; align-items: center;">
+                    <div class="search-trigger-icon" onclick="toggleSearchBar()">🔍</div>
+                    <div class="close-btn" onclick="closeModal('studyModal')">&times;</div>
+                </div>
+            </div>
+            
+            <div class="search-bar-wrapper" id="searchBarWrapper">
+                <input type="text" id="studySearchInput" class="search-input" placeholder="輸入關鍵字 (例如: sufficient)...">
+            </div>
+
+            <p style="color:#7f8c8d; margin-top:10px;">(點擊單字可發音 🔊)</p>
+            <div class="study-grid" id="studyListContainer"></div>
+        </div>
+    </div>
+
+        <script>
+        // --- 1. Firebase 設定與初始化 ---
+        const firebaseConfig = {
+            apiKey: "AIzaSyBdfTgb7FpkYdgjvrYWQ0jr-N-1fAaW9Q0",
+            authDomain: "vocabularyxdungeon.firebaseapp.com",
+            databaseURL: "https://vocabularyxdungeon-default-rtdb.asia-southeast1.firebasedatabase.app/",
+            projectId: "vocabularyxdungeon",
+            storageBucket: "vocabularyxdungeon.appspot.com",
+            messagingSenderId: "834761939928",
+            appId: "1:834761939928:web:d0fde740639a3eca46f0ad"
+        };
+        
+        let db = null;
+        let currentPlayer = null; 
+        
+        try {
+            if (!firebase.apps.length) {
+                firebase.initializeApp(firebaseConfig);
+            }
+            db = firebase.database();
+            console.log("Firebase initialized successfully");
+        } catch (e) {
+            alert("❌ Firebase 初始化失敗！\n錯誤: " + e.message);
+        }
+
+        const LEADERBOARD_PATH = 'leaderboards/synonym_hunter';
+        const USERS_PATH = 'users'; 
+
+        // --- 2. 數據庫 ---
+        const synonymData = [
+            { id: 'sufficient', color: 'lime', meaning: '充足 / 足夠', words: [{ t: 'Sufficient', m: '足夠' }, { t: 'Adequate', m: '足夠' }, { t: 'Ample', m: '充足' }, { t: 'Abundant', m: '充足' }, { t: 'plentiful', m: '充足' }] },
+            { id: 'shocking', color: 'red', meaning: '令人震驚', words: ['Shocking', 'Astonishing', 'Astounding', 'Mind-blowing', 'Mind-boggling', 'Jaw-dropping', 'Striking'] },
+            { id: 'means', color: 'blueviolet', meaning: '方法', words: ['Way', 'Method', 'Means', 'Approach'] },
+            { id: 'resemble', color: 'gray', meaning: '相似', words: [{ t: 'Similar to', m: '相似(泛用)' }, { t: 'Akin to', m: '相似(抽象)' }, { t: 'Resemble', m: '相似(物理)' }, { t: 'Alike', m: '好相似(放句尾)' }] },
+            { id: 'strange', color: 'mediumorchid', meaning: '奇怪', words: ['Strange', 'Odd', 'Weird', 'Bizarre', 'Eerie', 'Peculiar', 'Eccentric'] },
+            { id: 'hamper', color: 'maroon', meaning: '妨礙', words: ['Hamper', 'Hinder', 'Obstruct', 'Impede'] },
+            { id: 'however', color: 'brown', meaning: '但是/然而', words: ['However', 'Yet', 'Nevertheless', 'Nonetheless'] },
+            { id: 'be that as it may', color: 'burlywood', meaning: '話雖如此', words: ['Be that as it may', 'That said', 'Having said that', 'With that said'] },
+            { id: 'especially', color: 'burlywood', meaning: '尤其是', words: ['Especially', 'Particularly', 'In particular'] },
+            { id: 'specific', color: 'coral', meaning: '特定', words: ['Specific', 'Particular'] },
+            { id: 'benefit', color: 'cadetblue', meaning: '好處', words: [{ t: 'Benefit', m: '益處' }, { t: 'Merit', m: '優點' }, { t: 'Pros', m: '利(必須眾數)' }, { t: 'Advantage', m: '優點' }] },
+            { id: 'drawback', color: 'chocolate', meaning: '壞處', words: [{ t: 'Drawback', m: '弊處' }, { t: 'Demerit', m: '缺點' }, { t: 'Cons', m: '弊(必須眾數)' }, { t: 'Disadvantage', m: '缺點' }] },
+            { id: 'foster', color: 'green', meaning: '促進', words: [{ t: 'Foster', m: '促進' }, { t: 'Facilitate', m: '促進' }, { t: 'Promote', m: '促進' }] },
+            { id: 'decrease', color: 'olive', meaning: '減少', words: [{ t: 'Decrease', m: '減少' }, { t: 'Dwindle', m: '減少' }, { t: 'Plunge', m: '急跌' }, { t: 'Slump', m: '急跌' }, { t: 'Sink', m: '急跌' }, { t: 'Plummet', m: '急跌' }, { t: 'Reduce ', m: '減少(+n)' }, { t: 'Lower ', m: '減少(+n)' }] },
+            { id: 'staggering', color: 'yellow', meaning: '大(數字)', words: [{ t: 'Staggering', m: '大(數字)' }, { t: 'Whopping', m: '大(數字)' }] },
+            { id: 'important', color: 'blue', meaning: '重要', words: [{ t: 'Crucial', m: '極重要' }, { t: 'Significant', m: '重要' }, { t: 'Vital', m: '必不可少' }, { t: 'Indispensable', m: '不可或缺' }, { t: 'Key', m: '關鍵性的' }, { t: 'Critical ', m: '關鍵性的' }] },
+            { id: 'Cultivate', color: 'lime', meaning: '培育', words: [{ t: 'Cultivate', m: '培養' }, { t: 'Nurture', m: '孕育' }] },
+            { id: 'instead of', color: 'purple', meaning: '而不是', words: ['Instead of', 'Rather than', 'As opposed to'] }, // 
+            { id: 'suffer from', color: 'fuchsia', meaning: '患上', words: ['Suffer from', 'Develop', 'Afflicted with'] }, 
+            { id: 'enormous', color: 'navy', meaning: '巨大的', words: ['Enormous', 'Immense', 'Massive', 'Tremendous'] },
+            { id: 'situation', color: 'teal', meaning: '情況', words: ['Situation', 'Condition', 'Circumstances', 'Scenario'] },
+            { id: 'Amend', color: 'coral', meaning: '相似', words: [{ t: 'Amend', m: '修改(文件)' }, { t: 'Modify', m: '調整' }, { t: 'Adjust ', m: '調節' }, { t: 'Tune', m: '微調(工具)' }] },
+            { id: 'tackle', color: 'cornflowerblue', meaning: '應該/處理', words: ['Handle', 'tackle', 'deal with', 'cope with', 'address'] },
+            { id: 'unprecedented', color: '#e67e22', meaning: '前所未有', words: ['More than ever', 'Unprecedented'] },
+            { id: 'proliferate', color: 'aquamarine', meaning: '激增',words: [{ t: 'soar', m: '急升' }, { t: 'Skyrocket', m: '飛漲' }, { t: 'Proliferate', m: '激增' }, { t: 'Mushroom', m: '大量增加' }, { t: 'spring up', m: '湧現' }, { t: 'sprout', m: '湧現(強調新出現)' }, { t: 'Shoot up', m: '急速增加' }] },
+
+            { id: 'Deteriorate', color: 'darkblue', meaning: '惡化', words: [{ t: 'Deteriorate', m: '惡化(不+n)' }, { t: 'Aggravate', m: '惡化(+n)' }, { t: 'Exacerbate', m: '惡化(+n)' }, { t: 'Worsen ', m: '惡化(+n/不+n)' }] },
+{ 
+                id: 'vulnerable', 
+                color: '#e74c3c', // Red
+                meaning: '易受...傷害', 
+                words: [
+                    { t: 'Vulnerable to', m: '易受傷害' },
+                    { t: 'Susceptible to', m: '易受影響' },
+                    { t: 'Prone to', m: '傾向於(負面)' }
+                ] 
+            },
+            // --- Group 2: 靈丹妙藥 ---
+            { 
+                id: 'elixir', 
+                color: '#f1c40f', // Gold
+                meaning: '靈丹妙藥', 
+                words: ['Elixir', 'Panacea'] 
+            },
+            // --- Group 3: 愛好者 ---
+            { 
+                id: 'fan', 
+                color: '#e67e22', // Orange
+                meaning: '熱愛者', 
+                words: [
+                    { t: 'Fan', m: '粉絲' },
+                    { t: 'Enthusiast', m: '發燒友' },
+                    { t: 'Fanatic', m: '狂熱者' }
+                ] 
+            },
+            // --- Group 4: 大約 ---
+            { 
+                id: 'approx', 
+                color: '#95a5a6', // Gray
+                meaning: '大約', 
+                words: ['Approximately', 'Roughly', 'Around', 'About'] 
+            },
+            // --- Group 5: 幾乎 ---
+            { 
+                id: 'almost', 
+                color: '#7f8c8d', // Dark Gray
+                meaning: '幾乎', 
+                words: [
+                    { t: 'Almost', m: '幾乎' },
+                    { t: 'Virtually', m: '幾乎/事實上' }
+                ] 
+            },
+            // --- Group 6: 足夠 (基本) ---
+            { 
+                id: 'enough', 
+                color: '#2ecc71', // Emerald
+                meaning: '足夠', 
+                words: ['Enough', 'Sufficient', 'Adequate'] 
+            },
+            // --- Group 7: 充足 (豐富) ---
+            { 
+                id: 'plenty', 
+                color: '#27ae60', // Green
+                meaning: '充足 / 豐富', 
+                words: [
+                    { t: 'Plenty', m: '大量' },
+                    { t: 'Plentiful', m: '充足' },
+                    { t: 'Ample', m: '充裕' },
+                    { t: 'Abundant', m: '豐富' }
+                ] 
+            },
+            // --- Group 8: 預計 ---
+            { 
+                id: 'expect', 
+                color: '#3498db', // Blue
+                meaning: '預計 / 預測', 
+                words: [
+                    { t: 'Expect', m: '預期' },
+                    { t: 'Predict', m: '預測' },
+                    { t: 'Anticipate', m: '預料' },
+                    { t: 'Project', m: '推算' },
+                    { t: 'Foresee', m: '預見' }
+                ] 
+            },
+            // --- Group 9: 大幅度 ---
+            { 
+                id: 'significant', 
+                color: '#c0392b', // Dark Red
+                meaning: '大幅度 / 顯著', 
+                words: [
+                    { t: 'Significant', m: '顯著' },
+                    { t: 'Substantial', m: '可觀的' },
+                    { t: 'Drastic', m: '激烈的' },
+                    { t: 'Radical', m: '徹底的' },
+                    { t: 'Remarkable', m: '非凡的' }
+                ] 
+            },
+            // --- Group 10: 反而/相反 ---
+            { 
+                id: 'instead', 
+                color: 'darkgoldenrod', 
+                meaning: '反而 / 相反', 
+                words: [
+                    { t: 'Instead', m: '作為替代' },
+                    { t: 'Rather', m: '反而' },
+                    { t: 'In contrast', m: '相比之下' },
+                    { t: 'On the contrary', m: '正正相反' }
+                ] 
+            },
+            // --- Group 11: 與...有關 ---
+            { 
+                id: 'related', 
+                color: 'darkcyan',
+                meaning: '與...有關', 
+                words: [
+                    { t: 'Associated with', m: '有關聯' },
+                    { t: 'Linked to', m: '有聯繫' },
+                    { t: 'Related to', m: '有關係' },
+                    { t: 'Has to do with', m: '與..有關' }
+                ] 
+            },
+            // --- Group 12: 模糊 ---
+            { 
+                id: 'blurry', 
+                color: '#607d8b', // Blue Grey
+                meaning: '模糊', 
+                words: [
+                    { t: 'Blurry', m: '模糊(視覺)' },
+                    { t: 'Vague', m: '含糊(抽象)' },
+                    { t: 'Ambiguous', m: '模稜兩可' }
+                ] 
+            },
+            // --- Group 13: 有爭議性 ---
+            { 
+                id: 'controversial', 
+                color: '#d35400', // Pumpkin
+                meaning: '有爭議性', 
+                words: [
+                    { t: 'Controversial', m: '具爭議性' },
+                    { t: 'Disputable', m: '有商榷餘地' },
+                    { t: 'Debatable', m: '可辯論的' },
+                    { t: 'Contentious', m: '引起爭論的' }
+                ] 
+            },
+            // --- Group 14: 很多 ---
+            { 
+                id: 'numerous', 
+                color: '#f39c12', // Orange
+                meaning: '很多', 
+                words: [
+                    { t: 'Numerous', m: '眾多(可數)' },
+                    { t: 'A myriad of', m: '無數(可數)' },
+                    { t: 'A plethora of', m: '多不勝數(可數)' },
+                    { t: 'A host of', m: '許多(可數)' },
+                    { t: 'A good many', m: '很多(可數,口語)' },
+                    { t: 'Quite a few', m: '相當多(可數)' },
+                    { t: 'A great deal of', m: '大量(不可數)' },
+                    { t: 'A wealth of', m: '大量(描象名詞)' },
+                ] 
+            },
+            // --- Group 15: 特質 (分人與物) ---
+            { 
+                id: 'trait', 
+                color: '#8e44ad', // Wisteria
+                meaning: '特質 / 特徵', 
+                words: [
+                    { t: 'Nature', m: '本質(物)' },
+                    { t: 'Characteristics', m: '特徵(物)' },
+                    { t: 'Property', m: '屬性(物)' },
+                    { t: 'Attribute', m: '特質(物)' },
+                    { t: 'Trait', m: '特徵(人)' },
+                    { t: 'Character', m: '性格(人)' }
+                ] 
+            },
+            // --- Group 16: 展示/顯示 ---
+            { 
+                id: 'show', 
+                color: '#2980b9', // Belize Hole
+                meaning: '展示 / 顯示', 
+                words: [
+                    { t: 'Illustrate', m: '闡明/插圖' },
+                    { t: 'Demonstrate', m: '示範/證明' },
+                    { t: 'Reveal', m: '揭示' },
+                    { t: 'Indicate', m: '指出' },
+                    { t: 'Suggest', m: '暗示/建議' }
+                ] 
+            },
+            // --- Group 17: 展示 (正面/宏大) ---
+            { 
+                id: 'showcase', 
+                color: '#1abc9c', // Turquoise
+                meaning: '展示 (正面)', 
+                words: [
+                    { t: 'Showcase', m: '展示(優點)' },
+                    { t: 'Exhibit', m: '展覽' }
+                ] 
+            },
+            // --- Group 18: 教堂 (分大小) ---
+            { 
+                id: 'church', 
+                color: '#8e44ad', // Purple
+                meaning: '教堂 (分大小)', 
+                words: [
+                    { t: 'Chapel', m: '小教堂/禮拜堂' },
+                    { t: 'Church', m: '教堂(中)' },
+                    { t: 'Cathedral', m: '大教堂' },
+                    { t: 'Basilica', m: '宗座聖殿(超大)' }
+                ] 
+            },
+            // --- Group 19: 寺廟/宗教場所 ---
+            { 
+                id: 'temple', 
+                color: 'darkmagenta', // Red
+                meaning: '寺廟 / 聖地', 
+                words: [
+                    { t: 'Shrine', m: '神社/神龕(小)' },
+                    { t: 'Temple', m: '寺廟' },
+                    { t: 'Monastery', m: '修道院/僧院' },
+                    { t: 'Mosque', m: '清真寺' }
+                ] 
+            },
+            // --- Group 20: 迅速 ---
+            { 
+                id: 'rapid', 
+                color: '#e67e22', // Carrot
+                meaning: '迅速', 
+                words: [
+                    { t: 'Rapid', m: '迅速(改變)' },
+                    { t: 'Swift', m: '迅速(移動)' },
+                    { t: 'Prompt', m: '迅速(反應)' }
+                ] 
+            },
+            // --- Group 21: 宣佈 ---
+            { 
+                id: 'declare', 
+                color: '#34495e', // Wet Asphalt
+                meaning: '宣佈', 
+                words: [
+                    { t: 'Declare', m: '宣佈(正式)' },
+                    { t: 'Announce', m: '宣佈' }
+                ] 
+            },
+           { 
+                id: 'utter', 
+                color: 'darkkhaki',
+                meaning: '說', 
+                words: [
+                    { t: 'stress', m: '強調說' },
+                    { t: 'utter', m: '說' },
+                    { t: 'state', m: '說' },
+                    { t: 'remark', m: '說(正式)' }
+                ] 
+            },
+            // --- Group 22: 發生 ---
+            { 
+                id: 'happen', 
+                color: '#16a085', // Green Sea
+                meaning: '發生', 
+                words: ['Happen', 'Occur', 'Take place', 'Arise'] 
+            },
+            // --- Group 23: 驅使/促進 ---
+            { 
+                id: 'foster', 
+                color: '#27ae60', // Nephritis
+                meaning: '促進 / 驅使', 
+                words: [
+                    { t: 'Drive', m: '驅使' },
+                    { t: 'Prompt', m: '促使' },
+                    { t: 'Foster', m: '培養/促進' },
+                    { t: 'Facilitate', m: '促進/使便利' },
+                    { t: 'Promote', m: '推廣/促進' }
+                ] 
+            },
+            // --- Group 24: 香味/氣味 ---
+            { 
+                id: 'smell', 
+                color: '#d2527f', // Pink
+                meaning: '香味 / 氣味', 
+                words: [
+                    { t: 'Aroma', m: '香氣(食物)' },
+                    { t: 'Fragrance', m: '芬芳(香水/花)' },
+                    { t: 'Scent', m: '氣味(中性/好)' },
+                    { t: 'Smell', m: '味道(中性)' },
+                    { t: 'Odour', m: '氣味(通常指臭)' }
+                ] 
+            },
+            // --- Group 25: 開心 ---
+            { 
+                id: 'joy', 
+                color: '#f1c40f', // Sun Flower
+                meaning: '開心 / 喜悅', 
+                words: ['Pleasure', 'Delight', 'Joy', 'Glee'] 
+            },
+            // --- Group 26: 因此 ---
+            { 
+                id: 'therefore', 
+                color: '#7f8c8d', // Concrete
+                meaning: '因此', 
+                words: ['Thus', 'Hence', 'Therefore'] 
+            },
+            // --- Group 27: 熱衷於 ---
+            { 
+                id: 'enthusiastic', 
+                color: '#e74c3c', // Alizarin
+                meaning: '熱衷於', 
+                words: [
+                    { t: 'Enthusiastic about', m: '熱衷' },
+                    { t: 'Passionate about', m: '充滿熱誠' },
+                    { t: 'Keen to', m: '渴望/熱衷' }
+                ] 
+            },
+            // --- Group 28: 禁止 ---
+            { 
+                id: 'ban', 
+                color: '#c0392b', // Old Brick
+                meaning: '禁止', 
+                words: ['Forbid', 'Ban', 'Bar', 'Prohibit'] 
+            },
+            // --- Group 29: 意識到 ---
+            { 
+                id: 'aware', 
+                color: '#2980b9', // Blue
+                meaning: '意識到', 
+                words: [
+                    { t: 'Be aware of', m: '意識到' },
+                    { t: 'Realise', m: '意識到/實現' },
+                    { t: 'Be conscious of', m: '察覺到' }
+                ] 
+            },
+            // --- Group 30: 另外 ---
+            { 
+                id: 'addition', 
+                color: '#8e44ad', // Purple
+                meaning: '另外 / 此外', 
+                words: ['In addition', 'Furthermore', 'Moreover', 'Besides', 'On top of that', 'Plus'] 
+            },
+            // --- Group 31: 明顯 ---
+            { 
+                id: 'obvious', 
+                color: '#f39c12', // Orange
+                meaning: '明顯', 
+                words: ['Obvious', 'Apparent', 'Evident', 'Conspicuous', 'Clear'] 
+            },
+            // --- Group 32: 適應 ---
+            { 
+                id: 'adapt', 
+                color: '#2ecc71', // Green
+                meaning: '適應', 
+                words: [
+                    { t: 'Adapt to', m: '適應' },
+                    { t: 'Get used to', m: '習慣' },
+                    { t: 'Get accustomed to', m: '習慣於' }
+                ] 
+            },
+            // --- Group 33: 採用/實施 ---
+            { 
+                id: 'adopt', 
+                color: '#34495e', // Navy
+                meaning: '採用 / 實施', 
+                words: [
+                    { t: 'Adopt', m: '採用' },
+                    { t: 'Introduce', m: '引入' },
+                    { t: 'Launch', m: '推行' },
+                    { t: 'Implement', m: '實施(計劃)' },
+                    { t: 'Impose', m: '強制實施(-)' }
+                ] 
+            },
+            // --- Group 34: 可行的 ---
+            { 
+                id: 'feasible', 
+                color: '#27ae60', // Green
+                meaning: '可行的', 
+                words: ['Feasible', 'Viable', 'Workable'] 
+            }
+        ];
+
+        // --- 遊戲變數 ---
+        let hasFlippedCard = false, lockBoard = false;
+        let firstCard, secondCard, matchedPairs = 0;
+        let lives = 10, timer, timeLimit = 100, remainingTime = 100;
+        let currentLevel = 1, totalScore = 0;
+        
+        // 🔥 新增變數：配對池
+        let globalPairDeck = []; 
+
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+
+        // --- 登入系統邏輯 ---
+        function checkLoginStatus() {
+            const savedUser = localStorage.getItem('synonym_player');
+            if (savedUser) {
+                currentPlayer = savedUser;
+                showGameUI();
+                backToLobby();
+            } else {
+                document.getElementById('loginModal').classList.remove('hidden');
+            }
+        }
+
+        function handleLogin() {
+            const inputName = document.getElementById('loginNameInput').value.trim();
+            const loginBtn = document.querySelector('.btn-login');
+
+            if (!inputName) { alert("請輸入名字"); return; }
+            if (inputName.length > 12) { alert("名字太長啦 (限12字)"); return; }
+            if (!db) { alert("❌ 資料庫未連接"); return; }
+
+            const originalText = loginBtn.innerText;
+            loginBtn.innerText = "連線中...";
+            loginBtn.disabled = true;
+
+            db.ref(USERS_PATH + '/' + inputName).once('value')
+            .then(snapshot => {
+                if (snapshot.exists()) {
+                    const confirmLogin = confirm(`名字 "${inputName}" 已存在。是本人請按確定，否則請改名。`);
+                    if (confirmLogin) loginSuccess(inputName);
+                    else { loginBtn.innerText = originalText; loginBtn.disabled = false; }
+                } else {
+                    db.ref(USERS_PATH + '/' + inputName).set({ createdAt: firebase.database.ServerValue.TIMESTAMP })
+                    .then(() => { alert(`願你與鬼王同在！${inputName}！`); loginSuccess(inputName); });
+                }
+            })
+            .catch(error => {
+                alert("❌ 連線錯誤: " + error.message);
+                loginBtn.innerText = originalText; loginBtn.disabled = false;
+            });
+        }
+
+        function loginSuccess(name) {
+            currentPlayer = name;
+            localStorage.setItem('synonym_player', name); 
+            document.getElementById('loginModal').classList.add('hidden');
+            showGameUI();
+            backToLobby(); 
+        }
+
+        function logout() {
+            if(confirm("確定要登出嗎？")) {
+                localStorage.removeItem('synonym_player');
+                location.reload(); 
+            }
+        }
+
+        function showGameUI() {
+            document.getElementById('userPanel').style.display = 'flex';
+            document.getElementById('currentUserDisplay').innerText = currentPlayer;
+            document.getElementById('loginModal').classList.add('hidden'); 
+        }
+
+        // --- 音效 ---
+        function playSound(type) {
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            osc.connect(gain); gain.connect(audioCtx.destination);
+
+            if (type === 'flip') {
+                osc.type = 'sine'; osc.frequency.setValueAtTime(500, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+                gain.gain.setValueAtTime(0.05, now); gain.gain.exponentialRampToValueAtTime(0.001, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            } else if (type === 'match') {
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(523.25, now); osc.frequency.setValueAtTime(659.25, now + 0.1);
+                gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            } else if (type === 'fail') {
+                osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(100, now + 0.2);
+                gain.gain.setValueAtTime(0.1, now); gain.gain.linearRampToValueAtTime(0, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            } else if (type === 'victory') {
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+                    const o = audioCtx.createOscillator(); const g = audioCtx.createGain();
+                    o.connect(g); g.connect(audioCtx.destination);
+                    o.type = 'square'; o.frequency.value = freq;
+                    g.gain.setValueAtTime(0.05, now + i*0.1); g.gain.exponentialRampToValueAtTime(0.001, now + i*0.1 + 0.4);
+                    o.start(now + i*0.1); o.stop(now + i*0.1 + 0.4);
+                });
+            } else if (type === 'gameover') {
+                osc.type = 'triangle'; osc.frequency.setValueAtTime(300, now); osc.frequency.linearRampToValueAtTime(100, now + 1.5);
+                gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0, now + 1.5);
+                osc.start(now); osc.stop(now + 1.5);
+            }
+        }
+
+        function speakWord(text) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'en-US'; u.rate = 0.9;
+                window.speechSynthesis.speak(u);
+            }
+        }
+
+        // --- 遊戲邏輯 ---
+        
+        // 工具：將所有生字轉化為獨立配對
+        function generateMasterDeck() {
+            let tempDeck = [];
+            
+            synonymData.forEach(g => {
+                let ws = g.words.map(w => (typeof w === 'string') ? {t:w, m:g.meaning} : {t:w.t, m:w.m});
+                ws.sort(() => 0.5 - Math.random()); // 打亂組內
+
+                // 兩兩配對
+                for (let i = 0; i < ws.length - 1; i += 2) {
+                    tempDeck.push({ i1: ws[i], i2: ws[i+1], gid: g.id, c: g.color });
+                }
+            });
+            return tempDeck.sort(() => 0.5 - Math.random()); // 洗亂大池
+        }
+        
+        function initGame(isNextLevel = false) {
+            if (!currentPlayer) return; 
+
+            const grid = document.getElementById('gameGrid');
+            grid.innerHTML = '';
+            hasFlippedCard = false; lockBoard = false; firstCard = null; secondCard = null; matchedPairs = 0;
+            
+            if (!isNextLevel) { 
+                currentLevel = 1; 
+                totalScore = 0; 
+                lives = 10; 
+                globalPairDeck = generateMasterDeck(); // 開新局，洗牌
+            } else { 
+                currentLevel++; 
+                lives = Math.min(lives + 5, 10); 
+            }
+
+            // 防禦：如果不夠牌，加新牌
+            if (globalPairDeck.length < 8) {
+                globalPairDeck = globalPairDeck.concat(generateMasterDeck());
+            }
+
+            updateUI();
+            resetTimer(); startTimer();
+
+            // 抽 8 對
+            const selectedPairs = globalPairDeck.splice(0, 8);
+
+            // 放入 Deck
+            let deck = [];
+            selectedPairs.forEach(p => {
+                deck.push({t:p.i1.t, m:p.i1.m, gid:p.gid, c:p.c}, {t:p.i2.t, m:p.i2.m, gid:p.gid, c:p.c});
+            });
+            
+            deck.sort(()=>0.5-Math.random());
+
+deck.forEach(item => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                
+                // 設定 dataset (保持不變)
+                card.dataset.group = item.gid; 
+                card.dataset.word = item.t; 
+                card.dataset.color = item.c; 
+                card.dataset.failCount = 1;
+
+                // 🔥 新增：強制首字母大寫的邏輯 🔥
+                // 1. 處理單字 (Front)：攞第一個字轉大寫 + 拼番剩低嘅字
+                const displayWord = item.t.charAt(0).toUpperCase() + item.t.slice(1);
+                
+                // 2. 處理提示字 (Back)：只攞第一個字轉大寫
+                const hintLetter = item.t.charAt(0).toUpperCase();
+
+                const textClass = item.t.length > 12 ? 'word-text long-text' : 'word-text';
+                
+                // 🔥 更新 HTML：用 displayWord 同 hintLetter 代替舊變數
+                card.innerHTML = `<div class="card-inner">
+                    <div class="card-front">
+                        <div class="${textClass}">${displayWord}</div>
+                        <div class="meaning-text">${item.m}</div>
+                    </div>
+                    <div class="card-back">${hintLetter}</div>
+                </div>`;
+                
+                card.addEventListener('click', flipCard);
+                grid.appendChild(card);
+            });
+
+            setTimeout(() => { if(grid.children.length) grid.children[Math.floor(Math.random()*grid.children.length)].click(); }, 600);
+        }
+
+        function updateUI() {
+            let h = ""; for(let i=0; i<lives; i++) h+="❤️";
+            const l = document.getElementById('lives');
+            l.innerText = h || "💀";
+            l.className = lives<=2 ? "stat-box low-health" : "stat-box";
+            document.getElementById('total-score').innerText = totalScore;
+            document.getElementById('level-display').innerText = currentLevel;
+        }
+
+        function flipCard() {
+            if (lockBoard || this === firstCard) return;
+            playSound('flip'); this.classList.add('flipped'); speakWord(this.dataset.word);
+            if (!hasFlippedCard) { hasFlippedCard = true; firstCard = this; return; }
+            secondCard = this; checkForMatch();
+        }
+
+        function checkForMatch() {
+            firstCard.dataset.group === secondCard.dataset.group ? disableCards() : unflipCards();
+        }
+
+        function disableCards() {
+            const c1 = firstCard, c2 = secondCard, color = c1.dataset.color || '#333';
+            c1.removeEventListener('click', flipCard); c2.removeEventListener('click', flipCard);
+
+            setTimeout(() => {
+                playSound('match'); c1.classList.add('matched'); c2.classList.add('matched');
+                [c1, c2].forEach(c => {
+                    const f = c.querySelector('.card-front'), w = c.querySelector('.word-text'), m = c.querySelector('.meaning-text');
+                    f.setAttribute('style', `background-color:#fff!important; border:3px solid ${color}!important; color:${color}!important; transform:rotateY(180deg); box-shadow:inset 0 0 0 1px ${color}20;`);
+                    w.style.color = color; m.style.cssText = `color:${color}!important; opacity:1!important; transform:translateY(0)!important; display:block!important;`;
+                });
+            }, 300);
+
+            matchedPairs++;
+            if (matchedPairs === 8) {
+                clearInterval(timer);
+                totalScore += remainingTime + (lives * 10);
+                document.getElementById('total-score').innerText = totalScore;
+                setTimeout(() => {
+                    playSound('victory');
+                    alert(`🎉 Level ${currentLevel} Complete! 加番5個❤️俾你!\n總分: ${totalScore}`);
+                    initGame(true);
+                }, 800);
+            }
+            resetBoard();
+        }
+
+        function unflipCards() {
+            lockBoard = true; const c1 = firstCard, c2 = secondCard;
+            [c1, c2].forEach(c => {
+                let cnt = parseInt(c.dataset.failCount||1)+1; c.dataset.failCount = cnt;
+                let w = c.dataset.word, hint = w.substring(0, Math.min(cnt, w.length));
+                let b = c.querySelector('.card-back'); b.innerText = hint;
+                b.style.fontSize = hint.length>3?'1rem':(hint.length>1?'1.5rem':'2.5rem');
+                b.style.background = "linear-gradient(135deg, #5b6ebf 0%, #683e91 100%)";
+            });
+            lives--; updateUI();
+            if (lives === 0) {
+                clearInterval(timer);
+                setTimeout(() => { playSound('gameover'); autoSubmitScore(); }, 600);
+                return;
+            }
+            setTimeout(() => { playSound('fail'); c1.classList.add('shake'); c2.classList.add('shake'); }, 400);
+            setTimeout(() => { c1.classList.remove('flipped','shake'); c2.classList.remove('flipped','shake'); resetBoard(); }, 1200);
+        }
+
+        function resetBoard() { [hasFlippedCard, lockBoard] = [false, false]; [firstCard, secondCard] = [null, null]; }
+        
+        function startTimer() {
+            remainingTime = timeLimit; document.getElementById('timer').innerText = remainingTime;
+            timer = setInterval(() => {
+                remainingTime--; document.getElementById('timer').innerText = remainingTime;
+                if (remainingTime <= 0) { clearInterval(timer); playSound('gameover'); autoSubmitScore(); }
+            }, 1000);
+        }
+        function resetTimer() { clearInterval(timer); remainingTime = timeLimit; document.getElementById('timer').innerText = remainingTime; }
+
+        // --- 排行榜 (自動上傳) ---
+        function openRankModal() {
+            document.getElementById('rankModal').classList.remove('hidden');
+            fetchLeaderboard();
+        }
+
+        function autoSubmitScore() {
+            if (!currentPlayer) return;
+            if (totalScore === 0) {
+                 alert("💀 Game Over! \n0分... 下次努力！");
+                 backToLobby();
+                 return;
+            }
+
+            db.ref(LEADERBOARD_PATH).orderByChild('name').equalTo(currentPlayer).once('value', snapshot => {
+                if (snapshot.exists()) {
+                    let key = Object.keys(snapshot.val())[0];
+                    let oldScore = snapshot.val()[key].score;
+                    
+                    if (totalScore > oldScore) {
+                        db.ref(LEADERBOARD_PATH + '/' + key).update({
+                            score: totalScore,
+                            timestamp: firebase.database.ServerValue.TIMESTAMP
+                        }).then(() => {
+                            alert(`💀 Game Over!\n恭喜刷新紀錄！\n(舊: ${oldScore} -> 新: ${totalScore})`);
+                            openRankModal();
+                            backToLobby();
+                        });
+                    } else {
+                        alert(`💀 Game Over!\n最終分數: ${totalScore}\n(未破紀錄: ${oldScore})`);
+                        openRankModal();
+                        backToLobby();
+                    }
+                } else {
+                    db.ref(LEADERBOARD_PATH).push({
+                        name: currentPlayer,
+                        score: totalScore,
+                        timestamp: firebase.database.ServerValue.TIMESTAMP
+                    }).then(() => {
+                        alert(`💀 Game Over!\n分數已上傳: ${totalScore}`);
+                        openRankModal();
+                        backToLobby();
+                    });
+                }
+            });
+        }
+
+        function fetchLeaderboard() {
+            const listBody = document.getElementById('rankListBody');
+            const loading = document.getElementById('loadingRank');
+            
+            db.ref(LEADERBOARD_PATH).orderByChild('score').limitToLast(100).once('value', snapshot => {
+                loading.style.display = 'none';
+                listBody.innerHTML = '';
+                
+                let scores = [];
+                snapshot.forEach(child => { scores.push(child.val()); });
+                scores.reverse();
+
+                if(scores.length === 0) {
+                    listBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">暫無紀錄</td></tr>';
+                    return;
+                }
+
+                scores.forEach((s, index) => {
+                    const row = document.createElement('tr');
+                    row.className = 'rank-row';
+                    let rankIcon = index + 1;
+                    if(index===0) rankIcon = '🥇';
+                    if(index===1) rankIcon = '🥈';
+                    if(index===2) rankIcon = '🥉';
+
+                    row.innerHTML = `<td><span class="rank-num">${rankIcon}</span></td><td class="rank-name">${s.name}</td><td class="rank-score">${s.score}</td>`;
+                    listBody.appendChild(row);
+                });
+            });
+        }
+
+        // --- 搜尋與溫習功能 ---
+        function toggleSearchBar() {
+            const wrapper = document.getElementById('searchBarWrapper');
+            const input = document.getElementById('studySearchInput');
+            wrapper.classList.toggle('open');
+            if (wrapper.classList.contains('open')) {
+                setTimeout(() => input.focus(), 300);
+            } else {
+                input.value = '';
+                filterStudyList(''); 
+            }
+        }
+
+        function filterStudyList(term) {
+            const container = document.getElementById('studyListContainer');
+            const groups = container.querySelectorAll('.study-group');
+            groups.forEach(group => {
+                const text = group.innerText.toLowerCase();
+                group.style.display = (term === '' || text.includes(term.toLowerCase())) ? "block" : "none";
+            });
+        }
+
+        function openStudyModal() {
+            const c = document.getElementById('studyListContainer'); 
+            c.innerHTML = ''; 
+
+            document.getElementById('searchBarWrapper').classList.remove('open');
+            document.getElementById('studySearchInput').value = '';
+
+            document.getElementById('studySearchInput').oninput = function(e) { filterStudyList(e.target.value); };
+
+            synonymData.forEach(g => {
+                const d = document.createElement('div'); 
+                d.className = 'study-group'; 
+                d.style.borderLeftColor = g.color;
+                d.innerHTML = `<div class="study-meaning" style="color:${g.color}">${g.meaning}</div><div class="study-words"></div>`;
+                
+                const wd = d.querySelector('.study-words');
+                
+                g.words.forEach(w => {
+                    const t = document.createElement('span'); 
+                    t.className = 'study-tag'; 
+                    let wordToRead = "";
+                    if (typeof w === 'string') {
+                        t.innerText = w; wordToRead = w;
+                    } else {
+                        t.innerHTML = `${w.t} <small style="color:#7f8c8d; font-weight:normal; font-size: 0.85em;">(${w.m})</small>`;
+                        wordToRead = w.t;
+                    }
+                    t.onclick = () => {
+                        speakWord(wordToRead);
+                        t.classList.remove('pop-active'); 
+                        void t.offsetWidth;               
+                        t.classList.add('pop-active');    
+                    };
+                    wd.appendChild(t);
+                });
+                c.appendChild(d);
+            });
+            document.getElementById('studyModal').classList.remove('hidden');
+        }
+
+        // --- 導航與介面控制 ---
+        function backToLobby() {
+            clearInterval(timer);
+            lockBoard = false; hasFlippedCard = false;
+            document.getElementById('gameGrid').innerHTML = ''; 
+            document.getElementById('startOverlay').style.display = 'block'; 
+            document.getElementById('preGameButtons').style.display = 'flex';
+            document.getElementById('inGameButtons').style.display = 'none';
+            document.getElementById('timer').innerText = timeLimit;
+            document.getElementById('lives').innerText = "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️";
+            lives = 10;
+        }
+
+        function startGameSession() {
+            document.getElementById('startOverlay').style.display = 'none';
+            document.getElementById('preGameButtons').style.display = 'none';
+            document.getElementById('inGameButtons').style.display = 'flex';
+            initGame(false);
+        }
+
+        function closeModal(id) {
+            document.getElementById(id).classList.add('hidden');
+            if (id === 'rankModal' && lives <= 0) {
+                backToLobby();
+            }
+        }
+
+        // 啟動時檢查
+        checkLoginStatus();
+
+    </script>
+                  
+                 
