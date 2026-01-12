@@ -1132,14 +1132,71 @@
             }
         }
 
-        function speakWord(text) {
-            if ('speechSynthesis' in window) {
-                window.speechSynthesis.cancel();
-                const u = new SpeechSynthesisUtterance(text);
-                u.lang = 'en-US'; u.rate = 0.9;
-                window.speechSynthesis.speak(u);
-            }
+// --- 優化版發音系統 ---
+        let allVoices = [];
+
+        // 1. 預先載入聲音列表 (因為 Chrome 係非同步載入，要等一下)
+        function loadVoices() {
+            allVoices = window.speechSynthesis.getVoices();
         }
+
+        // 監聽聲音載入事件 (確保入到 game 有聲揀)
+        if ('speechSynthesis' in window) {
+            window.speechSynthesis.onvoiceschanged = loadVoices;
+        }
+
+        function speakWord(text) {
+            if (!('speechSynthesis' in window)) {
+                alert("你的瀏覽器不支援發音功能");
+                return;
+            }
+
+            // 確保聲音列表已載入
+            if (allVoices.length === 0) {
+                allVoices = window.speechSynthesis.getVoices();
+            }
+
+            window.speechSynthesis.cancel(); // 停上一句
+            const u = new SpeechSynthesisUtterance(text);
+            
+            // --- 🔍 尋找最佳英文聲音 (重點修改) ---
+            // 優先次序：
+            // 1. Google US English (Android/Chrome 最自然)
+            // 2. Microsoft Zira / David (Windows 比較好聽)
+            // 3. 任何包含 "English" 或 "US" 或 "UK" 的聲音
+            // 4. 最後先用預設 'en-US'
+            
+            let preferredVoice = allVoices.find(v => v.name.includes("Google US English"));
+            
+            if (!preferredVoice) {
+                preferredVoice = allVoices.find(v => v.name.includes("Google UK English Female"));
+            }
+            if (!preferredVoice) {
+                preferredVoice = allVoices.find(v => v.name.includes("Microsoft Zira")); // Windows 常見女聲
+            }
+            if (!preferredVoice) {
+                preferredVoice = allVoices.find(v => v.lang === 'en-US' && !v.name.includes("Chinese")); // 避開中文引擎
+            }
+            if (!preferredVoice) {
+                preferredVoice = allVoices.find(v => v.lang === 'en-GB');
+            }
+
+            // 如果搵倒比較好嘅聲，就套用
+            if (preferredVoice) {
+                u.voice = preferredVoice;
+                // console.log("Using voice:", preferredVoice.name); // Debug 用，想知用緊咩聲可以開呢句
+            }
+
+            // 設定語速同音調
+            u.lang = 'en-US'; 
+            u.rate = 0.9; // 語速 (0.1 - 10)
+            u.pitch = 1;  // 音調 (0 - 2)
+            
+            window.speechSynthesis.speak(u);
+        }
+
+        // 初始化載入一次
+        loadVoices();
 
         // --- 遊戲邏輯 ---
         
