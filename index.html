@@ -330,8 +330,8 @@
             <button class="btn-rank" onclick="openRankModal()">👑 排行榜</button>
         </div>
 
-        <div id="inGameButtons" style="display: none; gap: 15px;">
-            <button class="btn-restart" onclick="backToLobby()">🏳️ 放棄 & 回主選單</button>
+<div id="inGameButtons" style="display: none; gap: 15px;">
+            <button class="btn-restart" onclick="onGiveUp()">🏳️ 放棄 & 回主選單</button>
         </div>
     </div>
 
@@ -426,7 +426,7 @@
             { id: 'benefit', color: 'cadetblue', meaning: '好處', words: [{ t: 'Benefit', m: '益處' }, { t: 'Merit', m: '優點' }, { t: 'Pros', m: '利(必須眾數)' }, { t: 'Advantage', m: '優點' }] },
             { id: 'drawback', color: 'chocolate', meaning: '壞處', words: [{ t: 'Drawback', m: '弊處' }, { t: 'Demerit', m: '缺點' }, { t: 'Cons', m: '弊(必須眾數)' }, { t: 'Disadvantage', m: '缺點' }] },
             { id: 'foster', color: 'green', meaning: '促進', words: [{ t: 'Foster', m: '促進' }, { t: 'Facilitate', m: '促進' }, { t: 'Promote', m: '促進' }] },
-            { id: 'decrease', color: 'olive', meaning: '減少', words: [{ t: 'Decrease', m: '減少' }, { t: 'Dwindle', m: '減少' }, { t: 'Plunge', m: '急跌' }, { t: 'Slump', m: '急跌' }, { t: 'Sink', m: '急跌' }, { t: 'Plummet', m: '急跌' }, { t: 'Reduce ', m: '減少(+n)' }, { t: 'Lower ', m: '減少(+n)' }] },
+            { id: 'decrease', color: 'olive', meaning: '減少', words: [{ t: 'Decrease', m: '減少' }, { t: 'Dwindle', m: '減少' }, { t: 'Plunge', m: '急跌' }, { t: 'Slump', m: '急跌' }, { t: 'Sink', m: '急跌' }, { t: 'Plummet', m: '急跌' }, { t: 'Reduce ', m: '減少(+n)' }, { t: 'Lower ', m: '減少(+n)' }, { t: 'minimise ', m: '減少(+n)' }] },
             { id: 'staggering', color: 'yellow', meaning: '大(數字)', words: [{ t: 'Staggering', m: '大(數字)' }, { t: 'Whopping', m: '大(數字)' }] },
             { id: 'important', color: 'blue', meaning: '重要', words: [{ t: 'Crucial', m: '極重要' }, { t: 'Significant', m: '重要' }, { t: 'Vital', m: '必不可少' }, { t: 'Indispensable', m: '不可或缺' }, { t: 'Key', m: '關鍵性的' }, { t: 'Critical ', m: '關鍵性的' }] },
             { id: 'Cultivate', color: 'lime', meaning: '培育', words: [{ t: 'Cultivate', m: '培養' }, { t: 'Nurture', m: '孕育' }] },
@@ -440,6 +440,198 @@
             { id: 'proliferate', color: 'aquamarine', meaning: '激增',words: [{ t: 'soar', m: '急升' }, { t: 'Skyrocket', m: '飛漲' }, { t: 'Proliferate', m: '激增' }, { t: 'Mushroom', m: '大量增加' }, { t: 'spring up', m: '湧現' }, { t: 'sprout', m: '湧現(強調新出現)' }, { t: 'Shoot up', m: '急速增加' }] },
 
             { id: 'Deteriorate', color: 'darkblue', meaning: '惡化', words: [{ t: 'Deteriorate', m: '惡化(不+n)' }, { t: 'Aggravate', m: '惡化(+n)' }, { t: 'Exacerbate', m: '惡化(+n)' }, { t: 'Worsen ', m: '惡化(+n/不+n)' }] },
+{ 
+                id: 'extraordinary', color: '#e74c3c', meaning: '出眾 / 傑出', 
+                words: ['Extraordinary', 'Exceptional', 'Outstanding', 'Remarkable'] 
+            },
+            { 
+                id: 'headwind', color: '#8e44ad', meaning: '難關 / 逆境', 
+                words: [{t:'Headwind', m:'難關(逆境)'}, {t:'Uphill battle', m:'難關(硬仗)'}, {t:'Obstacle', m:'障礙'}] 
+            },
+            { 
+                id: 'harness', color: '#2980b9', meaning: '駕馭 / 控制', 
+                words: ['Harness', 'Manipulate', 'Control', 'Utilize'] 
+            },
+            { 
+                id: 'spur', color: '#27ae60', meaning: '刺激 / 激勵', 
+                words: ['Spur', 'Stimulate', 'Prompt', 'Propel'] 
+            },
+            { 
+                id: 'exponential', color: '#d35400', meaning: '巨大的 / 急劇的', 
+                words: ['Exponential', 'Drastic', 'Significant', 'Tremendous'] 
+            },
+            { 
+                id: 'optimism', color: '#f1c40f', meaning: '樂觀', 
+                words: ['Optimism', 'Positivity', 'Hopefulness'] 
+            },
+            { 
+                id: 'pessimism', color: '#7f8c8d', meaning: '悲觀', 
+                words: ['Pessimism', 'Negativity', 'Cynicism'] 
+            },
+            { 
+                id: 'pressing', color: '#c0392b', meaning: '迫在眉睫', 
+                words: ['Pressing', 'Looming', 'Imminent', 'Urgent'] 
+            },
+            { 
+                id: 'fulfil', color: '#16a085', meaning: '滿足 / 達成', 
+                words: ['Fulfil', 'Satisfy', 'Meet (requirements)'] 
+            },
+            { 
+                id: 'strategy', color: '#2c3e50', meaning: '策略', 
+                words: [{t:'Strategy', m:'戰略(長遠)'}, {t:'Tactic', m:'戰術(短期)'}] 
+            },
+            { 
+                id: 'grasp', color: '#e67e22', meaning: '抓緊 / 把握', 
+                words: ['Grasp', 'Seize', 'Grab'] 
+            },
+            { 
+                id: 'operate', color: '#34495e', meaning: '經營 / 運作', 
+                words: ['Operate', 'Run', 'Manage'] 
+            },
+            { 
+                id: 'turbine', color: '#95a5a6', meaning: '風車 / 渦輪', 
+                words: [{t:'Turbine', m:'渦輪機'}, {t:'Windmill', m:'風車'}, {t:'Generator', m:'發電機'}] 
+            },
+            { 
+                id: 'exceed', color: '#8e44ad', meaning: '超過', 
+                words: ['Exceed', 'Surpass', 'Outperform', 'Go beyond'] 
+            },
+            { 
+                id: 'drive', color: '#2980b9', meaning: '驅使', 
+                words: ['Drive', 'Prompt', 'Impel', 'Motivate'] 
+            },
+            { 
+                id: 'convert', color: '#27ae60', meaning: '轉變為', 
+                words: ['Convert into', 'Transform into', 'Turn into'] 
+            },
+            { 
+                id: 'transmit', color: '#1abc9c', meaning: '傳遞 / 傳播', 
+                words: [
+                    {t:'Transmit', m:'傳遞(訊號)'}, 
+                    {t:'Deliver', m:'傳遞(貨物)'}, 
+                    {t:'Convey', m:'傳達(意思)'}, 
+                    {t:'Impart', m:'分享(知識)'}, 
+                    {t:'Spread', m:'傳播'}
+                ] 
+            },
+            { 
+                id: 'collective', color: '#9b59b6', meaning: '共同的', 
+                words: ['Collective', 'Concerted', 'Joint'] 
+            },
+            { 
+                id: 'limit', color: '#c0392b', meaning: '限制', 
+                words: ['Limit', 'Constrain', 'Restrict', 'Confine'] 
+            },
+            { 
+                id: 'change', color: '#f39c12', meaning: '改變 (程度)', 
+                words: [
+                    {t:'Transform', m:'改變(大)'}, 
+                    {t:'Evolve', m:'進化(科技)'}, 
+                    {t:'Advance', m:'進步(科技)'}, 
+                    {t:'Alter', m:'改變(小)'}, 
+                    {t:'Shift', m:'轉變/轉移'}
+                ] 
+            },
+            { 
+                id: 'meanwhile', color: '#7f8c8d', meaning: '與此同時', 
+                words: ['Meanwhile', 'In the meantime', 'At the same time'] 
+            },
+            { 
+                id: 'implication', color: '#34495e', meaning: '暗示 / 影響', 
+                words: ['Implication', 'Suggestion', 'Insinuation', 'Consequence'] 
+            },
+            { 
+                id: 'prosper', color: '#c40ff1', meaning: '繁榮', 
+                words: ['Thrive', 'Flourish', 'Prosper'] 
+            },
+            { 
+                id: 'boom', color: '#f1c40f', meaning: '快速發展', 
+                words: ['Boom', 'Burgeon'] 
+            },
+            { 
+                id: 'alternative', color: '#16a085', meaning: '另一選擇', 
+                words: ['Alternative', 'Substitute'] 
+            },
+            { 
+                id: 'beyond', color: '#8e44ad', meaning: '不單只 / 超越', 
+                words: ['Beyond', 'More than', 'Other than', 'On top of'] 
+            },
+            { 
+                id: 'emerge', color: '#e67e22', meaning: '出現', 
+                words: ['Emerge', 'Appear', 'Arise', 'Surface'] 
+            },
+            { 
+                id: 'undermine', color: '#c0392b', meaning: '破壞 / 損害', 
+                words: [
+                    {t:'Undermine', m:'破壞(暗中/慢)'}, 
+                    {t:'Take a toll on', m:'造成損失(泛用)'}, 
+                    {t:'Deal a blow to', m:'打擊(突然)'}, 
+                    {t:'Wreak havoc on', m:'浩劫(大破壞)'}, 
+                    {t:'Damage', m:'損害'}
+                ] 
+            },
+            { 
+                id: 'essential', color: '#2ecc71', meaning: '必要 / 強制', 
+                words: [
+                    {t:'Essential', m:'必要'}, 
+                    {t:'Necessary', m:'必要'}, 
+                    {t:'Compulsory', m:'強制'}
+                ] 
+            },
+            { 
+                id: 'approx', color: '#bdc3c7', meaning: '大約 / 幾乎', 
+                words: ['Roughly', 'Approximately', 'Almost', 'Around'] 
+            },
+            { 
+                id: 'mitigate', color: '#3498db', meaning: '舒緩 / 減輕', 
+                words: ['Mitigate', 'Relieve', 'Alleviate', 'Ease', 'Allay'] 
+            },
+            { 
+                id: 'achieve', color: '#f39c12', meaning: '達成', 
+                words: ['Achieve', 'Attain', 'Accomplish'] 
+            },
+            { 
+                id: 'accusation', color: '#e74c3c', meaning: '指控 / 起訴', 
+                words: [
+                    {t:'Accusation', m:'指控'}, 
+                    {t:'Prosecution', m:'檢控'}, 
+                    {t:'Charge', m:'起訴'}
+                ] 
+            },
+            { 
+                id: 'similarly', color: '#9b59b6', meaning: '同樣地', 
+                words: ['Similarly', 'Likewise'] 
+            },
+            { 
+                id: 'appealing', color: '#e91e63', meaning: '吸引的', 
+                words: ['Appealing', 'Captivating', 'Attractive', 'Engaging'] 
+            },
+            { 
+                id: 'wise', color: '#1abc9c', meaning: '聰明 / 明智', 
+                words: ['Wise', 'Intelligent', 'Witty', 'Smart'] 
+            },
+            { 
+                id: 'customer', color: '#34495e', meaning: '顧客 / 客戶', 
+                words: [
+                    {t:'Customer', m:'顧客'}, 
+                    {t:'Client', m:'客戶(專業)'}, 
+                    {t:'Consumer', m:'消費者'}, 
+                    {t:'Patron', m:'常客/贊助人'},
+                    {t:'Frequenter', m:'常客'}
+                ] 
+            },
+            { 
+                id: 'affordable', color: '#27ae60', meaning: '可負擔 / 實惠', 
+                words: ['Affordable', 'Economical', 'Budget-friendly'] 
+            },
+            { 
+                id: 'worthwhile', color: '#f39c12', meaning: '值得', 
+                words: ['Worthwhile', 'Worthy', 'Deserving'] 
+            },
+            { 
+                id: 'struggle', color: '#c0392b', meaning: '難以 / 掙扎', 
+                words: ['Struggle to', 'Find it difficult', 'Have trouble'] 
+            },
 { 
                 id: 'vulnerable', 
                 color: '#e74c3c', // Red
@@ -958,7 +1150,7 @@
                 globalPairDeck = generateMasterDeck(); // 開新局，洗牌
             } else { 
                 currentLevel++; 
-                lives = Math.min(lives + 5, 10); 
+                lives = Math.min(lives + 3, 10); 
             }
 
             // 防禦：如果不夠牌，加新牌
@@ -1055,7 +1247,7 @@ deck.forEach(item => {
                 document.getElementById('total-score').innerText = totalScore;
                 setTimeout(() => {
                     playSound('victory');
-                    alert(`🎉 Level ${currentLevel} Complete! 加番5個❤️俾你!\n總分: ${totalScore}`);
+                    alert(`🎉 Level ${currentLevel} Complete! 加番3個❤️俾你!\n總分: ${totalScore}`);
                     initGame(true);
                 }, 800);
             }
@@ -1098,42 +1290,56 @@ deck.forEach(item => {
             fetchLeaderboard();
         }
 
-        function autoSubmitScore() {
+function autoSubmitScore(isSilent = false) {
             if (!currentPlayer) return;
+            
+            // 如果 0 分，直接處理 (不涉及數據庫)
             if (totalScore === 0) {
-                 alert("💀 Game Over! \n0分... 下次努力！");
-                 backToLobby();
+                 if (!isSilent) {
+                     alert("💀 Game Over! \n0分... 下次努力！");
+                     backToLobby();
+                 }
                  return;
             }
 
+            // 讀取舊分數並比較
             db.ref(LEADERBOARD_PATH).orderByChild('name').equalTo(currentPlayer).once('value', snapshot => {
                 if (snapshot.exists()) {
                     let key = Object.keys(snapshot.val())[0];
                     let oldScore = snapshot.val()[key].score;
                     
                     if (totalScore > oldScore) {
+                        // 破紀錄：更新
                         db.ref(LEADERBOARD_PATH + '/' + key).update({
                             score: totalScore,
                             timestamp: firebase.database.ServerValue.TIMESTAMP
                         }).then(() => {
-                            alert(`💀 Game Over!\n恭喜刷新紀錄！\n(舊: ${oldScore} -> 新: ${totalScore})`);
-                            openRankModal();
-                            backToLobby();
+                            if (!isSilent) {
+                                alert(`💀 Game Over!\n恭喜刷新紀錄！\n(舊: ${oldScore} -> 新: ${totalScore})`);
+                                openRankModal();
+                                backToLobby();
+                            }
                         });
                     } else {
-                        alert(`💀 Game Over!\n最終分數: ${totalScore}\n(未破紀錄: ${oldScore})`);
-                        openRankModal();
-                        backToLobby();
+                        // 未破紀錄：只通知
+                        if (!isSilent) {
+                            alert(`💀 Game Over!\n最終分數: ${totalScore}\n(未破紀錄: ${oldScore})`);
+                            openRankModal();
+                            backToLobby();
+                        }
                     }
                 } else {
+                    // 新玩家：直接上傳
                     db.ref(LEADERBOARD_PATH).push({
                         name: currentPlayer,
                         score: totalScore,
                         timestamp: firebase.database.ServerValue.TIMESTAMP
                     }).then(() => {
-                        alert(`💀 Game Over!\n分數已上傳: ${totalScore}`);
-                        openRankModal();
-                        backToLobby();
+                        if (!isSilent) {
+                            alert(`💀 Game Over!\n分數已上傳: ${totalScore}`);
+                            openRankModal();
+                            backToLobby();
+                        }
                     });
                 }
             });
@@ -1244,6 +1450,17 @@ deck.forEach(item => {
             document.getElementById('lives').innerText = "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️";
             lives = 10;
         }
+// --- 新增：按下放棄按鈕 ---
+    function onGiveUp() {
+        if(confirm("確定要放棄遊戲並結算分數嗎？")) {
+            // 停止計時，防止背景繼續扣分
+            clearInterval(timer);
+            // 播放 Game Over 音效
+            playSound('gameover');
+            // 上傳分數 (isSilent = false，因為學生還在看著螢幕，要給回應)
+            autoSubmitScore(false);
+        }
+    }
 
         function startGameSession() {
             document.getElementById('startOverlay').style.display = 'none';
@@ -1258,7 +1475,17 @@ deck.forEach(item => {
                 backToLobby();
             }
         }
-
+// --- 新增：當學生關閉 App 或切換視窗時自動儲存 ---
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'hidden') {
+                // 如果遊戲正在進行中 (有 Level 且有分數)
+                if (currentLevel > 0 && totalScore > 0 && document.getElementById('inGameButtons').style.display === 'flex') {
+                    console.log("App hidden, auto saving score...");
+                    // 靜默上傳 (isSilent = true)
+                    autoSubmitScore(true);
+                }
+            }
+        });
         // 啟動時檢查
         checkLoginStatus();
 
