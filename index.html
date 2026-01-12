@@ -4,14 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>👻同義詞の鬼👻</title>
-<link rel="manifest" href="manifest.json">
+    <link rel="manifest" href="manifest.json">
     <link rel="icon" type="image/png" href="icon.png">
-<link rel="apple-touch-icon" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0a9396">
     
-<script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
 
     <style>
@@ -88,6 +88,49 @@
             cursor: pointer;
             user-select: none;
         }
+
+        /* --- Result Page Styles --- */
+        .result-level-title {
+            background: #2c3e50; color: white;
+            padding: 8px 15px; border-radius: 8px;
+            margin: 20px 0 10px 0; font-weight: bold;
+            font-size: 1rem; display: inline-block;
+        }
+
+        .result-group-box {
+            border: 2px solid #eee; border-radius: 12px;
+            padding: 12px; margin-bottom: 12px;
+            background: #fff; position: relative;
+            overflow: hidden;
+        }
+
+        .result-meaning {
+            font-weight: 900; font-size: 1.1rem; margin-bottom: 8px;
+            display: flex; align-items: center; gap: 10px;
+        }
+
+        .result-words-flex {
+            display: flex; flex-wrap: wrap; gap: 8px; align-items: baseline;
+        }
+
+        /* 遊戲中出現過的字 (顯眼) */
+        .word-badge.active {
+            font-size: 1.1rem; font-weight: bold;
+            padding: 6px 12px; border-radius: 20px;
+            color: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            cursor: pointer; transition: transform 0.2s;
+            border: 2px solid rgba(0,0,0,0.1);
+        }
+        .word-badge.active:hover { transform: scale(1.1); }
+
+        /* 同組但沒出現的字 (暗淡) */
+        .word-badge.passive {
+            font-size: 0.85rem; color: #95a5a6;
+            padding: 4px 8px; border: 1px dashed #bdc3c7;
+            border-radius: 15px; background: #f8f9fa;
+            cursor: pointer; opacity: 0.8;
+        }
+        .word-badge.passive:hover { opacity: 1; border-color: #7f8c8d; background: #eee; }
 
         .card-inner {
             position: relative;
@@ -229,19 +272,25 @@
         .study-meaning { font-size: 1.1rem; font-weight: bold; color: #333; margin-bottom: 8px; }
         .study-words { display: flex; flex-wrap: wrap; gap: 8px; }
         .study-tag { background: white; padding: 6px 14px; border-radius: 20px; border: 1px solid #eee; font-size: 0.95rem; color: #555; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
-/* --- 單字點擊動畫 --- */
-        @keyframes pop-effect {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.15); background-color: #dff9fb; border-color: #3498db; box-shadow: 0 4px 10px rgba(52, 152, 219, 0.2); }
-            100% { transform: scale(1); }
-        }
         
-        /* 這個 class 會由 JS 動態加入 */
-        .pop-active {
-            animation: pop-effect 0.3s ease-out;
-        }
-        /* 搜尋欄樣式 */
-/* --- 🔍 搜尋功能樣式 (新) --- */
+        /* --- 單字點擊動畫 --- */
+@keyframes pop-effect {
+    0% { transform: scale(1); }
+    50% { 
+        transform: scale(1.25); /* 稍微放大一點點，配合長一點的時間 */
+        background-color: #fff; 
+        border-color: var(--pop-color); /* 邊框變色 */
+        box-shadow: 0 0 15px var(--pop-color); /* 發光變色 */
+    }
+    100% { transform: scale(1); }
+}
+
+/* 這個 class 會由 JS 動態加入 */
+.pop-active {
+    animation: pop-effect 0.6s ease-out; /* 時間加長至 0.6s */
+}
+
+        /* --- 🔍 搜尋功能樣式 (新) --- */
         .search-trigger-icon {
             font-size: 1.5rem;
             cursor: pointer;
@@ -264,17 +313,6 @@
         }
 
         .search-input {
-            width: 90%;
-            margin: 10px auto;
-            display: block;
-            padding: 10px 15px;
-            font-size: 1rem;
-            border: 2px solid #ddd;
-            border-radius: 50px;
-            outline: none;
-        }
-        .search-input:focus { border-color: #3498db; }
-        .search-input {
             width: 100%;
             padding: 12px 15px;
             font-size: 1rem;
@@ -284,12 +322,14 @@
             outline: none;
             transition: border-color 0.3s;
             background-color: #f8f9fa;
+            margin: 10px 0;
         }
         .search-input:focus {
             border-color: #3498db;
             background-color: #fff;
             box-shadow: 0 0 8px rgba(52, 152, 219, 0.2);
         }
+
         @keyframes shake {
             0%, 100% { transform: translateX(0); }
             20%, 60% { transform: translateX(-6px); }
@@ -297,12 +337,86 @@
         }
         .shake { animation: shake 0.4s; }
 
+        /* --- 🔥 新增：呼吸燈動畫 (Breathing Effect) --- */
+        @keyframes breathing {
+            0% { transform: scale(1); box-shadow: 0 0 0 rgba(142, 68, 173, 0.4); }
+            50% { transform: scale(1.08); box-shadow: 0 0 20px rgba(142, 68, 173, 0.7); }
+            100% { transform: scale(1); box-shadow: 0 0 0 rgba(142, 68, 173, 0.4); }
+        }
+
+        .breathing-btn {
+            animation: breathing 2s infinite ease-in-out !important;
+        }
+
+        /* 確保 Result Modal 的內容整體捲動，而不是分開捲動 */
+        .modal-content {
+            overflow-y: auto; /* 確保整個彈窗內容都可捲動 */
+        }
+/* --- 🔥 溫習表 UI 修復 (固定 Header + 完美圓角) --- */
+
+/* 1. 修改彈窗容器：變成 Flex 佈局，外框負責圓角，內部負責捲動 */
+.modal-content {
+    padding: 0 !important; /* 移除內距，讓 Header 可以貼邊 */
+    display: flex;
+    flex-direction: column;
+    overflow: hidden; /* 關鍵！將超出的內容(包括 Scrollbar) 隱藏在圓角內 */
+    max-height: 85vh;
+    border-radius: 20px; /* 確保四個角都圓 */
+}
+
+/* 2. 固定標頭區：不會隨內容捲動 */
+.modal-header {
+    padding: 20px 25px; /* 補回 Padding */
+    background: white;
+    z-index: 10;
+    flex-shrink: 0; /* 禁止被壓縮 */
+    border-bottom: 2px solid #f0f0f0;
+}
+
+/* 3. 搜尋欄區域：同樣固定 */
+.search-bar-wrapper {
+    flex-shrink: 0;
+    background: white;
+    width: 100%;
+}
+
+/* 4. 提示文字 (點擊發音)：同樣固定 */
+.study-hint-text {
+    flex-shrink: 0;
+    padding: 10px 25px 0 25px;
+    margin: 0;
+    color: #7f8c8d;
+    background: white;
+    font-size: 0.9rem;
+}
+
+/* 5. 內容列表區：只有這裡是可捲動的 (Scrollable) */
+.study-grid {
+    overflow-y: auto; /* 捲動條只在這裡出現 */
+    padding: 20px 25px;
+    flex-grow: 1; /* 佔據剩餘空間 */
+    scroll-behavior: smooth;
+}
+
+/* 美化捲動條 (讓它看起來沒那麼粗魯，不會破壞圓角感) */
+.study-grid::-webkit-scrollbar {
+    width: 8px;
+}
+.study-grid::-webkit-scrollbar-track {
+    background: transparent;
+}
+.study-grid::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+    border: 2px solid transparent;
+    background-clip: content-box;
+}
     </style>
 </head>
 <body>
 
     <h1>👻同義詞の鬼👻</h1>
-    <p>It's Dope!Just Another Level!</p>
+    <p>Presented by Enguistics Learning Centre</p>
     
     <div class="info-panel">
         <div class="user-panel" id="userPanel" style="display:none;">
@@ -315,7 +429,7 @@
         <div class="stat-box score-box">🏆 Score: <span id="total-score">0</span></div>
     </div>
 
-<div id="startOverlay" style="text-align: center; margin: 20px 0;">
+    <div id="startOverlay" style="text-align: center; margin: 20px 0;">
         <h2 style="color: #2c3e50; margin-bottom: 15px;">準備好接受挑戰了嗎？</h2>
         <button onclick="startGameSession()" style="background: #e74c3c; color: white; padding: 15px 40px; font-size: 1.2rem; border-radius: 50px; border:none; cursor:pointer; box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4); font-weight:bold;">
             ▶ 開始遊戲 (Start Game)
@@ -329,15 +443,45 @@
             <button class="btn-study" onclick="openStudyModal()">📖 溫習表</button>
             <button class="btn-rank" onclick="openRankModal()">👑 排行榜</button>
         </div>
+        
+        <div id="inGameButtons" style="display: none; gap: 15px;">
+            <button class="btn-restart" id="btn-giveup" onclick="onGiveUp()">🏳️ 放棄 & 回主選單</button>
+            <button class="btn-study" id="btn-review-level" onclick="goToResultPage()" style="display:none; background: #8e44ad; color: white;">
+                📊 關卡詞語回顧 (Review)
+            </button>
+        </div>
+    </div>
 
-<div id="inGameButtons" style="display: none; gap: 15px;">
-            <button class="btn-restart" onclick="onGiveUp()">🏳️ 放棄 & 回主選單</button>
+<div class="modal-overlay hidden" id="resultModal">
+        <div class="modal-content" style="max-width: 600px;">
+            <div class="modal-header">
+                <div class="modal-title">📊 戰績報告 (Game Recap)</div>
+                <div class="close-btn" onclick="closeResultAndReset()">&times;</div>
+            </div>
+            
+            <div id="resultListContainer" style="text-align: left; padding: 20px 25px; overflow-y: auto; flex: 1;">
+                </div>
+
+            <div style="padding: 20px; background: #fff; border-top: 1px solid #eee; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px;">
+                <button class="btn-study" onclick="startGameSession()" style="width: 100%; justify-content: center; background: #27ae60; font-size: 1.1rem;">
+                    💪 再來一局 (Play Again)
+                </button>
+
+                <div style="display: flex; gap: 10px;">
+                    <button class="btn-rank" onclick="openRankModal()" style="flex: 1; justify-content: center;">
+                        👑 排行榜
+                    </button>
+                    <button class="btn-restart" onclick="closeResultAndReset()" style="flex: 1; justify-content: center; background: #95a5a6;">
+                        🏠 主選單
+                    </button>
+                </div>
+            </div>
         </div>
     </div>
 
     <div class="modal-overlay" id="loginModal">
         <div class="modal-content login-box">
-            <h2>👋 準備好做同義詞の鬼未？</h2>
+            <h2>👻 準備好做同義詞の鬼了嗎？👻</h2>
             <p>請輸入你的名字以開始遊戲<br>(如果是第一次，系統會自動註冊)</p>
             <input type="text" id="loginNameInput" class="login-input" placeholder="例如: Tom A" maxlength="12">
             <button class="btn-login" onclick="handleLogin()">開始遊戲 (Start)</button>
@@ -375,15 +519,17 @@
             </div>
             
             <div class="search-bar-wrapper" id="searchBarWrapper">
-                <input type="text" id="studySearchInput" class="search-input" placeholder="輸入關鍵字 (例如: sufficient)...">
+                <div style="padding: 0 25px;"> <input type="text" id="studySearchInput" class="search-input" placeholder="輸入關鍵字 (例如: sufficient)...">
+                </div>
             </div>
 
-            <p style="color:#7f8c8d; margin-top:10px;">(點擊單字可發音 🔊)</p>
+            <p class="study-hint-text">(點擊單字可發音 🔊)</p>
+
             <div class="study-grid" id="studyListContainer"></div>
         </div>
     </div>
 
-        <script>
+<script>
         // --- 1. Firebase 設定與初始化 ---
         const firebaseConfig = {
             apiKey: "AIzaSyBdfTgb7FpkYdgjvrYWQ0jr-N-1fAaW9Q0",
@@ -1025,9 +1171,10 @@
         let firstCard, secondCard, matchedPairs = 0;
         let lives = 10, timer, timeLimit = 100, remainingTime = 100;
         let currentLevel = 1, totalScore = 0;
-        
-        // 🔥 新增變數：配對池
+        let sessionHistory = [];
         let globalPairDeck = []; 
+        let lastGameEndReason = "";
+        let lastGameRank = "計算中..."; 
 
         const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
@@ -1128,15 +1275,11 @@
             }
         }
 
-// --- 優化版發音系統 ---
+        // --- 優化版發音系統 ---
         let allVoices = [];
-
-        // 1. 預先載入聲音列表 (因為 Chrome 係非同步載入，要等一下)
         function loadVoices() {
             allVoices = window.speechSynthesis.getVoices();
         }
-
-        // 監聽聲音載入事件 (確保入到 game 有聲揀)
         if ('speechSynthesis' in window) {
             window.speechSynthesis.onvoiceschanged = loadVoices;
         }
@@ -1146,70 +1289,34 @@
                 alert("你的瀏覽器不支援發音功能");
                 return;
             }
+            if (allVoices.length === 0) allVoices = window.speechSynthesis.getVoices();
 
-            // 確保聲音列表已載入
-            if (allVoices.length === 0) {
-                allVoices = window.speechSynthesis.getVoices();
-            }
-
-            window.speechSynthesis.cancel(); // 停上一句
+            window.speechSynthesis.cancel();
             const u = new SpeechSynthesisUtterance(text);
             
-            // --- 🔍 尋找最佳英文聲音 (重點修改) ---
-            // 優先次序：
-            // 1. Google US English (Android/Chrome 最自然)
-            // 2. Microsoft Zira / David (Windows 比較好聽)
-            // 3. 任何包含 "English" 或 "US" 或 "UK" 的聲音
-            // 4. 最後先用預設 'en-US'
-            
-            let preferredVoice = allVoices.find(v => v.name.includes("Google US English"));
-            
-            if (!preferredVoice) {
-                preferredVoice = allVoices.find(v => v.name.includes("Google UK English Female"));
-            }
-            if (!preferredVoice) {
-                preferredVoice = allVoices.find(v => v.name.includes("Microsoft Zira")); // Windows 常見女聲
-            }
-            if (!preferredVoice) {
-                preferredVoice = allVoices.find(v => v.lang === 'en-US' && !v.name.includes("Chinese")); // 避開中文引擎
-            }
-            if (!preferredVoice) {
-                preferredVoice = allVoices.find(v => v.lang === 'en-GB');
-            }
+            let preferredVoice = allVoices.find(v => v.name.includes("Google US English")) ||
+                                 allVoices.find(v => v.name.includes("Google UK English Female")) ||
+                                 allVoices.find(v => v.name.includes("Microsoft Zira")) ||
+                                 allVoices.find(v => v.lang === 'en-US' && !v.name.includes("Chinese")) ||
+                                 allVoices.find(v => v.lang === 'en-GB');
 
-            // 如果搵倒比較好嘅聲，就套用
-            if (preferredVoice) {
-                u.voice = preferredVoice;
-                // console.log("Using voice:", preferredVoice.name); // Debug 用，想知用緊咩聲可以開呢句
-            }
-
-            // 設定語速同音調
-            u.lang = 'en-US'; 
-            u.rate = 0.9; // 語速 (0.1 - 10)
-            u.pitch = 1;  // 音調 (0 - 2)
-            
+            if (preferredVoice) u.voice = preferredVoice;
+            u.lang = 'en-US'; u.rate = 0.9; u.pitch = 1;
             window.speechSynthesis.speak(u);
         }
-
-        // 初始化載入一次
         loadVoices();
 
         // --- 遊戲邏輯 ---
-        
-        // 工具：將所有生字轉化為獨立配對
         function generateMasterDeck() {
             let tempDeck = [];
-            
             synonymData.forEach(g => {
                 let ws = g.words.map(w => (typeof w === 'string') ? {t:w, m:g.meaning} : {t:w.t, m:w.m});
-                ws.sort(() => 0.5 - Math.random()); // 打亂組內
-
-                // 兩兩配對
+                ws.sort(() => 0.5 - Math.random());
                 for (let i = 0; i < ws.length - 1; i += 2) {
                     tempDeck.push({ i1: ws[i], i2: ws[i+1], gid: g.id, c: g.color });
                 }
             });
-            return tempDeck.sort(() => 0.5 - Math.random()); // 洗亂大池
+            return tempDeck.sort(() => 0.5 - Math.random());
         }
         
         function initGame(isNextLevel = false) {
@@ -1220,27 +1327,30 @@
             hasFlippedCard = false; lockBoard = false; firstCard = null; secondCard = null; matchedPairs = 0;
             
             if (!isNextLevel) { 
-                currentLevel = 1; 
-                totalScore = 0; 
-                lives = 10; 
-                globalPairDeck = generateMasterDeck(); // 開新局，洗牌
+                currentLevel = 1; totalScore = 0; lives = 10; 
+                globalPairDeck = generateMasterDeck(); 
+                sessionHistory = []; 
             } else { 
                 currentLevel++; 
                 lives = Math.min(lives + 3, 10); 
             }
 
-            // 防禦：如果不夠牌，加新牌
-            if (globalPairDeck.length < 8) {
-                globalPairDeck = globalPairDeck.concat(generateMasterDeck());
-            }
+            if (globalPairDeck.length < 8) globalPairDeck = globalPairDeck.concat(generateMasterDeck());
 
-            updateUI();
-            resetTimer(); startTimer();
+            updateUI(); resetTimer(); startTimer();
 
-            // 抽 8 對
             const selectedPairs = globalPairDeck.splice(0, 8);
 
-            // 放入 Deck
+            sessionHistory.push({
+                level: currentLevel,
+                pairs: selectedPairs.map(p => ({
+                    gid: p.gid,
+                    words: [p.i1.t, p.i2.t], 
+                    color: p.c,
+                    meaning: p.i1.m
+                }))
+            });
+
             let deck = [];
             selectedPairs.forEach(p => {
                 deck.push({t:p.i1.t, m:p.i1.m, gid:p.gid, c:p.c}, {t:p.i2.t, m:p.i2.m, gid:p.gid, c:p.c});
@@ -1248,26 +1358,19 @@
             
             deck.sort(()=>0.5-Math.random());
 
-deck.forEach(item => {
+            deck.forEach(item => {
                 const card = document.createElement('div');
                 card.classList.add('card');
                 
-                // 設定 dataset (保持不變)
                 card.dataset.group = item.gid; 
                 card.dataset.word = item.t; 
                 card.dataset.color = item.c; 
                 card.dataset.failCount = 1;
 
-                // 🔥 新增：強制首字母大寫的邏輯 🔥
-                // 1. 處理單字 (Front)：攞第一個字轉大寫 + 拼番剩低嘅字
                 const displayWord = item.t.charAt(0).toUpperCase() + item.t.slice(1);
-                
-                // 2. 處理提示字 (Back)：只攞第一個字轉大寫
                 const hintLetter = item.t.charAt(0).toUpperCase();
-
                 const textClass = item.t.length > 12 ? 'word-text long-text' : 'word-text';
                 
-                // 🔥 更新 HTML：用 displayWord 同 hintLetter 代替舊變數
                 card.innerHTML = `<div class="card-inner">
                     <div class="card-front">
                         <div class="${textClass}">${displayWord}</div>
@@ -1316,7 +1419,11 @@ deck.forEach(item => {
                 });
             }, 300);
 
+            // 🔥 修改點：配對成功即時加 10 分
             matchedPairs++;
+            totalScore += 10; 
+            updateUI(); 
+
             if (matchedPairs === 8) {
                 clearInterval(timer);
                 totalScore += remainingTime + (lives * 10);
@@ -1330,21 +1437,35 @@ deck.forEach(item => {
             resetBoard();
         }
 
-        function unflipCards() {
+function unflipCards() {
             lockBoard = true; const c1 = firstCard, c2 = secondCard;
+            
             [c1, c2].forEach(c => {
                 let cnt = parseInt(c.dataset.failCount||1)+1; c.dataset.failCount = cnt;
-                let w = c.dataset.word, hint = w.substring(0, Math.min(cnt, w.length));
-                let b = c.querySelector('.card-back'); b.innerText = hint;
+                let w = c.dataset.word;
+                
+                // 1. 截取提示字 (例如 "spr")
+                let rawHint = w.substring(0, Math.min(cnt, w.length));
+                
+                // 🔥 2. 強制首字母大寫 ( "spr" -> "Spr" )
+                let hint = rawHint.charAt(0).toUpperCase() + rawHint.slice(1);
+
+                let b = c.querySelector('.card-back'); 
+                b.innerText = hint;
+                
+                // 調整字體大小
                 b.style.fontSize = hint.length>3?'1rem':(hint.length>1?'1.5rem':'2.5rem');
                 b.style.background = "linear-gradient(135deg, #5b6ebf 0%, #683e91 100%)";
             });
+
             lives--; updateUI();
+
             if (lives === 0) {
-                clearInterval(timer);
-                setTimeout(() => { playSound('gameover'); autoSubmitScore(); }, 600);
+                // 呼叫結束函數 (確保你代碼裡有 revealAndEndGame)
+                revealAndEndGame('HP 歸零'); 
                 return;
             }
+
             setTimeout(() => { playSound('fail'); c1.classList.add('shake'); c2.classList.add('shake'); }, 400);
             setTimeout(() => { c1.classList.remove('flipped','shake'); c2.classList.remove('flipped','shake'); resetBoard(); }, 1200);
         }
@@ -1355,21 +1476,151 @@ deck.forEach(item => {
             remainingTime = timeLimit; document.getElementById('timer').innerText = remainingTime;
             timer = setInterval(() => {
                 remainingTime--; document.getElementById('timer').innerText = remainingTime;
-                if (remainingTime <= 0) { clearInterval(timer); playSound('gameover'); autoSubmitScore(); }
+                if (remainingTime <= 0) { 
+                    revealAndEndGame('時間到'); 
+                }
             }, 1000);
         }
         function resetTimer() { clearInterval(timer); remainingTime = timeLimit; document.getElementById('timer').innerText = remainingTime; }
 
-        // --- 排行榜 (自動上傳) ---
-        function openRankModal() {
-            document.getElementById('rankModal').classList.remove('hidden');
-            fetchLeaderboard();
+        // --- 核心功能：結束與回顧 ---
+
+        // 1. 輸掉/結束時的處理
+        function revealAndEndGame(reason) {
+            clearInterval(timer);
+            lastGameEndReason = reason;
+            
+            playSound('gameover');
+            lockBoard = true;
+
+            const giveUpBtn = document.getElementById('btn-giveup');
+            if(giveUpBtn) giveUpBtn.style.display = 'none';
+            
+            const reviewBtn = document.getElementById('btn-review-level');
+            if(reviewBtn) {
+                reviewBtn.style.display = 'flex';
+                reviewBtn.classList.remove('pop-active');
+                void reviewBtn.offsetWidth; // Trigger reflow
+                reviewBtn.classList.add('breathing-btn'); 
+            }
+
+            const unmatchedCards = document.querySelectorAll('.card:not(.matched)');
+            unmatchedCards.forEach(card => {
+                card.classList.add('flipped'); 
+                const color = card.dataset.color;
+                const front = card.querySelector('.card-front');
+                const wordText = card.querySelector('.word-text');
+                const meaningText = card.querySelector('.meaning-text');
+
+                front.setAttribute('style', `
+                    background-color: #fff !important; 
+                    border: 3px solid ${color} !important; 
+                    color: ${color} !important; 
+                    transform: rotateY(180deg);
+                    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+                `);
+
+                if(wordText) wordText.style.color = color;
+                if(meaningText) {
+                    meaningText.style.cssText = `
+                        color: ${color} !important; 
+                        opacity: 1 !important; 
+                        transform: translateY(0) !important; 
+                        display: block !important;
+                    `;
+                }
+            });
+
+            autoSubmitScore(true);
         }
 
-function autoSubmitScore(isSilent = false) {
+        // 2. 按鈕觸發
+        function goToResultPage() {
+            showResultPage(lastGameEndReason);
+        }
+
+        // 3. 顯示結果頁 (新版)
+        function showResultPage(reason) {
+            closeModal('rankModal'); 
+            
+            const container = document.getElementById('resultListContainer');
+            container.innerHTML = ''; 
+
+            // A. 分數面板
+            const dashboard = document.createElement('div');
+            dashboard.style.cssText = "text-align: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px dashed #ddd;";
+            
+            let rankDisplay = `#${lastGameRank}`;
+            if(lastGameRank == 1) rankDisplay = "🏆 冠軍";
+            if(lastGameRank == 2) rankDisplay = "🥈 亞軍";
+            if(lastGameRank == 3) rankDisplay = "🥉 季軍";
+
+            // 🔥 修改點：文字改為 "辛苦曬！本次得分為"
+            dashboard.innerHTML = `
+                <div style="font-size: 1.1rem; color: #7f8c8d; margin-bottom: 5px;">辛苦曬！本次得分為</div>
+                <div style="font-size: 3rem; font-weight: 900; color: #e74c3c; line-height: 1.2; margin: 5px 0;">
+                    ${totalScore}
+                </div>
+                <div id="resultPageRankDisplay" style="font-size: 1.1rem; font-weight: bold; color: #f39c12; background: #fffbf0; display:inline-block; padding: 5px 15px; border-radius: 20px; border: 1px solid #f1c40f;">
+                     本次排名: ${rankDisplay}
+                </div>
+            `;
+            
+            container.appendChild(dashboard);
+
+            // B. 列表
+            if(sessionHistory.length === 0) {
+                container.innerHTML += '<p style="text-align:center;">無遊戲紀錄</p>';
+            }
+
+            [...sessionHistory].reverse().forEach(record => {
+                const levelTitle = document.createElement('div');
+                levelTitle.className = 'result-level-title';
+                levelTitle.innerText = `Level ${record.level}`;
+                container.appendChild(levelTitle);
+
+                record.pairs.forEach(pair => {
+                    const fullGroupData = synonymData.find(g => g.id === pair.gid);
+                    if (!fullGroupData) return;
+
+                    const groupBox = document.createElement('div');
+                    groupBox.className = 'result-group-box';
+                    groupBox.style.borderColor = pair.color;
+
+                    const meaningDiv = document.createElement('div');
+                    meaningDiv.className = 'result-meaning';
+                    meaningDiv.style.color = pair.color;
+                    meaningDiv.innerText = fullGroupData.meaning;
+                    groupBox.appendChild(meaningDiv);
+
+                    const wordsFlex = document.createElement('div');
+                    wordsFlex.className = 'result-words-flex';
+
+                    pair.words.forEach(wordText => {
+                        const badge = createWordBadge(wordText, pair.color, true);
+                        wordsFlex.appendChild(badge);
+                    });
+
+                    fullGroupData.words.forEach(w => {
+                        const wText = (typeof w === 'string') ? w : w.t;
+                        if (!pair.words.includes(wText)) {
+                            const badge = createWordBadge(wText, '#95a5a6', false);
+                            wordsFlex.appendChild(badge);
+                        }
+                    });
+
+                    groupBox.appendChild(wordsFlex);
+                    container.appendChild(groupBox);
+                });
+            });
+
+            document.getElementById('resultModal').classList.remove('hidden');
+        }
+
+        // --- 排行榜與分數 ---
+        function autoSubmitScore(isSilent = false) {
             if (!currentPlayer) return;
             
-            // 如果 0 分，直接處理 (不涉及數據庫)
             if (totalScore === 0) {
                  if (!isSilent) {
                      alert("💀 Game Over! \n0分... 下次努力！");
@@ -1378,140 +1629,121 @@ function autoSubmitScore(isSilent = false) {
                  return;
             }
 
-            // 讀取舊分數並比較
-            db.ref(LEADERBOARD_PATH).orderByChild('name').equalTo(currentPlayer).once('value', snapshot => {
-                if (snapshot.exists()) {
-                    let key = Object.keys(snapshot.val())[0];
-                    let oldScore = snapshot.val()[key].score;
-                    
-                    if (totalScore > oldScore) {
-                        // 破紀錄：更新
-                        db.ref(LEADERBOARD_PATH + '/' + key).update({
-                            score: totalScore,
-                            timestamp: firebase.database.ServerValue.TIMESTAMP
-                        }).then(() => {
-                            if (!isSilent) {
-                                alert(`💀 Game Over!\n恭喜刷新紀錄！\n(舊: ${oldScore} -> 新: ${totalScore})`);
-                                openRankModal();
-                                backToLobby();
-                            }
-                        });
-                    } else {
-                        // 未破紀錄：只通知
-                        if (!isSilent) {
-                            alert(`💀 Game Over!\n最終分數: ${totalScore}\n(未破紀錄: ${oldScore})`);
-                            openRankModal();
-                            backToLobby();
-                        }
+            db.ref(LEADERBOARD_PATH).push({
+                name: currentPlayer,
+                score: totalScore,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            }).then(() => {
+                calculateMyRank(); 
+            });
+        }
+
+
+        function calculateMyRank() {
+            lastGameRank = "..."; 
+            
+            db.ref(LEADERBOARD_PATH).orderByChild('score').once('value', snapshot => {
+                let rawScores = [];
+                snapshot.forEach(child => {
+                    rawScores.push(child.val());
+                });
+                
+                // --- 🔥 同樣應用過濾邏輯 ---
+                const uniqueMap = {};
+                rawScores.forEach(item => {
+                    if (!uniqueMap[item.name] || item.score > uniqueMap[item.name].score) {
+                        uniqueMap[item.name] = item;
                     }
-                } else {
-                    // 新玩家：直接上傳
-                    db.ref(LEADERBOARD_PATH).push({
-                        name: currentPlayer,
-                        score: totalScore,
-                        timestamp: firebase.database.ServerValue.TIMESTAMP
-                    }).then(() => {
-                        if (!isSilent) {
-                            alert(`💀 Game Over!\n分數已上傳: ${totalScore}`);
-                            openRankModal();
-                            backToLobby();
-                        }
-                    });
+                });
+                
+                // 轉成 Array 並排序
+                let uniqueScores = Object.values(uniqueMap).sort((a, b) => b.score - a.score);
+
+                // 找出自己在榜單中的位置
+                let myRank = "未上榜";
+                for (let i = 0; i < uniqueScores.length; i++) {
+                    if (uniqueScores[i].name === currentPlayer) {
+                        myRank = i + 1;
+                        break;
+                    }
+                }
+                
+                lastGameRank = myRank;
+
+                // 立即更新 UI (如果結果頁已經打開)
+                const displayDiv = document.getElementById('resultPageRankDisplay');
+                if (displayDiv) {
+                    let rankText = (typeof myRank === 'number') ? `#${myRank}` : myRank;
+                    
+                    if(myRank == 1) rankText = "🏆 冠軍";
+                    if(myRank == 2) rankText = "🥈 亞軍";
+                    if(myRank == 3) rankText = "🥉 季軍";
+                    
+                    displayDiv.innerText = `本次排名: ${rankText}`;
                 }
             });
         }
 
-        function fetchLeaderboard() {
+        function openRankModal() {
+            document.getElementById('rankModal').classList.remove('hidden');
+            fetchLeaderboard();
+        }
+
+       function fetchLeaderboard() {
             const listBody = document.getElementById('rankListBody');
             const loading = document.getElementById('loadingRank');
             
-            db.ref(LEADERBOARD_PATH).orderByChild('score').limitToLast(100).once('value', snapshot => {
-                loading.style.display = 'none';
-                listBody.innerHTML = '';
-                
-                let scores = [];
-                snapshot.forEach(child => { scores.push(child.val()); });
-                scores.reverse();
+            // 顯示載入中
+            loading.style.display = 'block';
+            listBody.innerHTML = '';
 
-                if(scores.length === 0) {
+            // 獲取最後 100 筆數據
+            db.ref(LEADERBOARD_PATH).orderByChild('score').limitToLast(100).once('value')
+            .then(snapshot => {
+                loading.style.display = 'none';
+                
+                let rawScores = [];
+                snapshot.forEach(child => { rawScores.push(child.val()); });
+                
+                // 過濾重複名字，只留最高分
+                const uniqueMap = {};
+                rawScores.forEach(item => {
+                    if (!uniqueMap[item.name] || item.score > uniqueMap[item.name].score) {
+                        uniqueMap[item.name] = item;
+                    }
+                });
+
+                // 排序
+                let uniqueScores = Object.values(uniqueMap).sort((a, b) => b.score - a.score);
+
+                if(uniqueScores.length === 0) {
                     listBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">暫無紀錄</td></tr>';
                     return;
                 }
 
-                scores.forEach((s, index) => {
+                uniqueScores.forEach((s, index) => {
                     const row = document.createElement('tr');
                     row.className = 'rank-row';
-                    let rankIcon = index + 1;
+                    
+                    let rankIcon = `<span class="rank-num">${index + 1}</span>`;
                     if(index===0) rankIcon = '🥇';
                     if(index===1) rankIcon = '🥈';
                     if(index===2) rankIcon = '🥉';
 
-                    row.innerHTML = `<td><span class="rank-num">${rankIcon}</span></td><td class="rank-name">${s.name}</td><td class="rank-score">${s.score}</td>`;
+                    const isMe = (s.name === currentPlayer) ? 'background:#fffde7;' : '';
+
+                    row.innerHTML = `
+                        <td style="${isMe}">${rankIcon}</td>
+                        <td class="rank-name" style="${isMe}">${s.name}</td>
+                        <td class="rank-score" style="${isMe}">${s.score}</td>
+                    `;
                     listBody.appendChild(row);
                 });
-            });
-        }
-
-        // --- 搜尋與溫習功能 ---
-        function toggleSearchBar() {
-            const wrapper = document.getElementById('searchBarWrapper');
-            const input = document.getElementById('studySearchInput');
-            wrapper.classList.toggle('open');
-            if (wrapper.classList.contains('open')) {
-                setTimeout(() => input.focus(), 300);
-            } else {
-                input.value = '';
-                filterStudyList(''); 
-            }
-        }
-
-        function filterStudyList(term) {
-            const container = document.getElementById('studyListContainer');
-            const groups = container.querySelectorAll('.study-group');
-            groups.forEach(group => {
-                const text = group.innerText.toLowerCase();
-                group.style.display = (term === '' || text.includes(term.toLowerCase())) ? "block" : "none";
-            });
-        }
-
-        function openStudyModal() {
-            const c = document.getElementById('studyListContainer'); 
-            c.innerHTML = ''; 
-
-            document.getElementById('searchBarWrapper').classList.remove('open');
-            document.getElementById('studySearchInput').value = '';
-
-            document.getElementById('studySearchInput').oninput = function(e) { filterStudyList(e.target.value); };
-
-            synonymData.forEach(g => {
-                const d = document.createElement('div'); 
-                d.className = 'study-group'; 
-                d.style.borderLeftColor = g.color;
-                d.innerHTML = `<div class="study-meaning" style="color:${g.color}">${g.meaning}</div><div class="study-words"></div>`;
-                
-                const wd = d.querySelector('.study-words');
-                
-                g.words.forEach(w => {
-                    const t = document.createElement('span'); 
-                    t.className = 'study-tag'; 
-                    let wordToRead = "";
-                    if (typeof w === 'string') {
-                        t.innerText = w; wordToRead = w;
-                    } else {
-                        t.innerHTML = `${w.t} <small style="color:#7f8c8d; font-weight:normal; font-size: 0.85em;">(${w.m})</small>`;
-                        wordToRead = w.t;
-                    }
-                    t.onclick = () => {
-                        speakWord(wordToRead);
-                        t.classList.remove('pop-active'); 
-                        void t.offsetWidth;               
-                        t.classList.add('pop-active');    
-                    };
-                    wd.appendChild(t);
-                });
-                c.appendChild(d);
-            });
-            document.getElementById('studyModal').classList.remove('hidden');
+            }) // 這裡正確閉合 .then
+            .catch(err => {
+                loading.innerText = "載入失敗";
+                console.error(err);
+            }); // 這裡正確閉合 .catch
         }
 
         // --- 導航與介面控制 ---
@@ -1526,22 +1758,24 @@ function autoSubmitScore(isSilent = false) {
             document.getElementById('lives').innerText = "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️";
             lives = 10;
         }
-// --- 新增：按下放棄按鈕 ---
-    function onGiveUp() {
-        if(confirm("確定要放棄遊戲並結算分數嗎？")) {
-            // 停止計時，防止背景繼續扣分
-            clearInterval(timer);
-            // 播放 Game Over 音效
-            playSound('gameover');
-            // 上傳分數 (isSilent = false，因為學生還在看著螢幕，要給回應)
-            autoSubmitScore(false);
+
+        function onGiveUp() {
+            if(confirm("確定要放棄遊戲並結算分數嗎？")) {
+                revealAndEndGame('主動放棄');
+            }
         }
-    }
 
         function startGameSession() {
+            // 🔥 修改點：再來一局時，強制關閉 Result Modal
+            document.getElementById('resultModal').classList.add('hidden');
+            
             document.getElementById('startOverlay').style.display = 'none';
             document.getElementById('preGameButtons').style.display = 'none';
-            document.getElementById('inGameButtons').style.display = 'flex';
+            const inGameBtns = document.getElementById('inGameButtons');
+            inGameBtns.style.display = 'flex';    
+            document.getElementById('btn-giveup').style.display = 'flex'; 
+            document.getElementById('btn-review-level').style.display = 'none'; 
+
             initGame(false);
         }
 
@@ -1551,20 +1785,130 @@ function autoSubmitScore(isSilent = false) {
                 backToLobby();
             }
         }
-// --- 新增：當學生關閉 App 或切換視窗時自動儲存 ---
+
+        function closeResultAndReset() {
+            document.getElementById('resultModal').classList.add('hidden');
+            backToLobby(); 
+        }
+
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'hidden') {
-                // 如果遊戲正在進行中 (有 Level 且有分數)
                 if (currentLevel > 0 && totalScore > 0 && document.getElementById('inGameButtons').style.display === 'flex') {
                     console.log("App hidden, auto saving score...");
-                    // 靜默上傳 (isSilent = true)
                     autoSubmitScore(true);
                 }
             }
         });
+
+        // 輔助函數：建立單字 Badge
+        function createWordBadge(text, color, isActive) {
+            const span = document.createElement('span');
+            span.innerText = text;
+            span.className = isActive ? 'word-badge active' : 'word-badge passive';
+            if (isActive) span.style.backgroundColor = color;
+            span.onclick = () => {
+                speakWord(text);
+                span.style.transform = "scale(0.9)";
+                setTimeout(()=> span.style.transform = isActive ? "scale(1)" : "scale(1)", 100);
+            };
+            return span;
+        }
+
+        // --- 溫習表功能 ---
+// --- 溫習表功能 (已修復：顯示個別字義 + 點擊動畫 + 移除喇叭圖示) ---
+        // --- 溫習表功能 (已更新：支援動態顏色光) ---
+        function openStudyModal() {
+            const container = document.getElementById('studyListContainer');
+            container.innerHTML = '';
+            
+            const searchWrapper = document.getElementById('searchBarWrapper');
+            const searchInput = document.getElementById('studySearchInput');
+            if(searchWrapper) searchWrapper.classList.remove('open');
+            if(searchInput) searchInput.value = '';
+
+            synonymData.sort((a,b) => a.id.localeCompare(b.id));
+
+            synonymData.forEach(group => {
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'study-group';
+                groupDiv.style.borderLeftColor = group.color;
+
+                const meaningDiv = document.createElement('div');
+                meaningDiv.className = 'study-meaning';
+                meaningDiv.style.color = group.color;
+                meaningDiv.innerText = group.meaning;
+                groupDiv.appendChild(meaningDiv);
+
+                const wordsDiv = document.createElement('div');
+                wordsDiv.className = 'study-words';
+
+                group.words.forEach(w => {
+                    const span = document.createElement('span');
+                    span.className = 'study-tag';
+                    
+                    // 🔥 關鍵修改：將這組字的顏色存入 CSS 變數 (--pop-color)
+                    span.style.setProperty('--pop-color', group.color);
+
+                    let textToSpeak = '';
+                    let displayHtml = '';
+
+                    if (typeof w === 'string') {
+                        textToSpeak = w;
+                        displayHtml = w;
+                    } else {
+                        textToSpeak = w.t;
+                        displayHtml = `${w.t} <small style="color:#7f8c8d; font-weight:normal; font-size: 0.85em;">(${w.m})</small>`;
+                    }
+
+                    span.innerHTML = displayHtml;
+
+                    span.onclick = () => {
+                        speakWord(textToSpeak);
+                        
+                        span.classList.remove('pop-active');
+                        void span.offsetWidth; // 強制瀏覽器重繪 (Trigger Reflow)
+                        span.classList.add('pop-active');
+                    };
+
+                    wordsDiv.appendChild(span);
+                });
+
+                groupDiv.appendChild(wordsDiv);
+                container.appendChild(groupDiv);
+            });
+
+            document.getElementById('studyModal').classList.remove('hidden');
+        }
+
+        function toggleSearchBar() {
+            const wrapper = document.getElementById('searchBarWrapper');
+            const input = document.getElementById('studySearchInput');
+            if (wrapper.classList.contains('open')) {
+                wrapper.classList.remove('open');
+                input.value = ''; filterStudyList('');
+            } else {
+                wrapper.classList.add('open');
+                input.focus();
+            }
+        }
+
+        document.getElementById('studySearchInput').addEventListener('input', function(e) {
+            filterStudyList(e.target.value);
+        });
+
+        function filterStudyList(keyword) {
+            const groups = document.querySelectorAll('.study-group');
+            keyword = keyword.toLowerCase();
+            groups.forEach(group => {
+                const text = group.innerText.toLowerCase();
+                if (text.includes(keyword)) group.style.display = 'block';
+                else group.style.display = 'none';
+            });
+        }
+
         // 啟動時檢查
         checkLoginStatus();
 
     </script>
-                  
-                 
+</body>
+</html>
