@@ -426,7 +426,7 @@
             { id: 'benefit', color: 'cadetblue', meaning: '好處', words: [{ t: 'Benefit', m: '益處' }, { t: 'Merit', m: '優點' }, { t: 'Pros', m: '利(必須眾數)' }, { t: 'Advantage', m: '優點' }] },
             { id: 'drawback', color: 'chocolate', meaning: '壞處', words: [{ t: 'Drawback', m: '弊處' }, { t: 'Demerit', m: '缺點' }, { t: 'Cons', m: '弊(必須眾數)' }, { t: 'Disadvantage', m: '缺點' }] },
             { id: 'foster', color: 'green', meaning: '促進', words: [{ t: 'Foster', m: '促進' }, { t: 'Facilitate', m: '促進' }, { t: 'Promote', m: '促進' }] },
-            { id: 'decrease', color: 'olive', meaning: '減少', words: [{ t: 'Decrease', m: '減少' }, { t: 'Dwindle', m: '減少' }, { t: 'Plunge', m: '急跌' }, { t: 'Slump', m: '急跌' }, { t: 'Sink', m: '急跌' }, { t: 'Plummet', m: '急跌' }, { t: 'Reduce ', m: '減少(+n)' }, { t: 'Lower ', m: '減少(+n)' }, { t: 'minimise ', m: '減少(+n)' }] },
+            { id: 'decrease', color: 'olive', meaning: '減少', words: [{ t: 'Decrease', m: '減少' }, { t: 'Dwindle', m: '減少' }, { t: 'Plunge', m: '急跌' }, { t: 'Slump', m: '急跌' }, { t: 'Sink', m: '急跌' }, { t: 'Decline', m: '下降' },{ t: 'Plummet', m: '急跌' }, { t: 'Reduce ', m: '減少(+n)' }, { t: 'Lower ', m: '減少(+n)' }, { t: 'minimise ', m: '減少(+n)' }] },
             { id: 'staggering', color: 'yellow', meaning: '大(數字)', words: [{ t: 'Staggering', m: '大(數字)' }, { t: 'Whopping', m: '大(數字)' }] },
             { id: 'important', color: 'blue', meaning: '重要', words: [{ t: 'Crucial', m: '極重要' }, { t: 'Significant', m: '重要' }, { t: 'Vital', m: '必不可少' }, { t: 'Indispensable', m: '不可或缺' }, { t: 'Key', m: '關鍵性的' }, { t: 'Critical ', m: '關鍵性的' }] },
             { id: 'Cultivate', color: 'lime', meaning: '培育', words: [{ t: 'Cultivate', m: '培養' }, { t: 'Nurture', m: '孕育' }] },
@@ -504,6 +504,10 @@
                 id: 'convert', color: '#27ae60', meaning: '轉變為', 
                 words: ['Convert into', 'Transform into', 'Turn into'] 
             },
+                        { 
+                id: 'the same', color: '#8c0ff1 ', meaning: '一模一樣', 
+                words: ['Homogeneous', 'The same', 'Identical'] 
+            },
             { 
                 id: 'transmit', color: '#1abc9c', meaning: '傳遞 / 傳播', 
                 words: [
@@ -541,12 +545,37 @@
                 words: ['Implication', 'Suggestion', 'Insinuation', 'Consequence'] 
             },
             { 
-                id: 'prosper', color: '#c40ff1', meaning: '繁榮', 
+                id: 'prosper', color: '#c40ff1', meaning: '繁盛', 
+                words: ['Lethal', 'Fatal', 'Deadly'] 
+            },
+                        { 
+                id: 'deadly', color: '#d40ff1', meaning: '致命的', 
                 words: ['Thrive', 'Flourish', 'Prosper'] 
             },
             { 
                 id: 'boom', color: '#f1c40f', meaning: '快速發展', 
                 words: ['Boom', 'Burgeon'] 
+            },
+                    { 
+                id: 'act as', color: '#b1c40f', meaning: '作為', 
+                words: ['Act as', 'Serve as'] 
+            },
+                                { 
+                id: 'firm', color: '#0f74f1', meaning: '公司/機構', 
+                words: [
+                    {t:'Company', m:'公司'}, 
+                    {t:'Firm', m:'公司(專業)'}, 
+                    {t:'Enterprise', m:'企業'}, 
+                    {t:'Agency', m:'中介公司'}, 
+                    {t:'Corporation', m:'大企業'},
+                    {t:'Establishment', m:'機構'},
+                    {t:'Institute', m:'機構'},
+                    {t:'Institution', m:'機構'},
+                ] 
+            },
+                               { 
+                id: 'as if', color: '#0fe5f1', meaning: '彷彿', 
+                words: ['as if', 'as though'] 
             },
             { 
                 id: 'alternative', color: '#16a085', meaning: '另一選擇', 
@@ -558,7 +587,6 @@
             },
             { 
                 id: 'emerge', color: '#e67e22', meaning: '出現', 
-                words: ['Emerge', 'Appear', 'Arise', 'Surface'] 
                 words: [
                     {t:'Emerge', m:'出現'}, 
                     {t:'Appear', m:'出現'}, 
@@ -602,6 +630,14 @@
                     {t:'Accusation', m:'指控'}, 
                     {t:'Prosecution', m:'檢控'}, 
                     {t:'Charge', m:'起訴'}
+                ] 
+            },
+                        { 
+                id: 'disastrous', color: '#f18c0f', meaning: '災難的', 
+                words: [
+                    {t:'Disastrous', m:'災難性的'}, 
+                    {t:'Catastrophic', m:'極災難性的'}, 
+                    {t:'Devastating', m:'毀滅性的'}
                 ] 
             },
             { 
@@ -809,23 +845,14 @@
             { 
                 id: 'show', 
                 color: '#2980b9', // Belize Hole
-                meaning: '展示 / 顯示', 
+                meaning: '展示/顯示', 
                 words: [
-                    { t: 'Illustrate', m: '闡明/插圖' },
-                    { t: 'Demonstrate', m: '示範/證明' },
-                    { t: 'Reveal', m: '揭示' },
-                    { t: 'Indicate', m: '指出' },
-                    { t: 'Suggest', m: '暗示/建議' }
-                ] 
-            },
-            // --- Group 17: 展示 (正面/宏大) ---
-            { 
-                id: 'showcase', 
-                color: '#1abc9c', // Turquoise
-                meaning: '展示 (正面)', 
-                words: [
-                    { t: 'Showcase', m: '展示(優點)' },
-                    { t: 'Exhibit', m: '展覽' }
+                    { t: 'Display', m: '展示(物品)' },
+                    { t: 'Demonstrate', m: '展示(描象)' },
+                    { t: 'Reveal', m: '顯示' },
+                    { t: 'Indicate', m: '顯示(數字)' },
+                    { t: 'Exhibit', m: '展示(物品)' },
+                    { t: 'Showcase', m: '展示' }
                 ] 
             },
             // --- Group 18: 教堂 (分大小) ---
@@ -908,13 +935,11 @@
             { 
                 id: 'smell', 
                 color: '#d2527f', // Pink
-                meaning: '香味 / 氣味', 
+                meaning: '香味', 
                 words: [
                     { t: 'Aroma', m: '香氣(食物)' },
                     { t: 'Fragrance', m: '芬芳(香水/花)' },
-                    { t: 'Scent', m: '氣味(中性/好)' },
-                    { t: 'Smell', m: '味道(中性)' },
-                    { t: 'Odour', m: '氣味(通常指臭)' }
+                    { t: 'Scent', m: '氣味(中性/好)' }
                 ] 
             },
             // --- Group 25: 開心 ---
