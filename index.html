@@ -489,23 +489,32 @@
         </div>
     </div>
 
-    <div class="modal-overlay hidden" id="rankModal">
+<div class="modal-overlay hidden" id="rankModal">
         <div class="modal-content">
-            <div class="modal-header">
-                <div class="modal-title">👻誰是鬼王?👻</div>
-                <div class="close-btn" onclick="closeModal('rankModal')">&times;</div>
+            
+            <div class="modal-header" style="justify-content: center; position: relative;">
+                <div class="modal-title">👻最強同義詞の鬼👻</div>
+                <div class="close-btn" onclick="closeModal('rankModal')" style="position: absolute; right: 20px;">&times;</div>
             </div>
             
-            <div id="loadingRank">載入中...</div>
-            <table class="rank-table" id="rankTable">
-                <thead>
-                    <tr><th width="15%">#</th><th>Player</th><th style="text-align: right;">Score</th></tr>
-                </thead>
-                <tbody id="rankListBody"></tbody>
-            </table>
+            <div style="flex: 1; overflow-y: auto; padding: 0 20px 20px 20px;">
+                
+                <div id="loadingRank">載入中...</div>
+                
+                <table class="rank-table" id="rankTable">
+                    <thead>
+                        <tr>
+                            <th width="15%">#</th>
+                            <th>Player</th>
+                            <th style="text-align: right;">戰鬥力</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rankListBody"></tbody>
+                </table>
+
+            </div>
         </div>
     </div>
-
 <div class="modal-overlay hidden" id="studyModal">
         <div class="modal-content">
             <div class="modal-header">
@@ -1402,8 +1411,17 @@
             secondCard = this; checkForMatch();
         }
 
-        function checkForMatch() {
-            firstCard.dataset.group === secondCard.dataset.group ? disableCards() : unflipCards();
+function checkForMatch() {
+            // 獲取兩張卡嘅單字 (Word)
+            const w1 = firstCard.dataset.word;
+            const w2 = secondCard.dataset.word;
+
+            // 🔥 修改點：不再檢查 Group ID，而是檢查它們是否「同義詞」
+            if (isSynonymPair(w1, w2)) {
+                disableCards();
+            } else {
+                unflipCards();
+            }
         }
 
         function disableCards() {
@@ -1418,7 +1436,32 @@
                     w.style.color = color; m.style.cssText = `color:${color}!important; opacity:1!important; transform:translateY(0)!important; display:block!important;`;
                 });
             }, 300);
+function isSynonymPair(wordA, wordB) {
+            if (!wordA || !wordB) return false;
+            
+            // 轉做細楷，避免大細階問題
+            const wa = wordA.toLowerCase();
+            const wb = wordB.toLowerCase();
 
+            // 如果兩隻字一模一樣，當然係同義 (雖然遊戲唔會出現兩隻一樣嘅牌)
+            if (wa === wb) return true;
+
+            // 遍歷整個資料庫 (synonymData)
+            for (let group of synonymData) {
+                // 將呢個 Group 入面所有字抽出黎，轉做細楷 Array
+                const wordsInGroup = group.words.map(w => 
+                    (typeof w === 'string' ? w : w.t).toLowerCase()
+                );
+
+                // 檢查：如果 wa 同 wb 都同時在呢個 Group 入面 -> 佢地係同義詞！
+                if (wordsInGroup.includes(wa) && wordsInGroup.includes(wb)) {
+                    return true; 
+                }
+            }
+
+            // 搵晒所有 Group 都無同時出現，即係唔係同義詞
+            return false;
+        }
             // 🔥 修改點：配對成功即時加 10 分
             matchedPairs++;
             totalScore += 10; 
