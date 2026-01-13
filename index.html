@@ -1410,13 +1410,12 @@
             if (!hasFlippedCard) { hasFlippedCard = true; firstCard = this; return; }
             secondCard = this; checkForMatch();
         }
-
 function checkForMatch() {
-            // 獲取兩張卡嘅單字 (Word)
+            // 獲取兩張卡嘅單字
             const w1 = firstCard.dataset.word;
             const w2 = secondCard.dataset.word;
 
-            // 🔥 修改點：不再檢查 Group ID，而是檢查它們是否「同義詞」
+            // 檢查是否同義詞
             if (isSynonymPair(w1, w2)) {
                 disableCards();
             } else {
@@ -1424,49 +1423,61 @@ function checkForMatch() {
             }
         }
 
-        function disableCards() {
-            const c1 = firstCard, c2 = secondCard, color = c1.dataset.color || '#333';
-            c1.removeEventListener('click', flipCard); c2.removeEventListener('click', flipCard);
-
-            setTimeout(() => {
-                playSound('match'); c1.classList.add('matched'); c2.classList.add('matched');
-                [c1, c2].forEach(c => {
-                    const f = c.querySelector('.card-front'), w = c.querySelector('.word-text'), m = c.querySelector('.meaning-text');
-                    f.setAttribute('style', `background-color:#fff!important; border:3px solid ${color}!important; color:${color}!important; transform:rotateY(180deg); box-shadow:inset 0 0 0 1px ${color}20;`);
-                    w.style.color = color; m.style.cssText = `color:${color}!important; opacity:1!important; transform:translateY(0)!important; display:block!important;`;
-                });
-            }, 300);
-function isSynonymPair(wordA, wordB) {
+        // 🔍 同義詞檢查功能 (獨立函數，不再被夾在中間)
+        function isSynonymPair(wordA, wordB) {
             if (!wordA || !wordB) return false;
             
-            // 轉做細楷，避免大細階問題
             const wa = wordA.toLowerCase();
             const wb = wordB.toLowerCase();
 
-            // 如果兩隻字一模一樣，當然係同義 (雖然遊戲唔會出現兩隻一樣嘅牌)
             if (wa === wb) return true;
 
-            // 遍歷整個資料庫 (synonymData)
+            // 查字典
             for (let group of synonymData) {
-                // 將呢個 Group 入面所有字抽出黎，轉做細楷 Array
                 const wordsInGroup = group.words.map(w => 
                     (typeof w === 'string' ? w : w.t).toLowerCase()
                 );
 
-                // 檢查：如果 wa 同 wb 都同時在呢個 Group 入面 -> 佢地係同義詞！
                 if (wordsInGroup.includes(wa) && wordsInGroup.includes(wb)) {
                     return true; 
                 }
             }
-
-            // 搵晒所有 Group 都無同時出現，即係唔係同義詞
             return false;
         }
-            // 🔥 修改點：配對成功即時加 10 分
+
+        function disableCards() {
+            const c1 = firstCard;
+            const c2 = secondCard;
+            const color = c1.dataset.color || '#333';
+
+            // 移除點擊事件
+            c1.removeEventListener('click', flipCard); 
+            c2.removeEventListener('click', flipCard);
+
+            // 播放配對動畫
+            setTimeout(() => {
+                playSound('match'); 
+                c1.classList.add('matched'); 
+                c2.classList.add('matched');
+                
+                [c1, c2].forEach(c => {
+                    const f = c.querySelector('.card-front');
+                    const w = c.querySelector('.word-text');
+                    const m = c.querySelector('.meaning-text');
+                    
+                    // 變色樣式
+                    f.setAttribute('style', `background-color:#fff!important; border:3px solid ${color}!important; color:${color}!important; transform:rotateY(180deg); box-shadow:inset 0 0 0 1px ${color}20;`);
+                    w.style.color = color; 
+                    if(m) m.style.cssText = `color:${color}!important; opacity:1!important; transform:translateY(0)!important; display:block!important;`;
+                });
+            }, 300);
+
+            // 🔥 立即加分
             matchedPairs++;
             totalScore += 10; 
             updateUI(); 
 
+            // 檢查是否贏了 (8對 = 16張卡)
             if (matchedPairs === 8) {
                 clearInterval(timer);
                 totalScore += remainingTime + (lives * 10);
@@ -1480,37 +1491,47 @@ function isSynonymPair(wordA, wordB) {
             resetBoard();
         }
 
-function unflipCards() {
-            lockBoard = true; const c1 = firstCard, c2 = secondCard;
+        function unflipCards() {
+            lockBoard = true; 
+            const c1 = firstCard;
+            const c2 = secondCard;
             
             [c1, c2].forEach(c => {
-                let cnt = parseInt(c.dataset.failCount||1)+1; c.dataset.failCount = cnt;
+                let cnt = parseInt(c.dataset.failCount || 1) + 1; 
+                c.dataset.failCount = cnt;
                 let w = c.dataset.word;
                 
-                // 1. 截取提示字 (例如 "spr")
+                // 提示邏輯
                 let rawHint = w.substring(0, Math.min(cnt, w.length));
-                
-                // 🔥 2. 強制首字母大寫 ( "spr" -> "Spr" )
                 let hint = rawHint.charAt(0).toUpperCase() + rawHint.slice(1);
 
                 let b = c.querySelector('.card-back'); 
-                b.innerText = hint;
-                
-                // 調整字體大小
-                b.style.fontSize = hint.length>3?'1rem':(hint.length>1?'1.5rem':'2.5rem');
-                b.style.background = "linear-gradient(135deg, #5b6ebf 0%, #683e91 100%)";
+                if(b) {
+                    b.innerText = hint;
+                    b.style.fontSize = hint.length > 3 ? '1rem' : (hint.length > 1 ? '1.5rem' : '2.5rem');
+                    b.style.background = "linear-gradient(135deg, #5b6ebf 0%, #683e91 100%)";
+                }
             });
 
-            lives--; updateUI();
+            lives--; 
+            updateUI();
 
             if (lives === 0) {
-                // 呼叫結束函數 (確保你代碼裡有 revealAndEndGame)
                 revealAndEndGame('HP 歸零'); 
                 return;
             }
 
-            setTimeout(() => { playSound('fail'); c1.classList.add('shake'); c2.classList.add('shake'); }, 400);
-            setTimeout(() => { c1.classList.remove('flipped','shake'); c2.classList.remove('flipped','shake'); resetBoard(); }, 1200);
+            setTimeout(() => { 
+                playSound('fail'); 
+                c1.classList.add('shake'); 
+                c2.classList.add('shake'); 
+            }, 400);
+
+            setTimeout(() => { 
+                c1.classList.remove('flipped', 'shake'); 
+                c2.classList.remove('flipped', 'shake'); 
+                resetBoard(); 
+            }, 1200);
         }
 
         function resetBoard() { [hasFlippedCard, lockBoard] = [false, false]; [firstCard, secondCard] = [null, null]; }
