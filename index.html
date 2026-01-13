@@ -655,28 +655,31 @@
             btn.disabled = true;
             btn.innerHTML = '🤖 思考中...';
             responseBox.style.display = 'block';
-            responseBox.innerHTML = '正在聯絡 Master Joe...';
+            responseBox.innerHTML = '正在聯絡 AuAu...';
 
             // 5. 準備資料
             const wordsList = wordsArray.map(w => (typeof w === 'string' ? w : w.t)).join(', ');
 
             // 6. 設定 Prompt (指令) - 針對同義詞設計
-            const prompt = `
-                你是一位專業的英文補習名師 Master Joe。
+const prompt = `
+                你是一位專業的英文補習名師 AuAu。
                 這組同義詞的意思是：「${meaning}」。
                 單字列表：[ ${wordsList} ]
 
-                請用 **廣東話** 為學生詳細分析這組字。
+                請用 **廣東話** 分析。
+                
+                **嚴格遵守以下規則：**
+                1. **不要**有任何開場白 (例如 Hello、今日講乜乜)，直接由第一個單字標題開始。
+                2. **不要**有任何結語、總結或鼓勵說話。
+                3. **中文定義與語境** 必須 **極度簡潔**，直接講重點 (例如：褒義/貶義、正式/口語、獨特用法)，不要長篇大論。
+
                 請針對列表中的 **每一個單字**，依照以下格式輸出：
                 
                 ### [單字]
-                * **中文定義與語境**：(解釋它的獨特之處，語氣是褒義/貶義？正式/口語？)
+                * **簡潔定義**：(精準點出獨特之處/語氣/正式度)
                 * **例句**：(一句英文例句 + 中文翻譯)
-                * **常用搭配 (Collocations)**：(列出 2-3 個，例如 adj+noun)
-
-                (請保持排版整潔，重點清晰，不要長篇大論)
+                * **常用搭配**：(列出 2-3 個)
             `;
-
             // 7. Call Gemini API
             try {
                 // 使用 gemini-1.5-flash 模型 (速度快、免費額度高)
