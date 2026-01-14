@@ -1558,14 +1558,16 @@ const prompt = `
             grid.innerHTML = '';
             hasFlippedCard = false; lockBoard = false; firstCard = null; secondCard = null; matchedPairs = 0;
             
-            if (!isNextLevel) { 
-                currentLevel = 1; totalScore = 0; lives = 10; 
-                globalPairDeck = generateMasterDeck(); 
-                sessionHistory = []; 
-            } else { 
-                currentLevel++; 
-                lives = Math.min(lives + 1, 10); 
-            }
+if (!isNextLevel) { 
+    currentLevel = 1; totalScore = 0; lives = 10; // ✅ 新：10條命
+    globalPairDeck = generateMasterDeck(); 
+    sessionHistory = []; 
+} 
+
+} else { 
+    currentLevel++; 
+    lives = Math.min(lives + 3, 10); // ✅ 新：+3, 上限10
+}
 
             if (globalPairDeck.length < 8) globalPairDeck = globalPairDeck.concat(generateMasterDeck());
 
@@ -1697,7 +1699,7 @@ deck.forEach(item => {
                 document.getElementById('total-score').innerText = totalScore;
                 setTimeout(() => {
                     playSound('victory');
-                    alert(`🎉 Level ${currentLevel} Complete! 加番1個❤️俾你!\n總分: ${totalScore}`);
+                    alert(`🎉 Level ${currentLevel} Complete! 加番3個❤️俾你!\n總分: ${totalScore}`);
                     initGame(true);
                 }, 800);
             }
@@ -2042,9 +2044,9 @@ deck.forEach(item => {
             document.getElementById('preGameButtons').style.display = 'flex';
             document.getElementById('inGameButtons').style.display = 'none';
             document.getElementById('timer').innerText = timeLimit;
-            document.getElementById('lives').innerText = "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️";
-            lives = 10;
-        }
+document.getElementById('lives').innerText = "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️";
+    lives = 10; 
+}
 
         function onGiveUp() {
             if(confirm("確定要放棄遊戲並結算分數嗎？")) {
