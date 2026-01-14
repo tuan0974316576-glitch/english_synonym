@@ -1559,15 +1559,13 @@ const prompt = `
             hasFlippedCard = false; lockBoard = false; firstCard = null; secondCard = null; matchedPairs = 0;
             
 if (!isNextLevel) { 
-    currentLevel = 1; totalScore = 0; lives = 10; // ✅ 新：10條命
-    globalPairDeck = generateMasterDeck(); 
-    sessionHistory = []; 
-} 
-
-} else { 
-    currentLevel++; 
-    lives = Math.min(lives + 3, 10); // ✅ 新：+3, 上限10
-}
+        currentLevel = 1; totalScore = 0; lives = 10; // ✅ 10條命
+        globalPairDeck = generateMasterDeck(); 
+        sessionHistory = []; 
+    } else { // ✅ 修正：直接 else，唔好加多個 }
+        currentLevel++; 
+        lives = Math.min(lives + 3, 10); // ✅ 過關 +3 血
+    }
 
             if (globalPairDeck.length < 8) globalPairDeck = globalPairDeck.concat(generateMasterDeck());
 
