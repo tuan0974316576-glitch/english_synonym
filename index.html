@@ -436,21 +436,28 @@
         .btn-ai-ask:hover { background: #8e44ad; transform: translateY(-1px); }
         .btn-ai-ask:disabled { background: #ccc; cursor: wait; }
 
-        /* AI 回應內容框 */
-        .ai-response-box {
-            margin-top: 10px;
-            padding: 15px;
-            background-color: #f3e5f5; /* 淺紫色底 */
-            border-radius: 8px;
-            border-left: 4px solid #9b59b6;
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: #2c3e50;
-            display: none; /* 預設隱藏 */
-            white-space: pre-wrap; /* 保留換行 */
-            text-align: left;
-            animation: fadeIn 0.3s ease;
-        }
+.ai-response-box {
+    margin-top: 10px;
+    padding: 15px;
+    background-color: #f3e5f5;
+    border-radius: 8px;
+    border-left: 4px solid #9b59b6;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #2c3e50;
+    
+    display: none; /* 預設隱藏 */
+    white-space: pre-wrap;
+    text-align: left;
+    
+    /* ✨ 改用新動畫：時間 0.5秒，使用 ease-out 令結尾減速 */
+    animation: aiPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+    transform-origin: top center; /* 設定變形起點在頂部 */
+    overflow: hidden; /* 確保展開時內容唔會溢出 */
+    
+    width: 100%;
+    box-sizing: border-box;
+}
         
         .ai-loading { color: #9b59b6; font-weight: bold; margin-top: 5px; display: none; }
         /* --- 🤖 AI 助手專用樣式 (仿照日文Game) --- */
@@ -474,22 +481,28 @@
         .ai-btn:disabled { background: #ccc; cursor: wait; }
 
         /* 紫色回應框 */
-        .ai-response-box {
-            margin-top: 10px;
-            padding: 15px;
-            background-color: #f3e5f5; /* 淺紫色底 */
-            border-radius: 8px;
-            border-left: 4px solid #9b59b6; /* 左邊深紫線 */
-            font-size: 0.95rem;
-            line-height: 1.6;
-            color: #2c3e50;
-            display: none; /* 預設隱藏 */
-            white-space: pre-wrap; /* 保留換行 */
-            text-align: left;
-            animation: fadeIn 0.3s ease;
-            width: 100%;
-            box-sizing: border-box;
-        }
+.ai-response-box {
+    margin-top: 10px;
+    padding: 15px;
+    background-color: #f3e5f5;
+    border-radius: 8px;
+    border-left: 4px solid #9b59b6;
+    font-size: 0.95rem;
+    line-height: 1.6;
+    color: #2c3e50;
+    
+    display: none; /* 預設隱藏 */
+    white-space: pre-wrap;
+    text-align: left;
+    
+    /* ✨ 改用新動畫：時間 0.5秒，使用 ease-out 令結尾減速 */
+    animation: aiPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+    transform-origin: top center; /* 設定變形起點在頂部 */
+    overflow: hidden; /* 確保展開時內容唔會溢出 */
+    
+    width: 100%;
+    box-sizing: border-box;
+}
 
         /* 簡單的 Markdown 標題樣式 */
         .ai-response-box h4 {
@@ -498,6 +511,29 @@
             border-bottom: 1px solid #ddd;
             padding-bottom: 3px;
         }
+        @keyframes aiPopIn {
+    0% {
+        opacity: 0;
+        transform: translateY(-10px) scale(0.95); /* 初始：向上縮少少 + 縮細 */
+        max-height: 0; /* 高度由 0 開始 */
+        padding-top: 0;
+        padding-bottom: 0;
+        margin-top: 0;
+    }
+    60% {
+        opacity: 1;
+        transform: translateY(2px) scale(1.01); /* 中途：輕微過界 (彈性效果) */
+        max-height: 500px; /* 快速拉開高度 */
+        padding-top: 15px;
+        padding-bottom: 15px;
+        margin-top: 10px;
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1); /* 結尾：回復正常 */
+        max-height: 1000px; /* 確保夠位顯示 */
+    }
+}
     </style>
 </head>
 <body>
