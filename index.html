@@ -1549,7 +1549,7 @@ const prompt = `
             
             deck.sort(()=>0.5-Math.random());
 
-            deck.forEach(item => {
+deck.forEach(item => {
                 const card = document.createElement('div');
                 card.classList.add('card');
                 
@@ -1559,7 +1559,14 @@ const prompt = `
                 card.dataset.failCount = 1;
 
                 const displayWord = item.t.charAt(0).toUpperCase() + item.t.slice(1);
-                const hintLetter = item.t.charAt(0).toUpperCase() + item.t.charAt(1).toLowerCase();
+                
+                let hintLetter = "";
+
+                if (item.t.charAt(1) === ' ') {
+                    hintLetter = item.t.charAt(0).toUpperCase() + " " + item.t.charAt(2).toLowerCase();
+                } else {
+                    hintLetter = item.t.charAt(0).toUpperCase() + item.t.charAt(1).toLowerCase();
+                }
                 const textClass = item.t.length > 12 ? 'word-text long-text' : 'word-text';
                 
                 card.innerHTML = `<div class="card-inner">
