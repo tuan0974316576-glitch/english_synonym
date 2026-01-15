@@ -888,11 +888,21 @@ const prompt = `
             { 
                 id: 'change', color: '#f39c12', meaning: '改變 (程度)', 
                 words: [
+                    {t:'Chane', m:'改變'},
                     {t:'Transform', m:'改變(大)'}, 
-                    {t:'Evolve', m:'進化(科技)'}, 
-                    {t:'Advance', m:'進步(科技)'}, 
                     {t:'Alter', m:'改變(小)'}, 
                     {t:'Shift', m:'轉變/轉移'}
+                ] 
+            },
+            { 
+                id: 'improve', color: 'gold', meaning: '進步', 
+                words: [
+                    {t:'Evolve', m:'進化(科技)'}, 
+                    {t:'Advance', m:'進步(科技)'}, 
+                    {t:'Improve', m:'進步(泛用)'}, 
+                    {t:'Enhance', m:'增強'}, 
+                    {t:'Strengthen', m:'強化'}, 
+                    {t:'Beef up', m:'增強(口語)'}
                 ] 
             },
             { 
@@ -1004,7 +1014,7 @@ const prompt = `
                 words: ['Similarly', 'Likewise'] 
             },
             { 
-                id: 'appealing', color: '#e91e63', meaning: '吸引的', 
+                id: 'appealing', color: '#e91e63', meaning: '有吸引力的', 
                 words: ['Appealing', 'Captivating', 'Attractive', 'Engaging'] 
             },
             { 
@@ -1119,20 +1129,27 @@ const prompt = `
                     { t: 'Significant', m: '顯著' },
                     { t: 'Substantial', m: '可觀的' },
                     { t: 'Drastic', m: '激烈的' },
-                    { t: 'Radical', m: '徹底的' },
-                    { t: 'Remarkable', m: '非凡的' }
+                    { t: 'Radical', m: '徹底的' }
                 ] 
             },
             // --- Group 10: 反而/相反 ---
             { 
-                id: 'instead', 
+                id: 'In contrast', 
                 color: 'darkgoldenrod', 
-                meaning: '反而 / 相反', 
+                meaning: '相反', 
                 words: [
-                    { t: 'Instead', m: '作為替代' },
-                    { t: 'Rather', m: '反而' },
-                    { t: 'In contrast', m: '相比之下' },
-                    { t: 'On the contrary', m: '正正相反' }
+                    { t: 'In contrast', m: '相反' },
+                    { t: 'On the contrary', m: '相反' }
+                ] 
+            },
+
+          { 
+                id: 'instead', 
+                color: 'red', 
+                meaning: '相反(否定)', 
+                words: [
+                    { t: 'Instead', m: '相反(否定)' },
+                    { t: 'Rather', m: '相反(否定)' }
                 ] 
             },
             // --- Group 11: 與...有關 ---
@@ -1229,7 +1246,7 @@ const prompt = `
             // --- Group 19: 寺廟/宗教場所 ---
             { 
                 id: 'temple', 
-                color: 'darkmagenta', // Red
+                color: 'darkmagenta', 
                 meaning: '寺廟 / 聖地', 
                 words: [
                     { t: 'Shrine', m: '神社/神龕(小)' },
@@ -1339,9 +1356,9 @@ const prompt = `
                 color: '#2980b9', // Blue
                 meaning: '意識到', 
                 words: [
-                    { t: 'Be aware of', m: '意識到' },
+                    { t: 'Aware of', m: '意識到' },
                     { t: 'Realise', m: '意識到/實現' },
-                    { t: 'Be conscious of', m: '察覺到' }
+                    { t: 'Conscious of', m: '察覺到' }
                 ] 
             },
             // --- Group 30: 另外 ---
@@ -1365,8 +1382,8 @@ const prompt = `
                 meaning: '適應', 
                 words: [
                     { t: 'Adapt to', m: '適應' },
-                    { t: 'Get used to', m: '習慣' },
-                    { t: 'Get accustomed to', m: '習慣於' }
+                    { t: 'Get used to', m: '適應' },
+                    { t: 'Get accustomed to', m: '適應' }
                 ] 
             },
             // --- Group 33: 採用/實施 ---
@@ -1390,6 +1407,7 @@ const prompt = `
                 words: ['Feasible', 'Viable', 'Workable'] 
             }
         ];
+
 
         // --- 遊戲變數 ---
         let hasFlippedCard = false, lockBoard = false;
