@@ -1005,7 +1005,7 @@ aiText = aiText.replace(/### (.*?)\n/g, '<h4>$1</h4>');
             },
             { 
                 id: 'approx', color: '#bdc3c7', meaning: '大約 / 幾乎', 
-                words: ['Roughly', 'Approximately', 'Almost', 'Around'] 
+                words: ['Roughly', 'Approximately', 'virtually','Almost', 'Around'] 
             },
             { 
                 id: 'mitigate', color: '#3498db', meaning: '舒緩 / 減輕', 
@@ -1110,16 +1110,7 @@ aiText = aiText.replace(/### (.*?)\n/g, '<h4>$1</h4>');
                 meaning: '大約', 
                 words: ['Approximately', 'Roughly', 'Around', 'About'] 
             },
-            // --- Group 5: 幾乎 ---
-            { 
-                id: 'almost', 
-                color: '#7f8c8d', // Dark Gray
-                meaning: '幾乎', 
-                words: [
-                    { t: 'Almost', m: '幾乎' },
-                    { t: 'Virtually', m: '幾乎/事實上' }
-                ] 
-            },
+
             // --- Group 6: 足夠 (基本) ---
             { 
                 id: 'enough', 
@@ -1691,11 +1682,12 @@ deck.forEach(item => {
             secondCard = this; checkForMatch();
         }
 
-        function checkForMatch() {
-            const w1 = firstCard.dataset.word;
-            const w2 = secondCard.dataset.word;
+function checkForMatch() {
+            const g1 = firstCard.dataset.group;
+            const g2 = secondCard.dataset.group;
 
-            if (isSynonymPair(w1, w2)) {
+            // 必須是同一個 Group ID 才能消除
+            if (g1 === g2) {
                 disableCards();
             } else {
                 unflipCards();
