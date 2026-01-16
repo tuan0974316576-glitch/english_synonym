@@ -201,11 +201,13 @@
         }
 
         /* --- 按鈕區域 --- */
-        .action-buttons {
-            display: flex;
-            gap: 15px;
-            margin-top: 30px;
-        }
+.action-buttons {
+    display: flex;
+    gap: 15px;
+    margin-top: 30px;
+    justify-content: center; /* 👈 關鍵：讓按鈕水平置中 */
+    width: 100%;             /* 確保容器佔滿寬度，這樣置中才有效 */
+}
 
         button {
             padding: 12px 30px;
@@ -568,7 +570,7 @@
         <div class="stat-box score-box">🏆 Score: <span id="total-score">0</span></div>
     </div>
 
-    <div id="startOverlay" style="text-align: center; margin: 20px 0;">
+<div id="startOverlay" style="text-align: center; margin: 20px 0; width: 100%;">
         <h2 style="color: #2c3e50; margin-bottom: 15px;">準備好接受挑戰了嗎？</h2>
         <button onclick="startGameSession()" style="background: #e74c3c; color: white; padding: 15px 40px; font-size: 1.2rem; border-radius: 50px; border:none; cursor:pointer; box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4); font-weight:bold;">
             ▶ 開始遊戲 (Start Game)
