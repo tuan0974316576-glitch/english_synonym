@@ -1730,7 +1730,9 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 osc.start();
                 osc.stop(audioCtx.currentTime + duration);
             },
-
+tick: () => {
+                cuteSfx.playTone(800, 'triangle', 0.05, 0.3);
+            },
             // 🖱️ UI Hover (像水滴聲，輕快)
             hover: () => {
                 cuteSfx.playTone(800, 'sine', 0.05, 0.1);
@@ -2072,10 +2074,27 @@ function checkForMatch() {
 
         function resetBoard() { [hasFlippedCard, lockBoard] = [false, false]; [firstCard, secondCard] = [null, null]; }
         
-        function startTimer() {
-            remainingTime = timeLimit; document.getElementById('timer').innerText = remainingTime;
+function startTimer() {
+            // 重置時間顯示顏色
+            const timerDisplay = document.getElementById('timer');
+            timerDisplay.style.color = ''; 
+            
+            remainingTime = timeLimit; 
+            timerDisplay.innerText = remainingTime;
+
             timer = setInterval(() => {
-                remainingTime--; document.getElementById('timer').innerText = remainingTime;
+                remainingTime--;
+                timerDisplay.innerText = remainingTime;
+
+                // --- ⏰ 倒數 10 秒特效 ---
+                if (remainingTime <= 10 && remainingTime > 0) {
+                    cuteSfx.tick(); // 播放滴答聲
+                    timerDisplay.style.color = '#e74c3c'; // 變紅色
+                    timerDisplay.classList.add('pulse-red'); // (如果有動畫class的話)
+                } else if (remainingTime > 10) {
+                    timerDisplay.style.color = ''; // 正常顏色
+                }
+
                 if (remainingTime <= 0) { 
                     revealAndEndGame('時間到'); 
                 }
