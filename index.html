@@ -10,7 +10,14 @@
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0a9396">
-    
+    <meta name="description" content="Enguistics自家研發：專為香港DSE考生設計的英文同義詞(Synonym)特訓遊戲。透過刺激的配對卡牌對戰，極速記憶大量高分寫作必備詞彙，提升Writing及Reading卷表現。">
+<meta name="keywords" content="DSE English, DSE, 英文, 英文閱讀, 同義詞, Reading 必考, Vocabulary Game, Enguistics, 補習社, 英文寫作">
+<meta name="author" content="Enguistics Learning Centre">
+    <meta property="og:type" content="website">
+<meta property="og:title" content="👻同義詞の鬼👻 - DSE英文生字特訓 Game">
+<meta property="og:description" content="玩Game學英文！挑戰你的同義詞詞彙量，不再只會用 'Good' 同 'Bad'！立即挑戰 Level 1！">
+<meta property="og:image" content="https://enguistics.com/synonym/icon.png">
+<meta property="og:url" content="https://enguistics.com/synonym/">
 
 
 
@@ -568,6 +575,9 @@
         <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
     <div class="info-panel">
+        <button id="btn-fullscreen" onclick="toggleFullScreen()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; margin-left:10px;" title="全螢幕模式">
+    ⛶
+</button>
         <div class="user-panel" id="userPanel" style="display:none;">
             👤 <span id="currentUserDisplay">Player</span>
             <button class="logout-btn" onclick="logout()">登出</button>
@@ -2815,7 +2825,21 @@ function openStudyModal() {
         }
     }
         checkLoginStatus();
+// --- 全螢幕功能 ---
+function toggleFullScreen() {
+    if (!document.fullscreenElement) {
+        document.documentElement.requestFullscreen().catch(e => {
+            console.log(e);
+        });
+    } else {
+        if (document.exitFullscreen) document.exitFullscreen();
+    }
+}
 
+// 針對 iPhone/iPad 隱藏按鈕 (因為 iOS 不支援按鈕觸發，只能用「加至主畫面」)
+if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+    document.getElementById('btn-fullscreen').style.display = 'none';
+}
     </script>
 </body>
 </html>
