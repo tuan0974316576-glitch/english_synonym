@@ -885,7 +885,7 @@
             { id: 'Amend', color: 'coral', meaning: '修改', words: [{ t: 'Amend', m: '修改(文件)' }, { t: 'Modify', m: '調整' }, { t: 'Adjust ', m: '調節' }, { t: 'Tune', m: '微調(工具)' }] },
             { id: 'tackle', color: 'cornflowerblue', meaning: '應付/處理', words: ['Handle', 'Tackle', 'Deal with', 'Cope with', 'Address'] },
             { id: 'unprecedented', color: '#e67e22', meaning: '前所未有', words: ['More than ever', 'Unprecedented'] },
-            { id: 'proliferate', color: 'aquamarine', meaning: '激增',words: [{ t: 'Soar', m: '急升' }, { t: 'Skyrocket', m: '飛漲' }, { t: 'Proliferate', m: '激增' }, { t: 'Mushroom', m: '大量增加' }, { t: 'spring up', m: '湧現' }, { t: 'sprout', m: '湧現(強調新出現)' }, { t: 'Shoot up', m: '急速增加' }] },
+            { id: 'proliferate', color: 'aquamarine', meaning: '激增',words: [{ t: 'Surge', m: '急升' },{ t: 'Soar', m: '急升' }, { t: 'Skyrocket', m: '飛漲' }, { t: 'Proliferate', m: '激增' }, { t: 'Mushroom', m: '大量增加' }, { t: 'spring up', m: '湧現' }, { t: 'sprout', m: '湧現(強調新出現)' }, { t: 'Shoot up', m: '急速增加' }] },
 
             { id: 'Deteriorate', color: 'darkblue', meaning: '惡化', words: [{ t: 'Deteriorate', m: '惡化(不+n)' }, { t: 'Aggravate', m: '惡化(+n)' }, { t: 'Exacerbate', m: '惡化(+n)' }, { t: 'Worsen ', m: '惡化(+n/不+n)' }] },
             { 
@@ -959,6 +959,13 @@
                 id: 'the same', color: '#8c0ff1 ', meaning: '一模一樣', 
                 words: ['Homogeneous', 'The same', 'Identical'] 
             },
+                { 
+                id: 'force', color: '#780000', meaning: '強迫', 
+                words: [
+                    {t:'Force', m:'強迫'}, 
+                    {t:'Compel', m:'迫使'}
+                ] 
+            },
             { 
                 id: 'transmit', color: '#1abc9c', meaning: '傳遞 / 傳播', 
                 words: [
@@ -1015,6 +1022,26 @@
                     {t:'Witness', m:'目擊'},
                     {t:'Observe', m:'觀察'}, 
                     {t:'Spot', m:'目睹'}
+                ] 
+            },
+ { 
+                id: 'dub', color: '#2f027e', meaning: '視為', 
+                words: [
+                    {t:'Dub', m:'稱為'},
+                    {t:'Hail as', m:'譽為'},
+                    {t:'Deem', m:'視為'},
+                    {t:'Consider', m:'視為'}, 
+                    {t:'See as', m:'視為'},
+                    {t:'View as', m:'視為'}
+                ] 
+            },
+ { 
+                id: 'permanent', color: '#009f88', meaning: '永久', 
+                words: [
+                    {t:'Permanent', m:'永久'},
+                    {t:'Eternal', m:'永恆'}, 
+                    {t:'Everlasting', m:'永恆'},
+                    {t:'Perpetual', m:'永無止境'}
                 ] 
             },
  { 
@@ -1093,6 +1120,10 @@
                                     { 
                 id: 'concerning', color: '#31572c', meaning: '就...而言', 
                 words: ['In terms of', 'Concerning', 'Regarding', 'As for', 'With regard to'] 
+            },
+                            { 
+                id: 'affect', color: '#d87379', meaning: '影響', 
+                words: ['Affect', 'Impact', Influence'] 
             },
                         { 
                 id: 'respect', color: '#14213d', meaning: '尊重', 
@@ -1264,6 +1295,13 @@ words: [
                     {t:'Once-in-a-lifetime', m:'千載難逢的'}
                 ] 
             },
+                    { 
+                id: 'accurate', color: '#005b96', meaning: '準確', 
+                words: [
+                    {t:'Accurate', m:'準確'}, 
+                    {t:'Precise', m:'精準'}
+                ] 
+            },
             { 
                 id: 'essential', color: '#2ecc71', meaning: '必要 / 強制', 
                 words: [
@@ -1271,6 +1309,14 @@ words: [
                     {t:'Necessary', m:'必要'}, 
                     {t:'Compulsory', m:'強制'}
                 ] 
+            },
+                    { 
+                id: 'discontent', color: '#03396c', meaning: '不滿', 
+                words: ['Discontent', 'Dissatisfaction'] 
+            },
+            { 
+                id: 'focus on', color: '#283618', meaning: '專注於', 
+                words: ['Focus on', 'Concentrate on'] 
             },
             { 
                 id: 'highlight', color: '#004e89', meaning: '突顯', 
@@ -1353,13 +1399,36 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 id: 'tempt', color: '#f8961e', meaning: '引誘', 
                 words: ['tempt', 'entice', 'lure']
             },
+         { 
+                id: 'over time', color: '#bc6c25', meaning: '隨著時間過去', 
+                words: ['Over time', 'As time goes by'] 
+            },
+         { 
+                id: 'impressive', color: '#6f1d1b', meaning: '令人印象深刻的', 
+                words: ['Impressive', 'Remarkable'] 
+            },
+     { 
+                id: 'once in a while', color: '#6f1d1b', meaning: '有時', 
+                words: ['Once in a while', 'Occasionally', 'From time to time'] 
+            },
             { 
                 id: 'achieve', color: '#f39c12', meaning: '達成', 
                 words: ['Achieve', 'Attain', 'Accomplish'] 
             },
+                    { 
+                id: 'found', color: '#7b2cbf', meaning: '創立', 
+                words: ['Found',  'Set up', 'Establish'] 
+            },
                 { 
                 id: 'satisfied', color: '#ff477e', meaning: '對...滿意', 
                 words: ['Content with', 'Satisfied with'] 
+            },
+                    { 
+                id: 'Propose', color: '#fb8500', meaning: '提議', 
+                words: [
+                    {t:'Propose', m:'提議(正式)'}, 
+                    {t:'Put forward', m:'提出'}
+                ] 
             },
                 { 
                 id: 'dedicate to', color: '#ef233c', meaning: '致力於', 
@@ -1547,6 +1616,26 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 words: [
                     { t: 'In contrast', m: '相反' },
                     { t: 'On the contrary', m: '相反' }
+                ] 
+            },
+                          { 
+                id: 'obsessed with', 
+                color: '#c1121f', 
+                meaning: '著迷於', 
+                words: [
+                    { t: 'Drawn to', m: '著迷於(中)' },
+                    { t: 'Obsessed with', m: '著迷於(大)' },
+                    { t: 'Hooked on', m: '著迷於(極)' }
+                ] 
+            },
+                          { 
+                id: 'lackluster', 
+                color: '#778da9', 
+                meaning: '沒精打采', 
+                words: [
+                    { t: 'Lackluster', m: '沒精打采' },
+                    { t: 'Lethargic', m: '沒精打采' },
+                    { t: 'Listless', m: '沒精打采' }
                 ] 
             },
                       { 
@@ -1821,7 +1910,12 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 meaning: '立法', 
                 words: ['Legislate', 'Enact a law'] 
             },
-            // --- Group 30: 另外 ---
+                { 
+                id: 'toxic', 
+                color: '#606c38', // Purple
+                meaning: '有毒的', 
+                words: ['Toxic', 'Venomous', 'Poisonous'] 
+            },
             { 
                 id: 'addition', 
                 color: '#8e44ad', // Purple
