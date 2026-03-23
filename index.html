@@ -912,9 +912,13 @@
                 id: 'famous', color: '#2980b9', meaning: '出名的', 
                 words: ['Well-known', 'Celebrated', 'Renowned', 'Reputable', 'Venerable'] 
             },
+{ 
+                id: 'Dire', color: 'DarkMagenta', meaning: '可怕的', 
+                words: ['Dire', 'Dreadful'] 
+            },
             { 
                 id: 'distress', color: '#3980b9', meaning: '悲傷', 
-                words: ['Distress', 'Grief', 'Sorrow'] 
+                words: ['Distress', 'Grief', 'Woe', 'Sorrow'] 
             },
                 { 
                 id: 'spur', color: '#27ae60', meaning: '刺激 / 激勵', 
@@ -1238,6 +1242,13 @@ words: ['Overcome','Get over','Surmount']
 words: ['Essentially','In essence','In nature'] 
             },
                                     {
+id: 'legendary', color: '#228ae6', meaning: '傳說的', 
+words: [
+                    {t:'Legendary', m:'傳說的'}, 
+                    {t:'Epic', m:'史詩的'}
+                ] 
+                },
+                                    {
 id: 'Bias', color: '#228ae6', meaning: '偏見', 
 words: [
                     {t:'Bias', m:'偏見'}, 
@@ -1391,10 +1402,26 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                      { 
                 id: 'exhuasted', color: '#277da1', meaning: '疲倦', 
                 words: ['Exhausted', 'Drained', 'Fatigued', 'Weary'] 
-            },               
+            },
+{ 
+                id: 'deep-rooted', color: '#66065c', meaning: '根深柢固', 
+                words: ['Deep-rooted', 'Deep-seated', 'Ingrained']
+            },
+{ 
+                id: 'Distinctive', color: '#01156e', meaning: '與眾不同', 
+                words: ['Distinctive', 'distinct']
+            },
+        { 
+                id: 'envisage', color: '#328a00', meaning: '想像', 
+                words: ['Envisage', 'Envision', 'Conceive']
+            },
+    { 
+                id: 'demolish', color: '#fc9d03', meaning: '拆除', 
+                words: ['Demolish', 'Tear down', 'Knock down']
+            },
     { 
                 id: 'nascent', color: '#f94144', meaning: '嶄新的', 
-                words: ['Nascent', 'Budding']
+                words: ['Nascent', 'Budding', 'Emerging']
             },
         { 
                 id: 'tempt', color: '#f8961e', meaning: '引誘', 
@@ -1411,6 +1438,10 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
      { 
                 id: 'once in a while', color: '#6f1d1b', meaning: '有時', 
                 words: ['Once in a while', 'Occasionally', 'From time to time'] 
+            },
+            { 
+                id: 'Hygienic', color: 'Crimson', meaning: '衛生的', 
+                words: ['Hygienic', 'Sanitary'] 
             },
             { 
                 id: 'achieve', color: '#f39c12', meaning: '達成', 
@@ -1437,6 +1468,15 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                     {t:'Dedicate to', m:'致力於(v)'}, 
                     {t:'Devote to', m:'致力於(v)'}, 
                     {t:'Committed to', m:'致力於(adj)'}
+                ] 
+            },
+                { 
+                id: 'Obey', color: 'DarkBlue', meaning: '服從/遵守', 
+                words: [
+                    {t:'Obey', m:'服從'}, 
+                    {t:'Comply with', m:'遵守'}, 
+                    {t:'Adhere to', m:'遵守'}, 
+                    {t:'Abide by', m:'遵循'}
                 ] 
             },
             { 
@@ -1504,8 +1544,24 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 ] 
             },
             { 
+                id: 'convince', color: '#27ae60', meaning: '說服', 
+                               words: [
+                    {t:'Convince', m:'說服'}, 
+                    {t:'Persuade', m:'說服'}, 
+                    {t:'Lobby', m:'遊說'}
+                ]  
+            },
+{ 
+                id: 'debris', color: '#008B8B', meaning: '碎片', 
+                words: ['Debris', 'Fragment'] 
+            },
+            { 
                 id: 'affordable', color: '#27ae60', meaning: '可負擔 / 實惠', 
                 words: ['Affordable', 'Economical', 'Budget-friendly'] 
+            },
+            { 
+                id: 'affordable', color: '#B8860B', meaning: '基礎的', 
+                words: ['Foundational', 'Elementary', 'Basic', 'Fundamental'] 
             },
             { 
                 id: 'worthwhile', color: '#f39c12', meaning: '值得', 
@@ -1684,7 +1740,16 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                     { t: 'Bustling', m: '忙(地)' }
                 ] 
             },
-            // --- Group 11: 與...有關 ---
+            { 
+                id: 'shelter', 
+                color: 'CadetBlue',
+                meaning: '庇護所', 
+                words: [
+                    { t: 'Shelter', m: '庇護所' },
+                    { t: 'Sanctuary o', m: '避難所' },
+                    { t: 'Haven', m: '安全的地方' }
+                ] 
+            },
             { 
                 id: 'related', 
                 color: 'darkcyan',
@@ -1696,7 +1761,16 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                     { t: 'Has to do with', m: '與..有關' }
                 ] 
             },
-            // --- Group 12: 模糊 ---
+            { 
+                id: 'embrace', 
+                color: '#607d8b', // Blue Grey
+                meaning: '支持', 
+                words: [
+                    { t: 'In favour of', m: '贊成' },
+                    { t: 'Embrace', m: '擁抱、贊同' },
+                    { t: 'Subscribe to', m: '支持' }
+                ] 
+            },
             { 
                 id: 'blurry', 
                 color: '#607d8b', // Blue Grey
@@ -1882,7 +1956,12 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 meaning: '開心 / 喜悅', 
                 words: ['Pleasure', 'Delight', 'Joy', 'Glee'] 
             },
-            // --- Group 26: 因此 ---
+            { 
+                id: 'Physical', 
+                color: '#7f8c8d', // Concrete
+                meaning: '實體', 
+                words: ['Physical', 'Brick-and-mortar'] 
+            },
             { 
                 id: 'therefore', 
                 color: '#7f8c8d', // Concrete
