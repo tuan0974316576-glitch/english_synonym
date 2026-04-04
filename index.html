@@ -2100,6 +2100,7 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
 
         let mistakeReplayQueue = [];
         let currentRunMistakeQueue = [];
+        let currentRunMistakeCounts = {};
         let mistakeReplayQueueLoaded = false;
 
         function getMistakeReplayQueueRef() {
@@ -2144,8 +2145,12 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
 
         function recordMistakeGroups(...groupIds) {
             groupIds.filter(Boolean).forEach(groupId => {
-                currentRunMistakeQueue = currentRunMistakeQueue.filter(id => id !== groupId);
-                currentRunMistakeQueue.unshift(groupId);
+                currentRunMistakeCounts[groupId] = (currentRunMistakeCounts[groupId] || 0) + 1;
+
+                if (currentRunMistakeCounts[groupId] >= 2) {
+                    currentRunMistakeQueue = currentRunMistakeQueue.filter(id => id !== groupId);
+                    currentRunMistakeQueue.unshift(groupId);
+                }
             });
         }
 
@@ -2158,6 +2163,7 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
             });
 
             currentRunMistakeQueue = [];
+            currentRunMistakeCounts = {};
             return saveMistakeReplayQueue();
         }
 
@@ -2453,6 +2459,7 @@ if (!isNextLevel) {
         globalPairDeck = []; 
         sessionHistory = []; 
         currentRunMistakeQueue = [];
+        currentRunMistakeCounts = {};
     } else { // ✅ 修正：直接 else，唔好加多個 }
         currentLevel++; 
         lives = Math.min(lives + 3, 10); // ✅ 過關 +3 血
