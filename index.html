@@ -2103,6 +2103,16 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
         let currentRunMistakeCounts = {};
         let mistakeReplayQueueLoaded = false;
 
+        function normalizeReplayWord(word) {
+            return (word || '').trim().toLowerCase();
+        }
+
+        function getReplayEntryKey(entry) {
+            if (!entry) return '';
+            if (typeof entry === 'string') return entry;
+            return `${entry.gid || ''}::${normalizeReplayWord(entry.word || '')}`;
+        }
+
         function getMistakeReplayQueueRef() {
             if (!db || !currentPlayer) return null;
             return db.ref(`${USERS_PATH}/${currentPlayer}/mistakeReplayQueue`);
@@ -2143,13 +2153,31 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 });
         }
 
-        function recordMistakeGroups(...groupIds) {
-            groupIds.filter(Boolean).forEach(groupId => {
-                currentRunMistakeCounts[groupId] = (currentRunMistakeCounts[groupId] || 0) + 1;
+        function clearResolvedMistakeWords(...entries) {
+            entries.forEach(entry => {
+                if (!entry || !entry.gid || !entry.word) return;
+                const key = getReplayEntryKey(entry);
+                delete currentRunMistakeCounts[key];
+                currentRunMistakeQueue = currentRunMistakeQueue.filter(item => getReplayEntryKey(item) !== key);
+            });
+        }
 
-                if (currentRunMistakeCounts[groupId] >= 2) {
-                    currentRunMistakeQueue = currentRunMistakeQueue.filter(id => id !== groupId);
-                    currentRunMistakeQueue.unshift(groupId);
+        function recordMistakeWords(...entries) {
+            entries.forEach(entry => {
+                if (!entry || !entry.gid || !entry.word) return;
+
+                const normalizedEntry = {
+                    gid: entry.gid,
+                    word: entry.word,
+                    color: entry.color || null
+                };
+                const key = getReplayEntryKey(normalizedEntry);
+
+                currentRunMistakeCounts[key] = (currentRunMistakeCounts[key] || 0) + 1;
+
+                if (currentRunMistakeCounts[key] >= 2) {
+                    currentRunMistakeQueue = currentRunMistakeQueue.filter(item => getReplayEntryKey(item) !== key);
+                    currentRunMistakeQueue.unshift(normalizedEntry);
                 }
             });
         }
@@ -2157,9 +2185,10 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
         function flushCurrentRunMistakesToReplayQueue() {
             if (currentRunMistakeQueue.length === 0) return saveMistakeReplayQueue();
 
-            currentRunMistakeQueue.forEach(groupId => {
-                mistakeReplayQueue = mistakeReplayQueue.filter(id => id !== groupId);
-                mistakeReplayQueue.unshift(groupId);
+            currentRunMistakeQueue.forEach(entry => {
+                const key = getReplayEntryKey(entry);
+                mistakeReplayQueue = mistakeReplayQueue.filter(item => getReplayEntryKey(item) !== key);
+                mistakeReplayQueue.unshift(entry);
             });
 
             currentRunMistakeQueue = [];
@@ -2167,7 +2196,7 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
             return saveMistakeReplayQueue();
         }
 
-        function createPairFromGroup(group) {
+        function createPairFromGroup(group, preferredWord = null) {
             if (!group || !Array.isArray(group.words)) return null;
 
             const words = group.words
@@ -2176,26 +2205,45 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
 
             if (words.length < 2) return null;
 
-            const shuffledWords = words.sort(() => 0.5 - Math.random());
-            return { i1: shuffledWords[0], i2: shuffledWords[1], gid: group.id, c: group.color };
+            const normalizedPreferredWord = normalizeReplayWord(preferredWord);
+            const anchorWord = normalizedPreferredWord
+                ? words.find(word => normalizeReplayWord(word.t) === normalizedPreferredWord)
+                : null;
+
+            if (!anchorWord) {
+                const shuffledWords = words.sort(() => 0.5 - Math.random());
+                return { i1: shuffledWords[0], i2: shuffledWords[1], gid: group.id, c: group.color };
+            }
+
+            const partnerPool = words
+                .filter(word => normalizeReplayWord(word.t) !== normalizedPreferredWord)
+                .sort(() => 0.5 - Math.random());
+
+            if (partnerPool.length === 0) return null;
+
+            return { i1: anchorWord, i2: partnerPool[0], gid: group.id, c: group.color };
         }
 
         function takeMistakeReplayPairs(limit, excludedGroupIds = new Set()) {
             const replayPairs = [];
             const remainingQueue = [];
 
-            mistakeReplayQueue.forEach(groupId => {
+            mistakeReplayQueue.forEach(entry => {
+                const groupId = typeof entry === 'string' ? entry : entry.gid;
                 if (replayPairs.length >= limit || excludedGroupIds.has(groupId)) {
-                    remainingQueue.push(groupId);
+                    remainingQueue.push(entry);
                     return;
                 }
 
                 const group = synonymData.find(item => item.id === groupId);
-                const pair = createPairFromGroup(group);
+                const preferredWord = typeof entry === 'string' ? null : entry.word;
+                const pair = createPairFromGroup(group, preferredWord);
 
                 if (pair) {
                     replayPairs.push(pair);
                     excludedGroupIds.add(groupId);
+                } else {
+                    remainingQueue.push(entry);
                 }
             });
 
@@ -2577,6 +2625,11 @@ function checkForMatch() {
             const c2 = secondCard;
             const color = c1.dataset.color || '#333';
 
+            clearResolvedMistakeWords(
+                { gid: c1.dataset.group, word: c1.dataset.word, color: color },
+                { gid: c2.dataset.group, word: c2.dataset.word, color: color }
+            );
+
             c1.removeEventListener('click', flipCard); 
             c2.removeEventListener('click', flipCard);
 
@@ -2617,7 +2670,10 @@ function checkForMatch() {
             const c1 = firstCard;
             const c2 = secondCard;
 
-            recordMistakeGroups(c2.dataset.group, c1.dataset.group);
+            recordMistakeWords(
+                { gid: c1.dataset.group, word: c1.dataset.word, color: c1.dataset.color },
+                { gid: c2.dataset.group, word: c2.dataset.word, color: c2.dataset.color }
+            );
             
             [c1, c2].forEach(c => {
                 let cnt = parseInt(c.dataset.failCount||1)+1; 
