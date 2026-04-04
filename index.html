@@ -2098,6 +2098,94 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
         let lastGameEndReason = "";
         let lastGameRank = "計算中..."; 
 
+        let mistakeReplayQueue = [];
+        let mistakeReplayQueueLoaded = false;
+
+        function getMistakeReplayQueueRef() {
+            if (!db || !currentPlayer) return null;
+            return db.ref(`${USERS_PATH}/${currentPlayer}/mistakeReplayQueue`);
+        }
+
+        function loadMistakeReplayQueue() {
+            const queueRef = getMistakeReplayQueueRef();
+            if (!queueRef) {
+                mistakeReplayQueue = [];
+                mistakeReplayQueueLoaded = true;
+                return Promise.resolve(mistakeReplayQueue);
+            }
+
+            mistakeReplayQueueLoaded = false;
+
+            return queueRef.once('value')
+                .then(snapshot => {
+                    const queue = snapshot.val();
+                    mistakeReplayQueue = Array.isArray(queue) ? queue.filter(Boolean) : [];
+                    mistakeReplayQueueLoaded = true;
+                    return mistakeReplayQueue;
+                })
+                .catch(error => {
+                    console.error('[MistakeReplay] Failed to load queue:', error);
+                    mistakeReplayQueue = [];
+                    mistakeReplayQueueLoaded = true;
+                    return mistakeReplayQueue;
+                });
+        }
+
+        function saveMistakeReplayQueue() {
+            const queueRef = getMistakeReplayQueueRef();
+            if (!queueRef) return Promise.resolve();
+
+            return queueRef.set(mistakeReplayQueue)
+                .catch(error => {
+                    console.error('[MistakeReplay] Failed to save queue:', error);
+                });
+        }
+
+        function recordMistakeGroups(...groupIds) {
+            groupIds.filter(Boolean).forEach(groupId => {
+                mistakeReplayQueue = mistakeReplayQueue.filter(id => id !== groupId);
+                mistakeReplayQueue.unshift(groupId);
+            });
+            saveMistakeReplayQueue();
+        }
+
+        function createPairFromGroup(group) {
+            if (!group || !Array.isArray(group.words)) return null;
+
+            const words = group.words
+                .map(word => typeof word === 'string' ? { t: word, m: group.meaning } : { t: word.t, m: word.m || group.meaning })
+                .filter(word => word.t);
+
+            if (words.length < 2) return null;
+
+            const shuffledWords = words.sort(() => 0.5 - Math.random());
+            return { i1: shuffledWords[0], i2: shuffledWords[1], gid: group.id, c: group.color };
+        }
+
+        function takeMistakeReplayPairs(limit, excludedGroupIds = new Set()) {
+            const replayPairs = [];
+            const remainingQueue = [];
+
+            mistakeReplayQueue.forEach(groupId => {
+                if (replayPairs.length >= limit || excludedGroupIds.has(groupId)) {
+                    remainingQueue.push(groupId);
+                    return;
+                }
+
+                const group = synonymData.find(item => item.id === groupId);
+                const pair = createPairFromGroup(group);
+
+                if (pair) {
+                    replayPairs.push(pair);
+                    excludedGroupIds.add(groupId);
+                }
+            });
+
+            mistakeReplayQueue = remainingQueue;
+            saveMistakeReplayQueue();
+            return replayPairs;
+        }
+
        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         // =========================================================
@@ -2108,7 +2196,9 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
             if (savedUser) {
                 currentPlayer = savedUser;
                 showGameUI();
-                backToLobby();
+                loadMistakeReplayQueue().finally(() => {
+                    backToLobby();
+                });
             } else {
                 document.getElementById('loginModal').classList.remove('hidden');
             }
@@ -2148,12 +2238,16 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
             localStorage.setItem('synonym_player', name); 
             document.getElementById('loginModal').classList.add('hidden');
             showGameUI();
-            backToLobby(); 
+            loadMistakeReplayQueue().finally(() => {
+                backToLobby();
+            }); 
         }
 
         function logout() {
             if(confirm("確定要登出嗎？")) {
                 localStorage.removeItem('synonym_player');
+                mistakeReplayQueue = [];
+                mistakeReplayQueueLoaded = false;
                 location.reload(); 
             }
         }
@@ -2322,9 +2416,10 @@ tick: () => {
         // ------------------------------------------------------------------
         // 🎮 遊戲核心邏輯 (完整修復版)
         // ------------------------------------------------------------------
-        function generateMasterDeck() {
+        function generateMasterDeck(excludedGroupIds = new Set()) {
             let tempDeck = [];
             synonymData.forEach(g => {
+                if (excludedGroupIds.has(g.id)) return;
                 let ws = g.words.map(w => (typeof w === 'string') ? {t:w, m:g.meaning} : {t:w.t, m:w.m});
                 ws.sort(() => 0.5 - Math.random());
                 for (let i = 0; i < ws.length - 1; i += 2) {
@@ -2343,14 +2438,23 @@ tick: () => {
             
 if (!isNextLevel) { 
         currentLevel = 1; totalScore = 0; lives = 10; // ✅ 10條命
-        globalPairDeck = generateMasterDeck(); 
+        globalPairDeck = []; 
         sessionHistory = []; 
     } else { // ✅ 修正：直接 else，唔好加多個 }
         currentLevel++; 
         lives = Math.min(lives + 3, 10); // ✅ 過關 +3 血
     }
 
-            if (globalPairDeck.length < 8) globalPairDeck = globalPairDeck.concat(generateMasterDeck());
+            if (globalPairDeck.length < 8) {
+                const excludedGroupIds = new Set(globalPairDeck.map(pair => pair.gid));
+                const replayPairs = takeMistakeReplayPairs(8 - globalPairDeck.length, excludedGroupIds);
+                globalPairDeck = replayPairs.concat(globalPairDeck);
+
+                if (globalPairDeck.length < 8) {
+                    const freshPairs = generateMasterDeck(new Set(globalPairDeck.map(pair => pair.gid)));
+                    globalPairDeck = globalPairDeck.concat(freshPairs.slice(0, 8 - globalPairDeck.length));
+                }
+            }
 
             updateUI(); resetTimer(); startTimer();
 
@@ -2492,6 +2596,8 @@ function checkForMatch() {
             lockBoard = true; 
             const c1 = firstCard;
             const c2 = secondCard;
+
+            recordMistakeGroups(c2.dataset.group, c1.dataset.group);
             
             [c1, c2].forEach(c => {
                 let cnt = parseInt(c.dataset.failCount||1)+1; 
@@ -2858,10 +2964,13 @@ document.getElementById('lives').innerText = "❤️❤️❤️❤️❤️❤�
             }
         }
 
-        function startGameSession() {
+        async function startGameSession() {
             // 🔥 修改點：再來一局時，強制關閉 Result Modal
             document.getElementById('resultModal').classList.add('hidden');
-            
+            if (!mistakeReplayQueueLoaded) {
+                await loadMistakeReplayQueue();
+            }
+
             document.getElementById('startOverlay').style.display = 'none';
             document.getElementById('preGameButtons').style.display = 'none';
             const inGameBtns = document.getElementById('inGameButtons');
