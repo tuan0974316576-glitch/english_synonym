@@ -806,10 +806,23 @@
         }
         .learning-card {
             border: 2px solid #ecf0f1;
-            border-radius: 18px;
-            padding: 16px;
-            background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
-            box-shadow: 0 8px 18px rgba(0,0,0,0.05);
+            border-radius: 24px;
+            padding: 18px;
+            background:
+                radial-gradient(circle at top right, rgba(255,255,255,0.95), rgba(255,255,255,0) 34%),
+                linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.06);
+            position: relative;
+            overflow: hidden;
+        }
+        .learning-card::before {
+            content: "";
+            position: absolute;
+            inset: auto -20px -28px auto;
+            width: 90px;
+            height: 90px;
+            border-radius: 999px;
+            background: rgba(255,255,255,0.18);
         }
         .learning-card-header {
             display: flex;
@@ -837,6 +850,11 @@
             display: inline-flex;
             align-items: center;
             gap: 5px;
+            transition: transform 0.16s ease, box-shadow 0.16s ease, border-color 0.16s ease;
+        }
+        .learning-word-chip:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.08);
         }
         .learning-question-box {
             max-width: 720px;
@@ -872,6 +890,12 @@
         .option-btn:hover {
             transform: translateY(-1px);
             border-color: #74b9ff;
+        }
+        .option-btn.selected {
+            background: #ffe8cc;
+            border-color: #ff922b;
+            color: #8f3f00;
+            box-shadow: 0 10px 20px rgba(255, 146, 43, 0.12);
         }
         .learning-feedback {
             min-height: 28px;
@@ -1249,6 +1273,7 @@
         let learningQuizState = null;
         let currentLearningLevelIndex = null;
         let currentLearningRunStats = null;
+        let currentLearningSelectedSynonyms = [];
         let reminderTimeout = null;
 
         const DAILY_REMINDER_KEY = 'synonym_daily_reminder_enabled';
@@ -1684,6 +1709,16 @@ tick: () => {
             element.classList.add('pop-active');
         }
 
+        function toggleLearningSynonymOption(wordText) {
+            const normalized = wordText.trim().toLowerCase();
+            if (currentLearningSelectedSynonyms.includes(normalized)) {
+                currentLearningSelectedSynonyms = currentLearningSelectedSynonyms.filter(item => item !== normalized);
+            } else {
+                currentLearningSelectedSynonyms = [...currentLearningSelectedSynonyms, normalized];
+            }
+            renderLearningSynonymQuestion();
+        }
+
         function buildLearningLevels() {
             const levels = [];
             for (let start = 0; start < synonymData.length; start += 14) {
@@ -1926,17 +1961,18 @@ tick: () => {
             activeGameGroups = null;
             useFiniteDeck = false;
             learningGroups = learningLevels[levelIndex];
-            learningQuizQueue = learningGroups.map(group => {
+            learningQuizQueue = shuffleArray(learningGroups.map(group => {
                 const words = shuffleArray(group.words.map(getWordText));
                 return {
                     groupId: group.id,
                     targetWord: words[0],
                     correctMeaning: group.meaning,
-                    correctSynonym: words.find(word => word !== words[0]) || words[0]
+                    correctSynonyms: words.filter(word => word !== words[0])
                 };
-            });
+            }));
             learningQuizIndex = 0;
             learningQuizState = null;
+            currentLearningSelectedSynonyms = [];
 
             document.getElementById('startOverlay').style.display = 'none';
             document.getElementById('preGameButtons').style.display = 'none';
@@ -1979,6 +2015,7 @@ tick: () => {
             currentMode = 'learning-quiz';
             learningQuizIndex = 0;
             learningQuizState = null;
+            currentLearningSelectedSynonyms = [];
             renderTopInfoBar();
             renderLearningMeaningQuestion();
         }
@@ -1987,8 +2024,8 @@ tick: () => {
             const item = learningQuizQueue[learningQuizIndex];
             const group = learningGroups.find(entry => entry.id === item.groupId);
             const distractors = pickRandomItems(
-                synonymData.map(entry => entry.meaning),
-                3,
+                learningGroups.map(entry => entry.meaning),
+                5,
                 new Set([group.meaning])
             );
             const options = shuffleArray([group.meaning, ...distractors]);
@@ -1998,7 +2035,7 @@ tick: () => {
                 <div class="learning-question-box">
                     <div class="learning-progress">STEP 2 / 3 · QUIZ 1 · ${learningQuizIndex + 1} / ${learningQuizQueue.length}</div>
                     <div class="learning-prompt">「${item.targetWord}」係邊個中文意思？</div>
-                    <div class="learning-help">先答中意思，之後先會問你同組同義詞。</div>
+                    <div class="learning-help">今關 7 組入面抽 6 個選擇。答中意思，之後要揀晒同組同義詞。</div>
                     <div class="learning-options">
                         ${options.map(option => `<button class="option-btn" onclick="handleLearningMeaningAnswer('${option.replace(/'/g, "\\'")}')">${option}</button>`).join('')}
                     </div>
@@ -2019,17 +2056,18 @@ tick: () => {
                 return;
             }
             playSound('match');
+            currentLearningSelectedSynonyms = [];
             renderLearningSynonymQuestion();
         }
 
         function renderLearningSynonymQuestion(feedback = '', isError = false) {
             const { group, item } = learningQuizState;
-            const distractorPool = synonymData
+            const distractorPool = learningGroups
                 .filter(entry => entry.id !== group.id)
                 .flatMap(entry => entry.words.map(getWordText));
             const options = shuffleArray([
-                item.correctSynonym,
-                ...pickRandomItems(distractorPool, 3, new Set([item.targetWord, item.correctSynonym]))
+                ...item.correctSynonyms,
+                ...pickRandomItems(distractorPool, Math.min(6, distractorPool.length), new Set([item.targetWord, ...item.correctSynonyms]))
             ]);
 
             learningQuizState = { ...learningQuizState, phase: 'synonym' };
@@ -2037,29 +2075,39 @@ tick: () => {
             showLearningPanel(`
                 <div class="learning-question-box">
                     <div class="learning-progress">STEP 2 / 3 · QUIZ 1 · ${learningQuizIndex + 1} / ${learningQuizQueue.length}</div>
-                    <div class="learning-prompt">邊個同「${item.targetWord}」係同組同義詞？</div>
-                    <div class="learning-help">答中之後就會進入下一組。</div>
+                    <div class="learning-prompt">揀晒同「${item.targetWord}」同組嘅同義詞</div>
+                    <div class="learning-help">可以多選。要揀啱晒先會過呢一題。</div>
                     <div class="learning-options">
-                        ${options.map(option => `<button class="option-btn" onclick="handleLearningSynonymAnswer('${option.replace(/'/g, "\\'")}')">${option}</button>`).join('')}
+                        ${options.map(option => {
+                            const normalized = option.trim().toLowerCase();
+                            const selectedClass = currentLearningSelectedSynonyms.includes(normalized) ? 'selected' : '';
+                            return `<button class="option-btn ${selectedClass}" onclick="toggleLearningSynonymOption('${option.replace(/\\/g, "\\\\").replace(/'/g, "\\'")}')">${option}</button>`;
+                        }).join('')}
                     </div>
                     <div class="learning-feedback ${isError ? 'error' : 'success'}">${feedback}</div>
                     <div class="learning-actions">
+                        <button class="btn-learning" onclick="submitLearningSynonymAnswer()">確認答案</button>
                         <button class="btn-restart" onclick="goToLearningMap()">返回路線圖</button>
                     </div>
                 </div>
             `);
         }
 
-        function handleLearningSynonymAnswer(selectedWord) {
+        function submitLearningSynonymAnswer() {
             const { item } = learningQuizState;
-            if (selectedWord !== item.correctSynonym) {
+            const selected = [...currentLearningSelectedSynonyms].sort();
+            const correct = [...item.correctSynonyms.map(word => word.trim().toLowerCase())].sort();
+            const isMatch = selected.length === correct.length && selected.every((word, index) => word === correct[index]);
+
+            if (!isMatch) {
                 if (currentLearningRunStats) currentLearningRunStats.quizMistakes++;
                 playSound('fail');
-                renderLearningSynonymQuestion(`差少少。記住「${item.targetWord}」同邊個字係同一組。`, true);
+                renderLearningSynonymQuestion(`未齊或者揀多咗。要揀晒同「${item.targetWord}」同組嘅字先算過。`, true);
                 return;
             }
 
             playSound('match');
+            currentLearningSelectedSynonyms = [];
             learningQuizIndex++;
 
             if (learningQuizIndex >= learningQuizQueue.length) {
