@@ -576,9 +576,6 @@
     <script src="vocab.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
     <div class="info-panel">
-        <button id="btn-fullscreen" onclick="toggleFullScreen()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; margin-left:10px;" title="全螢幕模式">
-    ⛶
-</button>
         <div class="user-panel" id="userPanel" style="display:none;">
             👤 <span id="currentUserDisplay">Player</span>
             <button class="logout-btn" onclick="logout()">登出</button>
@@ -2020,21 +2017,6 @@ function openStudyModal() {
         }
     }
         checkLoginStatus();
-// --- 全螢幕功能 ---
-function toggleFullScreen() {
-    if (!document.fullscreenElement) {
-        document.documentElement.requestFullscreen().catch(e => {
-            console.log(e);
-        });
-    } else {
-        if (document.exitFullscreen) document.exitFullscreen();
-    }
-}
-
-// 針對 iPhone/iPad 隱藏按鈕 (因為 iOS 不支援按鈕觸發，只能用「加至主畫面」)
-if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
-    document.getElementById('btn-fullscreen').style.display = 'none';
-}
     </script>
 </body>
 </html>
