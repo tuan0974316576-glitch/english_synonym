@@ -565,6 +565,144 @@
             justify-content: center;  /* 令內容垂直置中 (如果需要) */
             padding: 40px !important; /* 加回內距，否則字會貼邊 */
         }
+        .start-mode-buttons {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 12px;
+        }
+        .btn-learning {
+            background: linear-gradient(135deg, #ffb703 0%, #fb8500 100%);
+            color: #2c3e50;
+        }
+        .btn-reminder {
+            background: #2a9d8f;
+            color: white;
+        }
+        .learning-panel {
+            width: 100%;
+            max-width: 920px;
+            margin: 0 auto 24px;
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 14px 40px rgba(0,0,0,0.08);
+            padding: 24px;
+            box-sizing: border-box;
+            display: none;
+        }
+        .learning-panel.visible {
+            display: block;
+        }
+        .learning-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .learning-subtitle {
+            color: #7f8c8d;
+            font-size: 0.95rem;
+            margin-top: 6px;
+        }
+        .learning-progress {
+            display: inline-block;
+            padding: 6px 14px;
+            border-radius: 999px;
+            background: #e8f7f5;
+            color: #127369;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-bottom: 12px;
+        }
+        .learning-study-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 14px;
+            margin: 20px 0;
+        }
+        .learning-card {
+            border: 2px solid #ecf0f1;
+            border-radius: 18px;
+            padding: 16px;
+            background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
+            box-shadow: 0 8px 18px rgba(0,0,0,0.05);
+        }
+        .learning-card h3 {
+            margin: 0 0 10px;
+            font-size: 1.1rem;
+        }
+        .learning-words {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+        .learning-word-chip {
+            background: #f1f3f5;
+            border-radius: 999px;
+            padding: 6px 10px;
+            font-size: 0.9rem;
+            cursor: pointer;
+        }
+        .learning-question-box {
+            max-width: 720px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .learning-prompt {
+            font-size: 1.4rem;
+            font-weight: 800;
+            color: #2c3e50;
+            margin: 14px 0 10px;
+        }
+        .learning-help {
+            color: #7f8c8d;
+            margin-bottom: 18px;
+        }
+        .learning-options {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px;
+        }
+        .option-btn {
+            width: 100%;
+            justify-content: center;
+            text-align: center;
+            background: #f8f9fa;
+            color: #2c3e50;
+            border: 2px solid #dfe6e9;
+            box-shadow: none;
+            border-radius: 18px;
+            min-height: 68px;
+        }
+        .option-btn:hover {
+            transform: translateY(-1px);
+            border-color: #74b9ff;
+        }
+        .learning-feedback {
+            min-height: 28px;
+            margin: 16px 0 0;
+            font-weight: bold;
+        }
+        .learning-feedback.error {
+            color: #e74c3c;
+        }
+        .learning-feedback.success {
+            color: #27ae60;
+        }
+        .learning-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-top: 22px;
+        }
+        .learning-note {
+            margin-top: 12px;
+            padding: 12px 14px;
+            border-radius: 14px;
+            background: #fff7e6;
+            color: #8a5a00;
+            font-size: 0.92rem;
+            line-height: 1.5;
+        }
     </style>
 </head>
 <body>
@@ -588,17 +726,24 @@
 
 <div id="startOverlay" style="text-align: center; margin: 20px 0; width: 100%;">
         <h2 style="color: #2c3e50; margin-bottom: 15px;">準備好接受挑戰了嗎？</h2>
-        <button onclick="startGameSession()" style="background: #e74c3c; color: white; padding: 15px 40px; font-size: 1.2rem; border-radius: 50px; border:none; cursor:pointer; box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4); font-weight:bold;">
-            ▶ 開始遊戲 (Start Game)
-        </button>
+        <div class="start-mode-buttons">
+            <button onclick="startGameSession()" style="background: #e74c3c; color: white; padding: 15px 40px; font-size: 1.2rem; border-radius: 50px; border:none; cursor:pointer; box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4); font-weight:bold;">
+                ▶ 經典模式
+            </button>
+            <button class="btn-learning" onclick="startLearningMode()">
+                🎓 學習模式
+            </button>
+        </div>
     </div>
 
+    <div id="learningPanel" class="learning-panel"></div>
     <div class="game-grid" id="gameGrid"></div>
 
     <div class="action-buttons">
         <div id="preGameButtons" style="display: flex; gap: 15px;">
             <button class="btn-study" onclick="openStudyModal()">📖 溫習表</button>
             <button class="btn-rank" onclick="openRankModal()">👑 排行榜</button>
+            <button class="btn-reminder" onclick="toggleDailyReminder()">🔔 每日提醒</button>
         </div>
         
         <div id="inGameButtons" style="display: none; gap: 15px;">
@@ -865,12 +1010,25 @@
         // --- 遊戲變數 ---
         let hasFlippedCard = false, lockBoard = false;
         let firstCard, secondCard, matchedPairs = 0;
+        let pairsThisLevel = 0;
         let lives = 10, timer, timeLimit = 100, remainingTime = 100;
         let currentLevel = 1, totalScore = 0;
         let sessionHistory = [];
         let globalPairDeck = []; 
         let lastGameEndReason = "";
         let lastGameRank = "計算中..."; 
+        let currentMode = 'classic';
+        let activeGameGroups = null;
+        let useFiniteDeck = false;
+        let learningGroups = [];
+        let learningQuizQueue = [];
+        let learningQuizIndex = 0;
+        let learningQuizState = null;
+        let reminderTimeout = null;
+
+        const DAILY_REMINDER_KEY = 'synonym_daily_reminder_enabled';
+        const LAST_ACTIVE_AT_KEY = 'synonym_last_active_at';
+        const LAST_REMINDER_AT_KEY = 'synonym_last_reminder_at';
 
         let mistakeReplayQueue = [];
         let currentRunMistakeQueue = [];
@@ -1096,6 +1254,9 @@
             document.getElementById('userPanel').style.display = 'flex';
             document.getElementById('currentUserDisplay').innerText = currentPlayer;
             document.getElementById('loginModal').classList.add('hidden'); 
+            markAppActivity();
+            maybeShowComebackReminder();
+            scheduleDailyReminder();
         }
 
         // =========================================================
@@ -1248,6 +1409,310 @@ tick: () => {
         }
         loadVoices();
 
+        function shuffleArray(arr) {
+            const cloned = [...arr];
+            for (let i = cloned.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [cloned[i], cloned[j]] = [cloned[j], cloned[i]];
+            }
+            return cloned;
+        }
+
+        function pickRandomItems(arr, count, excludeValues = new Set()) {
+            return shuffleArray(arr.filter(item => !excludeValues.has(item))).slice(0, count);
+        }
+
+        function getWordText(word) {
+            return typeof word === 'string' ? word : word.t;
+        }
+
+        function getWordMeaning(word, fallbackMeaning) {
+            return typeof word === 'string' ? fallbackMeaning : word.m;
+        }
+
+        function hideLearningPanel() {
+            const panel = document.getElementById('learningPanel');
+            panel.classList.remove('visible');
+            panel.innerHTML = '';
+        }
+
+        function showLearningPanel(html) {
+            const panel = document.getElementById('learningPanel');
+            panel.innerHTML = html;
+            panel.classList.add('visible');
+            document.getElementById('gameGrid').style.display = 'none';
+        }
+
+        function buildLearningWordChip(wordText, color) {
+            return `<span class="learning-word-chip" style="border:1px solid ${color}33; color:${color};" onclick="speakWord('${wordText.replace(/'/g, "\\'")}')">${wordText}</span>`;
+        }
+
+        function resetLearningState() {
+            learningGroups = [];
+            learningQuizQueue = [];
+            learningQuizIndex = 0;
+            learningQuizState = null;
+            activeGameGroups = null;
+            useFiniteDeck = false;
+            if (currentMode !== 'classic') currentMode = 'classic';
+        }
+
+        function startLearningMode() {
+            if (!currentPlayer) return;
+            closeModal('rankModal');
+            document.getElementById('resultModal').classList.add('hidden');
+            clearInterval(timer);
+
+            currentMode = 'learning-study';
+            activeGameGroups = null;
+            useFiniteDeck = false;
+            learningGroups = shuffleArray(synonymData).slice(0, 10);
+            learningQuizQueue = learningGroups.map(group => {
+                const words = shuffleArray(group.words.map(getWordText));
+                return {
+                    groupId: group.id,
+                    targetWord: words[0],
+                    correctMeaning: group.meaning,
+                    correctSynonym: words.find(word => word !== words[0]) || words[0]
+                };
+            });
+            learningQuizIndex = 0;
+            learningQuizState = null;
+
+            document.getElementById('startOverlay').style.display = 'none';
+            document.getElementById('preGameButtons').style.display = 'none';
+            document.getElementById('inGameButtons').style.display = 'none';
+            renderLearningStudyStep();
+        }
+
+        function renderLearningStudyStep() {
+            const cardsHtml = learningGroups.map((group, index) => {
+                const wordsHtml = group.words
+                    .map(word => buildLearningWordChip(getWordText(word), group.color))
+                    .join('');
+                return `
+                    <div class="learning-card" style="border-color:${group.color}33;">
+                        <h3 style="color:${group.color};">${index + 1}. ${group.meaning}</h3>
+                        <div class="learning-words">${wordsHtml}</div>
+                    </div>
+                `;
+            }).join('');
+
+            showLearningPanel(`
+                <div class="learning-header">
+                    <div class="learning-progress">STEP 1 / 3</div>
+                    <div class="learning-prompt">先溫 10 組同義詞</div>
+                    <div class="learning-subtitle">點字可以發音。睇熟中文意思同同義詞之後，再開始測驗。</div>
+                </div>
+                <div class="learning-study-grid">${cardsHtml}</div>
+                <div class="learning-actions">
+                    <button class="btn-learning" onclick="startLearningQuizOne()">開始 QUIZ 1</button>
+                    <button class="btn-restart" onclick="backToLobby()">返回主選單</button>
+                </div>
+            `);
+        }
+
+        function startLearningQuizOne() {
+            currentMode = 'learning-quiz';
+            learningQuizIndex = 0;
+            learningQuizState = null;
+            renderLearningMeaningQuestion();
+        }
+
+        function renderLearningMeaningQuestion(feedback = '', isError = false) {
+            const item = learningQuizQueue[learningQuizIndex];
+            const group = learningGroups.find(entry => entry.id === item.groupId);
+            const distractors = pickRandomItems(
+                synonymData.map(entry => entry.meaning),
+                3,
+                new Set([group.meaning])
+            );
+            const options = shuffleArray([group.meaning, ...distractors]);
+            learningQuizState = { phase: 'meaning', item, group };
+
+            showLearningPanel(`
+                <div class="learning-question-box">
+                    <div class="learning-progress">STEP 2 / 3 · QUIZ 1 · ${learningQuizIndex + 1} / ${learningQuizQueue.length}</div>
+                    <div class="learning-prompt">「${item.targetWord}」係邊個中文意思？</div>
+                    <div class="learning-help">先答中意思，之後先會問你同組同義詞。</div>
+                    <div class="learning-options">
+                        ${options.map(option => `<button class="option-btn" onclick="handleLearningMeaningAnswer('${option.replace(/'/g, "\\'")}')">${option}</button>`).join('')}
+                    </div>
+                    <div class="learning-feedback ${isError ? 'error' : 'success'}">${feedback}</div>
+                    <div class="learning-actions">
+                        <button class="btn-restart" onclick="backToLobby()">退出學習模式</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        function handleLearningMeaningAnswer(selectedMeaning) {
+            const { group, item } = learningQuizState;
+            if (selectedMeaning !== group.meaning) {
+                playSound('fail');
+                renderLearningMeaningQuestion(`未啱，再試一次。提示：${item.targetWord} 屬於你啱啱溫過嘅其中一組。`, true);
+                return;
+            }
+            playSound('match');
+            renderLearningSynonymQuestion();
+        }
+
+        function renderLearningSynonymQuestion(feedback = '', isError = false) {
+            const { group, item } = learningQuizState;
+            const distractorPool = synonymData
+                .filter(entry => entry.id !== group.id)
+                .flatMap(entry => entry.words.map(getWordText));
+            const options = shuffleArray([
+                item.correctSynonym,
+                ...pickRandomItems(distractorPool, 3, new Set([item.targetWord, item.correctSynonym]))
+            ]);
+
+            learningQuizState = { ...learningQuizState, phase: 'synonym' };
+
+            showLearningPanel(`
+                <div class="learning-question-box">
+                    <div class="learning-progress">STEP 2 / 3 · QUIZ 1 · ${learningQuizIndex + 1} / ${learningQuizQueue.length}</div>
+                    <div class="learning-prompt">邊個同「${item.targetWord}」係同組同義詞？</div>
+                    <div class="learning-help">答中之後就會進入下一組。</div>
+                    <div class="learning-options">
+                        ${options.map(option => `<button class="option-btn" onclick="handleLearningSynonymAnswer('${option.replace(/'/g, "\\'")}')">${option}</button>`).join('')}
+                    </div>
+                    <div class="learning-feedback ${isError ? 'error' : 'success'}">${feedback}</div>
+                    <div class="learning-actions">
+                        <button class="btn-restart" onclick="backToLobby()">退出學習模式</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        function handleLearningSynonymAnswer(selectedWord) {
+            const { item } = learningQuizState;
+            if (selectedWord !== item.correctSynonym) {
+                playSound('fail');
+                renderLearningSynonymQuestion(`差少少。記住「${item.targetWord}」同邊個字係同一組。`, true);
+                return;
+            }
+
+            playSound('match');
+            learningQuizIndex++;
+
+            if (learningQuizIndex >= learningQuizQueue.length) {
+                renderLearningQuizTwoIntro();
+                return;
+            }
+
+            renderLearningMeaningQuestion('答得好，下一組。', false);
+        }
+
+        function renderLearningQuizTwoIntro() {
+            currentMode = 'learning-quiz-2';
+            showLearningPanel(`
+                <div class="learning-question-box">
+                    <div class="learning-progress">STEP 3 / 3</div>
+                    <div class="learning-prompt">QUIZ 2：翻卡牌配對</div>
+                    <div class="learning-help">而家會用返翻卡模式，只玩你頭先學過嘅 10 組同義詞。</div>
+                    <div class="learning-actions">
+                        <button class="btn-learning" onclick="startLearningCardMode()">開始 QUIZ 2</button>
+                        <button class="btn-restart" onclick="backToLobby()">返回主選單</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        function startLearningCardMode() {
+            currentMode = 'learning-card';
+            activeGameGroups = learningGroups;
+            useFiniteDeck = true;
+            hideLearningPanel();
+            document.getElementById('gameGrid').style.display = 'grid';
+            document.getElementById('inGameButtons').style.display = 'flex';
+            document.getElementById('btn-giveup').style.display = 'flex';
+            document.getElementById('btn-review-level').style.display = 'none';
+            globalPairDeck = generateMasterDeck(new Set(), activeGameGroups);
+            initGame(false);
+        }
+
+        function renderLearningCompletion() {
+            currentMode = 'learning-finished';
+            document.getElementById('inGameButtons').style.display = 'none';
+            showLearningPanel(`
+                <div class="learning-question-box">
+                    <div class="learning-progress">完成</div>
+                    <div class="learning-prompt">今日 10 組學習模式完成</div>
+                    <div class="learning-help">Quiz 1 同 Quiz 2 都完成咗，可以再玩一次，或者返回主選單。</div>
+                    <div class="learning-actions">
+                        <button class="btn-learning" onclick="startLearningMode()">再學一輪</button>
+                        <button class="btn-restart" onclick="backToLobby()">返回主選單</button>
+                    </div>
+                </div>
+            `);
+        }
+
+        function isLearningFlow() {
+            return currentMode.startsWith('learning');
+        }
+
+        function toggleDailyReminder() {
+            if (!('Notification' in window)) {
+                alert("你的裝置/瀏覽器未支援通知功能。");
+                return;
+            }
+
+            const enabled = localStorage.getItem(DAILY_REMINDER_KEY) === 'true';
+            if (enabled) {
+                localStorage.setItem(DAILY_REMINDER_KEY, 'false');
+                clearTimeout(reminderTimeout);
+                alert("已關閉每日提醒。");
+                return;
+            }
+
+            Notification.requestPermission().then(permission => {
+                if (permission !== 'granted') {
+                    alert("未能開啟通知權限。");
+                    return;
+                }
+                localStorage.setItem(DAILY_REMINDER_KEY, 'true');
+                scheduleDailyReminder();
+                alert("已開啟提醒。提示：純 Web App 提醒受裝置與瀏覽器支援限制，如要穩定背景每日推播，之後仍建議接 push service。");
+            });
+        }
+
+        function scheduleDailyReminder() {
+            clearTimeout(reminderTimeout);
+            if (localStorage.getItem(DAILY_REMINDER_KEY) !== 'true') return;
+            if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+            reminderTimeout = setTimeout(() => {
+                new Notification('同義詞の鬼', {
+                    body: '今日未練 synonym，花 5 分鐘玩一局學習模式啦。',
+                    icon: 'icon.png'
+                });
+                localStorage.setItem(LAST_REMINDER_AT_KEY, String(Date.now()));
+                scheduleDailyReminder();
+            }, 24 * 60 * 60 * 1000);
+        }
+
+        function maybeShowComebackReminder() {
+            if (localStorage.getItem(DAILY_REMINDER_KEY) !== 'true') return;
+            if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+            const lastActiveAt = Number(localStorage.getItem(LAST_ACTIVE_AT_KEY) || 0);
+            const lastReminderAt = Number(localStorage.getItem(LAST_REMINDER_AT_KEY) || 0);
+            const now = Date.now();
+
+            if (lastActiveAt && now - lastActiveAt >= 24 * 60 * 60 * 1000 && now - lastReminderAt >= 12 * 60 * 60 * 1000) {
+                new Notification('同義詞の鬼', {
+                    body: '隔咗一日喇，返嚟練 10 組 synonym 啦。',
+                    icon: 'icon.png'
+                });
+                localStorage.setItem(LAST_REMINDER_AT_KEY, String(now));
+            }
+        }
+
+        function markAppActivity() {
+            localStorage.setItem(LAST_ACTIVE_AT_KEY, String(Date.now()));
+        }
+
         // --- 遊戲邏輯 ---
  // ------------------------------------------------------------------
         // 🤖 Google Gemini AI 設定 (最新修復版)
@@ -1256,9 +1721,9 @@ tick: () => {
         // ------------------------------------------------------------------
         // 🎮 遊戲核心邏輯 (完整修復版)
         // ------------------------------------------------------------------
-        function generateMasterDeck(excludedGroupIds = new Set()) {
+        function generateMasterDeck(excludedGroupIds = new Set(), sourceGroups = synonymData) {
             let tempDeck = [];
-            synonymData.forEach(g => {
+            sourceGroups.forEach(g => {
                 if (excludedGroupIds.has(g.id)) return;
                 let ws = g.words.map(w => (typeof w === 'string') ? {t:w, m:g.meaning} : {t:w.t, m:w.m});
                 ws.sort(() => 0.5 - Math.random());
@@ -1273,12 +1738,13 @@ tick: () => {
             if (!currentPlayer) return; 
 
             const grid = document.getElementById('gameGrid');
+            grid.style.display = 'grid';
             grid.innerHTML = '';
             hasFlippedCard = false; lockBoard = false; firstCard = null; secondCard = null; matchedPairs = 0;
             
 if (!isNextLevel) { 
         currentLevel = 1; totalScore = 0; lives = 10; // ✅ 10條命
-        globalPairDeck = []; 
+        if (!useFiniteDeck) globalPairDeck = [];
         sessionHistory = []; 
         currentRunMistakeQueue = [];
         currentRunMistakeCounts = {};
@@ -1287,20 +1753,29 @@ if (!isNextLevel) {
         lives = Math.min(lives + 3, 10); // ✅ 過關 +3 血
     }
 
-            if (globalPairDeck.length < 8) {
+            const sourceGroups = activeGameGroups || synonymData;
+
+            if (!useFiniteDeck && globalPairDeck.length < 8) {
                 const excludedGroupIds = new Set(globalPairDeck.map(pair => pair.gid));
                 const replayPairs = takeMistakeReplayPairs(8 - globalPairDeck.length, excludedGroupIds);
                 globalPairDeck = replayPairs.concat(globalPairDeck);
 
                 if (globalPairDeck.length < 8) {
-                    const freshPairs = generateMasterDeck(new Set(globalPairDeck.map(pair => pair.gid)));
+                    const freshPairs = generateMasterDeck(new Set(globalPairDeck.map(pair => pair.gid)), sourceGroups);
                     globalPairDeck = globalPairDeck.concat(freshPairs.slice(0, 8 - globalPairDeck.length));
                 }
             }
 
+            if (useFiniteDeck && globalPairDeck.length === 0) {
+                clearInterval(timer);
+                renderLearningCompletion();
+                return;
+            }
+
             updateUI(); resetTimer(); startTimer();
 
-            const selectedPairs = globalPairDeck.splice(0, 8);
+            const selectedPairs = globalPairDeck.splice(0, Math.min(8, globalPairDeck.length));
+            pairsThisLevel = selectedPairs.length;
 
             sessionHistory.push({
                 level: currentLevel,
@@ -1426,14 +1901,18 @@ function checkForMatch() {
             totalScore += 10; 
             updateUI(); 
 
-            if (matchedPairs === 8) {
+            if (matchedPairs === pairsThisLevel) {
                 clearInterval(timer);
                 totalScore += remainingTime + (lives * 10);
                 document.getElementById('total-score').innerText = totalScore;
                 setTimeout(() => {
                     playSound('victory');
-                    alert(`🎉 Level ${currentLevel} Complete! 加番3個❤️俾你!\n總分: ${totalScore}`);
-                    initGame(true);
+                    if (useFiniteDeck && globalPairDeck.length === 0) {
+                        renderLearningCompletion();
+                    } else {
+                        alert(`🎉 Level ${currentLevel} Complete! 加番3個❤️俾你!\n總分: ${totalScore}`);
+                        initGame(true);
+                    }
                 }, 800);
             }
             resetBoard();
@@ -1669,6 +2148,7 @@ function showResultPage(reason) {
         // --- 排行榜與分數 ---
         function autoSubmitScore(isSilent = false) {
             if (!currentPlayer) return;
+            if (isLearningFlow()) return;
             
             if (totalScore === 0) {
                  if (!isSilent) {
@@ -1801,15 +2281,25 @@ uniqueScores = uniqueScores.slice(0, 100);
             clearInterval(timer);
             lockBoard = false; hasFlippedCard = false;
             document.getElementById('gameGrid').innerHTML = ''; 
+            document.getElementById('gameGrid').style.display = 'grid';
             document.getElementById('startOverlay').style.display = 'block'; 
             document.getElementById('preGameButtons').style.display = 'flex';
             document.getElementById('inGameButtons').style.display = 'none';
             document.getElementById('timer').innerText = timeLimit;
 document.getElementById('lives').innerText = "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️";
     lives = 10; 
+    hideLearningPanel();
+    resetLearningState();
+    updateUI();
 }
 
         function onGiveUp() {
+            if (isLearningFlow()) {
+                if(confirm("確定要離開學習模式並返回主選單嗎？")) {
+                    backToLobby();
+                }
+                return;
+            }
             if(confirm("確定要放棄遊戲並結算分數嗎？")) {
                 revealAndEndGame('主動放棄');
             }
@@ -1822,14 +2312,20 @@ document.getElementById('lives').innerText = "❤️❤️❤️❤️❤️❤�
                 await loadMistakeReplayQueue();
             }
 
+            currentMode = 'classic';
+            activeGameGroups = null;
+            useFiniteDeck = false;
+            hideLearningPanel();
             document.getElementById('startOverlay').style.display = 'none';
             document.getElementById('preGameButtons').style.display = 'none';
+            document.getElementById('gameGrid').style.display = 'grid';
             const inGameBtns = document.getElementById('inGameButtons');
             inGameBtns.style.display = 'flex';    
             document.getElementById('btn-giveup').style.display = 'flex'; 
             document.getElementById('btn-review-level').style.display = 'none'; 
 
             initGame(false);
+            markAppActivity();
         }
 
         function closeModal(id) {
@@ -1845,11 +2341,17 @@ document.getElementById('lives').innerText = "❤️❤️❤️❤️❤️❤�
         }
 
         document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+                markAppActivity();
+                maybeShowComebackReminder();
+                scheduleDailyReminder();
+            }
             if (document.visibilityState === 'hidden') {
                 if (currentLevel > 0 && totalScore > 0 && document.getElementById('inGameButtons').style.display === 'flex') {
                     console.log("App hidden, auto saving score...");
                     autoSubmitScore(true);
                 }
+                markAppActivity();
             }
         });
 
