@@ -1547,6 +1547,19 @@ tick: () => {
             click: () => {
                 cuteSfx.playTone(600, 'triangle', 0.1, 0.3);
             },
+            select: () => {
+                cuteSfx.playTone(720, 'triangle', 0.08, 0.22);
+                setTimeout(() => cuteSfx.playTone(860, 'triangle', 0.08, 0.16), 50);
+            },
+            stage: () => {
+                cuteSfx.playTone(523.25, 'sine', 0.12, 0.18);
+                setTimeout(() => cuteSfx.playTone(659.25, 'sine', 0.12, 0.18), 70);
+                setTimeout(() => cuteSfx.playTone(783.99, 'triangle', 0.18, 0.2), 140);
+            },
+            confirm: () => {
+                cuteSfx.playTone(880, 'square', 0.08, 0.18);
+                setTimeout(() => cuteSfx.playTone(1174.66, 'triangle', 0.14, 0.22), 55);
+            },
 
             // 🃏 翻卡聲 (Pop! 比較清脆)
             flip: () => {
@@ -1600,13 +1613,16 @@ tick: () => {
             else if (type === 'fail') cuteSfx.fail();
             else if (type === 'victory') cuteSfx.victory();
             else if (type === 'gameover') cuteSfx.gameover();
+            else if (type === 'select') cuteSfx.select();
+            else if (type === 'stage') cuteSfx.stage();
+            else if (type === 'confirm') cuteSfx.confirm();
         }
 
         // --- 自動綁定 UI 音效 (所有 Button 都有聲) ---
         (function initAutoSound() {
             const attachSounds = () => {
                 // 捉住所有 button, 選項, 溫習卡
-                const targets = document.querySelectorAll('button, .option-btn, .word-badge, .study-tag, .close-btn');
+                const targets = document.querySelectorAll('button, .option-btn, .word-badge, .study-tag, .learning-word-chip, .route-node, .close-btn');
                 
                 targets.forEach(el => {
                     if (el.dataset.soundReady) return; // 避免重複加
@@ -1703,6 +1719,7 @@ tick: () => {
         }
 
         function handleLearningWordClick(element, wordText) {
+            playSound('select');
             speakWord(wordText);
             element.classList.remove('pop-active');
             void element.offsetWidth;
@@ -1713,8 +1730,10 @@ tick: () => {
             const normalized = wordText.trim().toLowerCase();
             if (currentLearningSelectedSynonyms.includes(normalized)) {
                 currentLearningSelectedSynonyms = currentLearningSelectedSynonyms.filter(item => item !== normalized);
+                playSound('click');
             } else {
                 currentLearningSelectedSynonyms = [...currentLearningSelectedSynonyms, normalized];
+                playSound('select');
             }
             renderLearningSynonymQuestion();
         }
@@ -1869,6 +1888,7 @@ tick: () => {
 
         function goToLearningMap() {
             if (!currentPlayer) return;
+            playSound('stage');
             closeModal('rankModal');
             document.getElementById('resultModal').classList.add('hidden');
             clearInterval(timer);
@@ -1948,6 +1968,7 @@ tick: () => {
             const progress = getLearningProgress();
             if (levelIndex + 1 > Math.min(progress, learningLevels.length)) return;
 
+            playSound('stage');
             closeModal('rankModal');
             document.getElementById('resultModal').classList.add('hidden');
             clearInterval(timer);
@@ -2016,6 +2037,7 @@ tick: () => {
             learningQuizIndex = 0;
             learningQuizState = null;
             currentLearningSelectedSynonyms = [];
+            playSound('stage');
             renderTopInfoBar();
             renderLearningMeaningQuestion();
         }
@@ -2056,6 +2078,7 @@ tick: () => {
                 return;
             }
             playSound('match');
+            playSound('confirm');
             currentLearningSelectedSynonyms = [];
             renderLearningSynonymQuestion();
         }
@@ -2107,6 +2130,7 @@ tick: () => {
             }
 
             playSound('match');
+            playSound('confirm');
             currentLearningSelectedSynonyms = [];
             learningQuizIndex++;
 
@@ -2120,6 +2144,7 @@ tick: () => {
 
         function renderLearningQuizTwoIntro() {
             currentMode = 'learning-quiz-2';
+            playSound('stage');
             renderTopInfoBar();
             showLearningPanel(`
                 <div class="learning-question-box">
@@ -2138,6 +2163,7 @@ tick: () => {
             currentMode = 'learning-card';
             activeGameGroups = learningGroups;
             useFiniteDeck = true;
+            playSound('stage');
             hideLearningPanel();
             document.getElementById('gameGrid').style.display = 'grid';
             document.getElementById('inGameButtons').style.display = 'flex';
@@ -2164,6 +2190,7 @@ tick: () => {
                 setLearningProgress(nextProgress);
             }
             currentMode = 'learning-finished';
+            playSound('stage');
             document.getElementById('inGameButtons').style.display = 'none';
             renderTopInfoBar();
             showLearningPanel(`
