@@ -713,6 +713,30 @@
             font-size: 0.84rem;
             color: #6c757d;
         }
+        .route-rewards {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 12px;
+        }
+        .route-reward {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 10px;
+            border-radius: 999px;
+            font-size: 0.78rem;
+            font-weight: 800;
+            letter-spacing: 0.02em;
+        }
+        .route-reward.clear {
+            background: #e8f7ee;
+            color: #1b7f4b;
+        }
+        .route-reward.perfect {
+            background: #fff3bf;
+            color: #9c6b00;
+        }
         .route-milestone {
             position: absolute;
             left: 50%;
@@ -1195,12 +1219,14 @@
         let learningQuizIndex = 0;
         let learningQuizState = null;
         let currentLearningLevelIndex = null;
+        let currentLearningRunStats = null;
         let reminderTimeout = null;
 
         const DAILY_REMINDER_KEY = 'synonym_daily_reminder_enabled';
         const LAST_ACTIVE_AT_KEY = 'synonym_last_active_at';
         const LAST_REMINDER_AT_KEY = 'synonym_last_reminder_at';
         const LEARNING_PROGRESS_PREFIX = 'synonym_learning_progress_';
+        const LEARNING_AWARDS_PREFIX = 'synonym_learning_awards_';
 
         let mistakeReplayQueue = [];
         let currentRunMistakeQueue = [];
@@ -1635,6 +1661,10 @@ tick: () => {
             return `${LEARNING_PROGRESS_PREFIX}${currentPlayer || 'guest'}`;
         }
 
+        function getLearningAwardsKey() {
+            return `${LEARNING_AWARDS_PREFIX}${currentPlayer || 'guest'}`;
+        }
+
         function getLearningProgress() {
             const rawValue = Number(localStorage.getItem(getLearningProgressKey()) || 1);
             if (!learningLevels.length) learningLevels = buildLearningLevels();
@@ -1643,6 +1673,26 @@ tick: () => {
 
         function setLearningProgress(levelNumber) {
             localStorage.setItem(getLearningProgressKey(), String(levelNumber));
+        }
+
+        function getLearningAwards() {
+            try {
+                return JSON.parse(localStorage.getItem(getLearningAwardsKey()) || '{}');
+            } catch (error) {
+                return {};
+            }
+        }
+
+        function saveLearningAwards(awards) {
+            localStorage.setItem(getLearningAwardsKey(), JSON.stringify(awards));
+        }
+
+        function getLearningRunSummary() {
+            return {
+                quizMistakes: currentLearningRunStats?.quizMistakes || 0,
+                cardMistakes: currentLearningRunStats?.cardMistakes || 0,
+                perfect: (currentLearningRunStats?.quizMistakes || 0) === 0 && (currentLearningRunStats?.cardMistakes || 0) === 0
+            };
         }
 
         function getRoutePreviewText(groups) {
@@ -1663,17 +1713,25 @@ tick: () => {
             if (!learningLevels.length) learningLevels = buildLearningLevels();
 
             const progress = getLearningProgress();
+            const awards = getLearningAwards();
             const completedCount = Math.min(learningLevels.length, Math.max(0, progress - 1));
             const nodesHtml = learningLevels.map((groups, index) => {
                 const levelNumber = index + 1;
                 const isCompleted = progress > learningLevels.length ? true : levelNumber < progress;
                 const isCurrent = progress <= learningLevels.length && levelNumber === progress;
                 const isLocked = levelNumber > progress;
+                const award = awards[String(levelNumber)];
                 const positionClass = index % 2 === 0 ? 'left' : 'right';
                 const stateClass = isCurrent ? 'current' : isCompleted ? 'completed' : isLocked ? 'locked' : '';
                 const statusText = isCurrent ? '目前挑戰' : isCompleted ? '已完成' : '尚未解鎖';
                 const previewText = getRoutePreviewText(groups);
                 const clickAction = isLocked ? '' : `onclick="startLearningLevel(${index})"`;
+                const rewardHtml = award ? `
+                    <div class="route-rewards">
+                        <span class="route-reward clear">🏅 過關</span>
+                        ${award.perfect ? '<span class="route-reward perfect">👑 完美通關</span>' : ''}
+                    </div>
+                ` : '';
 
                 return `
                     <div class="route-stop ${positionClass} ${stateClass}">
@@ -1684,6 +1742,7 @@ tick: () => {
                                 <div class="route-title">第 ${levelNumber} 關</div>
                                 <div class="route-meta">7 組同義詞 · 先溫習，再做 Quiz 1，最後翻卡配對</div>
                                 <div class="route-preview">${previewText}</div>
+                                ${rewardHtml}
                             </button>
                         </div>
                     </div>
@@ -1716,6 +1775,7 @@ tick: () => {
             learningQuizIndex = 0;
             learningQuizState = null;
             currentLearningLevelIndex = null;
+            currentLearningRunStats = null;
             activeGameGroups = null;
             useFiniteDeck = false;
             if (currentMode !== 'classic') currentMode = 'classic';
@@ -1736,6 +1796,10 @@ tick: () => {
 
             currentMode = 'learning-study';
             currentLearningLevelIndex = levelIndex;
+            currentLearningRunStats = {
+                quizMistakes: 0,
+                cardMistakes: 0
+            };
             activeGameGroups = null;
             useFiniteDeck = false;
             learningGroups = learningLevels[levelIndex];
@@ -1821,6 +1885,7 @@ tick: () => {
         function handleLearningMeaningAnswer(selectedMeaning) {
             const { group, item } = learningQuizState;
             if (selectedMeaning !== group.meaning) {
+                if (currentLearningRunStats) currentLearningRunStats.quizMistakes++;
                 playSound('fail');
                 renderLearningMeaningQuestion(`未啱，再試一次。提示：${item.targetWord} 屬於你啱啱溫過嘅其中一組。`, true);
                 return;
@@ -1860,6 +1925,7 @@ tick: () => {
         function handleLearningSynonymAnswer(selectedWord) {
             const { item } = learningQuizState;
             if (selectedWord !== item.correctSynonym) {
+                if (currentLearningRunStats) currentLearningRunStats.quizMistakes++;
                 playSound('fail');
                 renderLearningSynonymQuestion(`差少少。記住「${item.targetWord}」同邊個字係同一組。`, true);
                 return;
@@ -1908,6 +1974,14 @@ tick: () => {
             const justClearedLevel = currentLearningLevelIndex + 1;
             const nextProgress = Math.min(learningLevels.length + 1, justClearedLevel + 1);
             const savedProgress = getLearningProgress();
+            const summary = getLearningRunSummary();
+            const awards = getLearningAwards();
+            const existingAward = awards[String(justClearedLevel)] || { cleared: true, perfect: false };
+            awards[String(justClearedLevel)] = {
+                cleared: true,
+                perfect: existingAward.perfect || summary.perfect
+            };
+            saveLearningAwards(awards);
             if (savedProgress <= justClearedLevel) {
                 setLearningProgress(nextProgress);
             }
@@ -1918,6 +1992,7 @@ tick: () => {
                     <div class="learning-progress">完成</div>
                     <div class="learning-prompt">第 ${justClearedLevel} 關完成</div>
                     <div class="learning-help">Quiz 1 同 Quiz 2 都完成咗。下一關已經幫你解鎖，可以繼續推圖。</div>
+                    <div class="learning-note">${summary.perfect ? '👑 完美通關：今關 Quiz 1 冇答錯，而且 Quiz 2 冇失血。' : `🏅 已獲得過關獎章。今關答錯 ${summary.quizMistakes} 次，翻卡失手 ${summary.cardMistakes} 次。想拎皇冠可以再挑戰。`}</div>
                     <div class="learning-actions">
                         <button class="btn-learning" onclick="goToLearningMap()">回到路線圖</button>
                         <button class="btn-restart" onclick="startLearningLevel(${currentLearningLevelIndex})">重玩這一關</button>
@@ -2200,6 +2275,10 @@ function checkForMatch() {
             lockBoard = true; 
             const c1 = firstCard;
             const c2 = secondCard;
+
+            if (currentMode === 'learning-card' && currentLearningRunStats) {
+                currentLearningRunStats.cardMistakes++;
+            }
 
             recordMistakeWords(
                 { gid: c1.dataset.group, word: c1.dataset.word, color: c1.dataset.color },
