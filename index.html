@@ -927,7 +927,7 @@
             <div class="stat-box score-box">🏆 Score: <span id="total-score">0</span></div>
         </div>
         <div class="info-group" id="overviewStatsGroup" style="display:none;">
-            <div class="stat-box overview-box">Mastered Vocab <span id="mastered-vocab-display">[0 / 210]</span></div>
+            <div class="stat-box overview-box">Mastered Vocab <span id="mastered-vocab-display">[0 / 0]</span></div>
             <div class="stat-box overview-box">最高分數: <span id="best-score-display">0</span></div>
             <div class="stat-box overview-box">排名: <span id="best-rank-display">--</span></div>
         </div>
@@ -1715,10 +1715,19 @@ tick: () => {
             };
         }
 
+        function getTotalVocabCount() {
+            return synonymData.reduce((total, group) => total + group.words.length, 0);
+        }
+
         function getMasteredVocabCount() {
             if (!learningLevels.length) learningLevels = buildLearningLevels();
             const completedLevels = Math.min(learningLevels.length, Math.max(0, getLearningProgress() - 1));
-            return Math.min(synonymData.length, completedLevels * 7);
+            const masteredCount = learningLevels
+                .slice(0, completedLevels)
+                .reduce((total, levelGroups) => {
+                    return total + levelGroups.reduce((groupTotal, group) => groupTotal + group.words.length, 0);
+                }, 0);
+            return Math.min(getTotalVocabCount(), masteredCount);
         }
 
         function getOrdinalSuffix(num) {
@@ -1754,7 +1763,7 @@ tick: () => {
             } else {
                 gameStatsGroup.style.display = 'none';
                 overviewStatsGroup.style.display = 'flex';
-                document.getElementById('mastered-vocab-display').innerText = `[${getMasteredVocabCount()} / ${synonymData.length}]`;
+                document.getElementById('mastered-vocab-display').innerText = `[${getMasteredVocabCount()} / ${getTotalVocabCount()}]`;
                 document.getElementById('best-score-display').innerText = currentPlayerBestScore || 0;
                 document.getElementById('best-rank-display').innerHTML = formatRankLabel(currentPlayerBestRank);
             }
