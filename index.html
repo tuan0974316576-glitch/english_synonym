@@ -63,6 +63,13 @@
             display: flex; gap: 10px; align-items: center;
             border: 1px solid #b2bec3;
         }
+        .info-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
         .logout-btn {
             background: none; border: none; color: #e74c3c; 
             cursor: pointer; text-decoration: underline; font-size: 0.85rem;
@@ -70,6 +77,23 @@
 
         .stat-box { display: flex; align-items: center; gap: 6px; white-space: nowrap;}
         .score-box { color: #2980b9; }
+        .overview-box { color: #34495e; }
+        .rank-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 26px;
+            height: 26px;
+            padding: 0 8px;
+            border-radius: 999px;
+            font-size: 0.82rem;
+            font-weight: 900;
+            color: white;
+        }
+        .rank-pill.gold { background: linear-gradient(135deg, #f4b400 0%, #ffcf33 100%); color: #6b4f00; }
+        .rank-pill.silver { background: linear-gradient(135deg, #b8c0cc 0%, #e2e8f0 100%); color: #495057; }
+        .rank-pill.bronze { background: linear-gradient(135deg, #b26b3d 0%, #d79a6b 100%); color: #fff8f0; }
+        .rank-pill.default { background: #6c757d; }
         
         #lives { color: #e74c3c; transition: all 0.3s; }
         .low-health { animation: pulse-red 0.8s infinite; }
@@ -896,10 +920,17 @@
             👤 <span id="currentUserDisplay">Player</span>
             <button class="logout-btn" onclick="logout()">登出</button>
         </div>
-        <div class="stat-box">LEVEL <span id="level-display">1</span></div>
-        <div class="stat-box">⏱️ <span id="timer">100</span>s</div>
-        <div class="stat-box"> <span id="lives">10</span></div> 
-        <div class="stat-box score-box">🏆 Score: <span id="total-score">0</span></div>
+        <div class="info-group" id="gameStatsGroup">
+            <div class="stat-box">LEVEL <span id="level-display">1</span></div>
+            <div class="stat-box">⏱️ <span id="timer">100</span>s</div>
+            <div class="stat-box"> <span id="lives">10</span></div> 
+            <div class="stat-box score-box">🏆 Score: <span id="total-score">0</span></div>
+        </div>
+        <div class="info-group" id="overviewStatsGroup" style="display:none;">
+            <div class="stat-box overview-box">Mastered Vocab <span id="mastered-vocab-display">[0 / 210]</span></div>
+            <div class="stat-box overview-box">最高分數: <span id="best-score-display">0</span></div>
+            <div class="stat-box overview-box">排名: <span id="best-rank-display">--</span></div>
+        </div>
     </div>
 
 <div id="startOverlay" style="text-align: center; margin: 20px 0; width: 100%;">
@@ -1195,7 +1226,9 @@
         let globalPairDeck = []; 
         let lastGameEndReason = "";
         let lastGameRank = "計算中..."; 
-        let currentMode = 'classic';
+        let currentPlayerBestScore = 0;
+        let currentPlayerBestRank = null;
+        let currentMode = 'menu';
         let activeGameGroups = null;
         let useFiniteDeck = false;
         let learningLevels = [];
@@ -1440,6 +1473,8 @@
             markAppActivity();
             maybeShowComebackReminder();
             scheduleDailyReminder();
+            renderTopInfoBar();
+            refreshPlayerProfileStats();
         }
 
         // =========================================================
@@ -1680,6 +1715,88 @@ tick: () => {
             };
         }
 
+        function getMasteredVocabCount() {
+            if (!learningLevels.length) learningLevels = buildLearningLevels();
+            const completedLevels = Math.min(learningLevels.length, Math.max(0, getLearningProgress() - 1));
+            return Math.min(synonymData.length, completedLevels * 7);
+        }
+
+        function getOrdinalSuffix(num) {
+            const mod10 = num % 10;
+            const mod100 = num % 100;
+            if (mod10 === 1 && mod100 !== 11) return 'st';
+            if (mod10 === 2 && mod100 !== 12) return 'nd';
+            if (mod10 === 3 && mod100 !== 13) return 'rd';
+            return 'th';
+        }
+
+        function formatRankLabel(rank) {
+            if (!rank || typeof rank !== 'number') return '--';
+            const text = `${rank}${getOrdinalSuffix(rank)}`;
+            if (rank === 1) return `<span class="rank-pill gold">👑 ${text}</span>`;
+            if (rank === 2) return `<span class="rank-pill silver">👑 ${text}</span>`;
+            if (rank >= 3 && rank <= 10) return `<span class="rank-pill bronze">👑 ${text}</span>`;
+            return `<span class="rank-pill default">${text}</span>`;
+        }
+
+        function isGameplayInfoMode() {
+            return currentMode === 'classic' || currentMode === 'learning-card';
+        }
+
+        function renderTopInfoBar() {
+            const gameStatsGroup = document.getElementById('gameStatsGroup');
+            const overviewStatsGroup = document.getElementById('overviewStatsGroup');
+            if (!gameStatsGroup || !overviewStatsGroup) return;
+
+            if (isGameplayInfoMode()) {
+                gameStatsGroup.style.display = 'flex';
+                overviewStatsGroup.style.display = 'none';
+            } else {
+                gameStatsGroup.style.display = 'none';
+                overviewStatsGroup.style.display = 'flex';
+                document.getElementById('mastered-vocab-display').innerText = `[${getMasteredVocabCount()} / ${synonymData.length}]`;
+                document.getElementById('best-score-display').innerText = currentPlayerBestScore || 0;
+                document.getElementById('best-rank-display').innerHTML = formatRankLabel(currentPlayerBestRank);
+            }
+        }
+
+        function getUniqueScores(rawScores) {
+            const uniqueMap = {};
+            rawScores.forEach(item => {
+                if (!item || !item.name) return;
+                if (!uniqueMap[item.name] || item.score > uniqueMap[item.name].score) {
+                    uniqueMap[item.name] = item;
+                }
+            });
+            return Object.values(uniqueMap).sort((a, b) => b.score - a.score);
+        }
+
+        function syncCurrentPlayerProfile(uniqueScores) {
+            const me = uniqueScores.findIndex(item => item.name === currentPlayer);
+            if (me >= 0) {
+                currentPlayerBestScore = uniqueScores[me].score || 0;
+                currentPlayerBestRank = me + 1;
+            } else {
+                currentPlayerBestScore = 0;
+                currentPlayerBestRank = null;
+            }
+            renderTopInfoBar();
+        }
+
+        function refreshPlayerProfileStats() {
+            if (!db || !currentPlayer) {
+                renderTopInfoBar();
+                return;
+            }
+            db.ref(LEADERBOARD_PATH).orderByChild('score').once('value', snapshot => {
+                const rawScores = [];
+                snapshot.forEach(child => rawScores.push(child.val()));
+                syncCurrentPlayerProfile(getUniqueScores(rawScores));
+            }).catch(() => {
+                renderTopInfoBar();
+            });
+        }
+
         function getRoutePreviewText(groups) {
             return groups
                 .slice(0, 3)
@@ -1732,6 +1849,7 @@ tick: () => {
             document.getElementById('startOverlay').style.display = 'none';
             document.getElementById('preGameButtons').style.display = 'none';
             document.getElementById('inGameButtons').style.display = 'none';
+            renderTopInfoBar();
             showLearningPanel(`
                 <div class="learning-header">
                     <div class="learning-progress">${completedCount}/${learningLevels.length}</div>
@@ -1756,7 +1874,6 @@ tick: () => {
             currentLearningRunStats = null;
             activeGameGroups = null;
             useFiniteDeck = false;
-            if (currentMode !== 'classic') currentMode = 'classic';
         }
 
         function startLearningMode() {
@@ -1796,6 +1913,7 @@ tick: () => {
             document.getElementById('startOverlay').style.display = 'none';
             document.getElementById('preGameButtons').style.display = 'none';
             document.getElementById('inGameButtons').style.display = 'none';
+            renderTopInfoBar();
             renderLearningStudyStep();
         }
 
@@ -1830,6 +1948,7 @@ tick: () => {
             currentMode = 'learning-quiz';
             learningQuizIndex = 0;
             learningQuizState = null;
+            renderTopInfoBar();
             renderLearningMeaningQuestion();
         }
 
@@ -1922,6 +2041,7 @@ tick: () => {
 
         function renderLearningQuizTwoIntro() {
             currentMode = 'learning-quiz-2';
+            renderTopInfoBar();
             showLearningPanel(`
                 <div class="learning-question-box">
                     <div class="learning-progress">STEP 3 / 3</div>
@@ -1945,6 +2065,7 @@ tick: () => {
             document.getElementById('btn-giveup').style.display = 'flex';
             document.getElementById('btn-review-level').style.display = 'none';
             globalPairDeck = generateMasterDeck(new Set(), activeGameGroups);
+            renderTopInfoBar();
             initGame(false);
         }
 
@@ -1965,6 +2086,7 @@ tick: () => {
             }
             currentMode = 'learning-finished';
             document.getElementById('inGameButtons').style.display = 'none';
+            renderTopInfoBar();
             showLearningPanel(`
                 <div class="learning-question-box">
                     <div class="learning-progress">完成</div>
@@ -2167,6 +2289,7 @@ deck.forEach(item => {
             l.className = lives<=2 ? "stat-box low-health" : "stat-box";
             document.getElementById('total-score').innerText = totalScore;
             document.getElementById('level-display').innerText = currentLevel;
+            renderTopInfoBar();
         }
 
         function flipCard() {
@@ -2335,6 +2458,8 @@ function startTimer() {
             clearInterval(timer);
             lastGameEndReason = reason;
             flushCurrentRunMistakesToReplayQueue();
+            currentMode = isLearningFlow() ? 'learning-ended' : 'post-game';
+            renderTopInfoBar();
             
             playSound('gameover');
             lockBoard = true;
@@ -2511,17 +2636,8 @@ function showResultPage(reason) {
                 snapshot.forEach(child => {
                     rawScores.push(child.val());
                 });
-                
-                // --- 🔥 同樣應用過濾邏輯 ---
-                const uniqueMap = {};
-                rawScores.forEach(item => {
-                    if (!uniqueMap[item.name] || item.score > uniqueMap[item.name].score) {
-                        uniqueMap[item.name] = item;
-                    }
-                });
-                
-                // 轉成 Array 並排序
-                let uniqueScores = Object.values(uniqueMap).sort((a, b) => b.score - a.score);
+                let uniqueScores = getUniqueScores(rawScores);
+                syncCurrentPlayerProfile(uniqueScores);
 
                 // 找出自己在榜單中的位置
                 let myRank = "未上榜";
@@ -2568,17 +2684,8 @@ function showResultPage(reason) {
                 
                 let rawScores = [];
                 snapshot.forEach(child => { rawScores.push(child.val()); });
-                
-                // 過濾重複名字，只留最高分
-                const uniqueMap = {};
-                rawScores.forEach(item => {
-                    if (!uniqueMap[item.name] || item.score > uniqueMap[item.name].score) {
-                        uniqueMap[item.name] = item;
-                    }
-                });
-
-                // 排序
-                let uniqueScores = Object.values(uniqueMap).sort((a, b) => b.score - a.score);
+                let uniqueScores = getUniqueScores(rawScores);
+                syncCurrentPlayerProfile(uniqueScores);
 
 uniqueScores = uniqueScores.slice(0, 100);
                 if(uniqueScores.length === 0) {
@@ -2615,6 +2722,7 @@ uniqueScores = uniqueScores.slice(0, 100);
         function backToLobby() {
             clearInterval(timer);
             lockBoard = false; hasFlippedCard = false;
+            currentMode = 'menu';
             document.getElementById('gameGrid').innerHTML = ''; 
             document.getElementById('gameGrid').style.display = 'grid';
             document.getElementById('startOverlay').style.display = 'block'; 
@@ -2626,6 +2734,7 @@ document.getElementById('lives').innerText = "❤️❤️❤️❤️❤️❤�
     hideLearningPanel();
     resetLearningState();
     updateUI();
+    renderTopInfoBar();
 }
 
         function onGiveUp() {
@@ -2659,6 +2768,7 @@ document.getElementById('lives').innerText = "❤️❤️❤️❤️❤️❤�
             document.getElementById('btn-giveup').style.display = 'flex'; 
             document.getElementById('btn-review-level').style.display = 'none'; 
 
+            renderTopInfoBar();
             initGame(false);
             markAppActivity();
         }
