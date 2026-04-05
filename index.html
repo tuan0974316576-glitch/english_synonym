@@ -811,8 +811,15 @@
             background: linear-gradient(180deg, #ffffff 0%, #f9fbff 100%);
             box-shadow: 0 8px 18px rgba(0,0,0,0.05);
         }
+        .learning-card-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
         .learning-card h3 {
-            margin: 0 0 10px;
+            margin: 0;
             font-size: 1.1rem;
         }
         .learning-words {
@@ -826,6 +833,10 @@
             padding: 6px 10px;
             font-size: 0.9rem;
             cursor: pointer;
+            border: 1px solid #e5e7eb;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
         }
         .learning-question-box {
             max-width: 720px;
@@ -927,7 +938,7 @@
             <div class="stat-box score-box">🏆 Score: <span id="total-score">0</span></div>
         </div>
         <div class="info-group" id="overviewStatsGroup" style="display:none;">
-            <div class="stat-box overview-box">Mastered Vocab <span id="mastered-vocab-display">[0 / 0]</span></div>
+            <div class="stat-box overview-box">已征服的生字 <span id="mastered-vocab-display">[0 / 0]</span></div>
             <div class="stat-box overview-box">最高分數: <span id="best-score-display">0</span></div>
             <div class="stat-box overview-box">排名: <span id="best-rank-display">--</span></div>
         </div>
@@ -1662,7 +1673,15 @@ tick: () => {
         }
 
         function buildLearningWordChip(wordText, color) {
-            return `<span class="learning-word-chip" style="border:1px solid ${color}33; color:${color};" onclick="speakWord('${wordText.replace(/'/g, "\\'")}')">${wordText}</span>`;
+            const safeWord = wordText.replace(/\\/g, "\\\\").replace(/'/g, "\\'");
+            return `<span class="learning-word-chip" style="border:1px solid ${color}33; color:${color}; --pop-color:${color};" onclick="handleLearningWordClick(this, '${safeWord}')">${wordText}</span>`;
+        }
+
+        function handleLearningWordClick(element, wordText) {
+            speakWord(wordText);
+            element.classList.remove('pop-active');
+            void element.offsetWidth;
+            element.classList.add('pop-active');
         }
 
         function buildLearningLevels() {
@@ -1933,7 +1952,10 @@ tick: () => {
                     .join('');
                 return `
                     <div class="learning-card" style="border-color:${group.color}33;">
-                        <h3 style="color:${group.color};">${index + 1}. ${group.meaning}</h3>
+                        <div class="learning-card-header">
+                            <h3 style="color:${group.color};">${index + 1}. ${group.meaning}</h3>
+                            <button class="ai-btn" onclick="askGemini(this, '${group.meaning.replace(/\\/g, "\\\\").replace(/'/g, "\\'")}', learningGroups[${index}].words)">✨作文點用</button>
+                        </div>
                         <div class="learning-words">${wordsHtml}</div>
                     </div>
                 `;
