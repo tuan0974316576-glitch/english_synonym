@@ -1375,6 +1375,8 @@
         let globalPairDeck = []; 
         let lastGameEndReason = "";
         let lastGameRank = "計算中..."; 
+        let lastGameRankUsesCurrentScore = false;
+        let lastGameBestScoreUsed = 0;
         let currentPlayerBestScore = 0;
         let currentPlayerBestRank = null;
         let currentMode = 'menu';
@@ -2830,6 +2832,9 @@ function showResultPage(reason) {
             if(lastGameRank == 1) rankDisplay = "🏆 冠軍";
             if(lastGameRank == 2) rankDisplay = "🥈 亞軍";
             if(lastGameRank == 3) rankDisplay = "🥉 季軍";
+            const rankLabel = lastGameRankUsesCurrentScore
+                ? `本次排名: ${rankDisplay}`
+                : `未刷新個人最佳，排行榜仍以最高分計: ${rankDisplay}`;
 
             dashboard.innerHTML = `
                 <div style="font-size: 1.1rem; color: #7f8c8d; margin-bottom: 5px;">辛苦曬！本次得分為</div>
@@ -2837,7 +2842,7 @@ function showResultPage(reason) {
                     ${totalScore}
                 </div>
                 <div id="resultPageRankDisplay" style="font-size: 1.1rem; font-weight: bold; color: #f39c12; background: #fffbf0; display:inline-block; padding: 5px 15px; border-radius: 20px; border: 1px solid #f1c40f;">
-                     本次排名: ${rankDisplay}
+                     ${rankLabel}
                 </div>
             `;
             container.appendChild(dashboard);
@@ -2935,6 +2940,8 @@ function showResultPage(reason) {
 
         function calculateMyRank() {
             lastGameRank = "..."; 
+            lastGameRankUsesCurrentScore = false;
+            lastGameBestScoreUsed = 0;
             
             db.ref(LEADERBOARD_PATH).orderByChild('score').once('value', snapshot => {
                 let rawScores = [];
@@ -2949,11 +2956,13 @@ function showResultPage(reason) {
                 for (let i = 0; i < uniqueScores.length; i++) {
                     if (uniqueScores[i].name === currentPlayer) {
                         myRank = i + 1;
+                        lastGameBestScoreUsed = uniqueScores[i].score || 0;
                         break;
                     }
                 }
                 
                 lastGameRank = myRank;
+                lastGameRankUsesCurrentScore = (typeof myRank === 'number') && (lastGameBestScoreUsed === totalScore);
 
                 // 立即更新 UI (如果結果頁已經打開)
                 const displayDiv = document.getElementById('resultPageRankDisplay');
@@ -2964,7 +2973,9 @@ function showResultPage(reason) {
                     if(myRank == 2) rankText = "🥈 亞軍";
                     if(myRank == 3) rankText = "🥉 季軍";
                     
-                    displayDiv.innerText = `本次排名: ${rankText}`;
+                    displayDiv.innerText = lastGameRankUsesCurrentScore
+                        ? `本次排名: ${rankText}`
+                        : `未刷新個人最佳，排行榜仍以最高分計: ${rankText}`;
                 }
             });
         }
