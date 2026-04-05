@@ -952,7 +952,7 @@
         }
         .learning-options {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            grid-template-columns: repeat(3, minmax(0, 1fr));
             gap: 12px;
         }
         .option-btn {
@@ -964,7 +964,9 @@
             border: 2px solid #dfe6e9;
             box-shadow: none;
             border-radius: 18px;
-            min-height: 68px;
+            min-height: 58px;
+            padding: 10px 12px;
+            line-height: 1.35;
         }
         .option-btn:hover {
             transform: translateY(-1px);
@@ -1017,6 +1019,15 @@
             }
             .route-milestone {
                 left: 50%;
+            }
+            .learning-options {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+                gap: 10px;
+            }
+            .option-btn {
+                min-height: 54px;
+                font-size: 0.92rem;
+                border-radius: 16px;
             }
         }
     </style>
@@ -2156,7 +2167,7 @@ tick: () => {
                 new Set([group.meaning])
             );
             const options = shuffleArray([group.meaning, ...distractors]);
-            learningQuizState = { phase: 'meaning', item, group };
+            learningQuizState = { phase: 'meaning', item, group, meaningOptions: options, synonymOptions: null };
 
             showLearningPanel(`
                 <div class="learning-question-box">
@@ -2190,21 +2201,25 @@ tick: () => {
 
         function renderLearningSynonymQuestion(feedback = '', isError = false) {
             const { group, item } = learningQuizState;
-            const distractorPool = learningGroups
-                .filter(entry => entry.id !== group.id)
-                .flatMap(entry => entry.words.map(getWordText));
-            const options = shuffleArray([
-                ...item.correctSynonyms,
-                ...pickRandomItems(distractorPool, Math.min(6, distractorPool.length), new Set([item.targetWord, ...item.correctSynonyms]))
-            ]);
+            let options = learningQuizState.synonymOptions;
+            if (!options) {
+                const distractorPool = learningGroups
+                    .filter(entry => entry.id !== group.id)
+                    .flatMap(entry => entry.words.map(getWordText));
+                const distractorCount = Math.max(0, Math.min(12 - item.correctSynonyms.length, distractorPool.length));
+                options = shuffleArray([
+                    ...item.correctSynonyms,
+                    ...pickRandomItems(distractorPool, distractorCount, new Set([item.targetWord, ...item.correctSynonyms]))
+                ]);
+            }
 
-            learningQuizState = { ...learningQuizState, phase: 'synonym' };
+            learningQuizState = { ...learningQuizState, phase: 'synonym', synonymOptions: options };
 
             showLearningPanel(`
                 <div class="learning-question-box">
                     <div class="learning-progress">STEP 2 / 3 · QUIZ 1 · ${learningQuizIndex + 1} / ${learningQuizQueue.length}</div>
                     <div class="learning-prompt">揀晒同「${item.targetWord}」同組嘅同義詞</div>
-                    <div class="learning-help">可以多選。要揀啱晒先會過呢一題。</div>
+                    <div class="learning-help">固定顯示一組選項。可以多選，要揀啱晒先會過呢一題。</div>
                     <div class="learning-options">
                         ${options.map(option => {
                             const normalized = option.trim().toLowerCase();
