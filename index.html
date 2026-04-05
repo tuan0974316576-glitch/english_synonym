@@ -873,7 +873,7 @@
             { id: 'benefit', color: 'cadetblue', meaning: '好處', words: [{ t: 'Benefit', m: '益處' }, { t: 'Merit', m: '優點' }, { t: 'Pros', m: '利(必須眾數)' }, { t: 'Upside', m: '好處(不可加s)' }, { t: 'Advantage', m: '優點' }] },
             { id: 'drawback', color: 'chocolate', meaning: '壞處', words: [{ t: 'Drawback', m: '弊處' }, { t: 'Demerit', m: '缺點' }, { t: 'Cons', m: '弊(必須眾數)' }, { t: 'Downside', m: '壞處(不可加s)' },{ t: 'Disadvantage', m: '缺點' }] },
             { id: 'foster', color: 'green', meaning: '促進', words: [{ t: 'Foster', m: '促進' }, { t: 'Facilitate', m: '促進' }, { t: 'Promote', m: '促進' }] },
-            { id: 'decrease', color: 'olive', meaning: '減少', words: [{ t: 'Decrease', m: '減少' }, { t: 'Dwindle', m: '減少' },  { t: 'Decline', m: '減少' },{ t: 'Reduce ', m: '減少(+n)' }, { t: 'Lower ', m: '減少(+n)' }, { t: 'Minimise ', m: '減少(+n)' }] },
+            { id: 'decrease', color: 'olive', meaning: '減少', words: [{ t: 'Decrease', m: '減少' }, { t: 'Shrink', m: '減少' },{ t: 'Dwindle', m: '減少' },  { t: 'Decline', m: '減少' },{ t: 'Reduce ', m: '減少(+n)' }, { t: 'Lower ', m: '減少(+n)' }, { t: 'Minimise ', m: '減少(+n)' }] },
             { id: 'plunge', color: 'red', meaning: '急跌', words: ['Plunge', 'Plummet', 'Slump', 'Sink'] },
             { id: 'staggering', color: '#FFC72C', meaning: '大(數字)', words: [{ t: 'Staggering', m: '大(數字)' }, { t: 'Whopping', m: '大(數字)' }] },
             { id: 'important', color: 'blue', meaning: '重要', words: [{ t: 'Crucial', m: '極重要' }, { t: 'Significant', m: '重要/顯著' }, { t: 'Vital', m: '必不可少' }, { t: 'Indispensable', m: '不可或缺' }, { t: 'Key', m: '關鍵性的' }, { t: 'Critical', m: '關鍵性的' }] },
@@ -915,6 +915,14 @@
 { 
                 id: 'Dire', color: 'DarkMagenta', meaning: '可怕的', 
                 words: ['Dire', 'Dreadful'] 
+            },
+            { 
+                id: 'several', color: '#e83c3c', meaning: '幾個', 
+                words: ['Several','A number of','A couple of'] 
+            },
+            { 
+                id: 'combat', color: '#e83c3c', meaning: '對抗', 
+                words: ['Combat', 'Confront'] 
             },
             { 
                 id: 'distress', color: '#3980b9', meaning: '悲傷', 
@@ -1072,6 +1080,15 @@
                     {t:'Dull', m:'枯燥'}
                 ] 
             },
+               { 
+                id: 'Goal', color: '#264653', meaning: '目的', 
+                words: [
+                    {t:'Goal', m:'目的'}, 
+                    {t:'Aim', m:'目的'}, 
+                    {t:'Objective', m:'目的'}, 
+                    {t:'Purpose', m:'目的'}
+                ] 
+            },
             { 
                 id: 'nostalgic', color: '#264653', meaning: '懷舊', 
                 words: [
@@ -1087,7 +1104,9 @@
                     {t:'Evolve', m:'進化(科技)'}, 
                     {t:'Advance', m:'進步(科技)'}, 
                     {t:'Improve', m:'進步(泛用)'}, 
-                    {t:'Enhance', m:'增強'}, 
+                    {t:'Enhance', m:'增強'},
+                     {t:'Boost', m:'提升'},
+                     {t:'Reinforce', m:'加強/增援'},
                     {t:'Strengthen', m:'強化'}, 
                     {t:'Beef up', m:'增強(口語)'}
                 ] 
@@ -1342,10 +1361,6 @@ words: [
                     id: 'sceptical', color: '#ff006e', meaning: '懷疑', 
                 words: ['Sceptical about', 'Doubtful about', 'Cast doubt on', 'doubt'] 
             },
-                {
-                  id: 'Boost', color: '#4338ec', meaning: '提升', 
-                words: ['Boost', 'Enhance', 'Beef up'] 
-            },
     {
                   id: 'opposed', color: '#8338ec', meaning: '反對', 
                 words: ['Opposed to', 'Averse to', 'Against'] 
@@ -1404,6 +1419,10 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 words: ['Exhausted', 'Drained', 'Fatigued', 'Weary'] 
             },
 { 
+                id: 'In contrast', color: '#b88944', meaning: '相反', 
+                words: ['In contrast', 'On the contrary']
+            },
+{ 
                 id: 'deep-rooted', color: '#66065c', meaning: '根深柢固', 
                 words: ['Deep-rooted', 'Deep-seated', 'Ingrained']
             },
@@ -1414,6 +1433,10 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
         { 
                 id: 'envisage', color: '#328a00', meaning: '想像', 
                 words: ['Envisage', 'Envision', 'Conceive']
+            },
+    { 
+                id: 'Cause', color: '#d98200', meaning: '導致', 
+                words: ['Cause', 'Lead to', 'Contribute to', 'Result in']
             },
     { 
                 id: 'demolish', color: '#fc9d03', meaning: '拆除', 
@@ -1692,6 +1715,15 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                     { t: 'Hooked on', m: '著迷於(極)' }
                 ] 
             },
+                                  { 
+                id: 'glimpse', 
+                color: '#d87373', 
+                meaning: '看一眼', 
+                words: [
+                    { t: 'Glimpse', m: '看一眼' },
+                    { t: 'Glance', m: '看一眼' }
+                ] 
+            },
                           { 
                 id: 'lackluster', 
                 color: '#778da9', 
@@ -1894,6 +1926,16 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 ] 
             },
            { 
+                id: 'bacteria', 
+                color: 'tomato',
+                meaning: '細菌', 
+                words: [
+                    { t: 'Bacteria', m: '細菌' },
+                    { t: 'Germ', m: '病菌' },
+                    { t: 'Virus', m: '病毒' }
+                ] 
+            },
+           { 
                 id: 'utter', 
                 color: 'tomato',
                 meaning: '說', 
@@ -1986,7 +2028,35 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 meaning: '禁止', 
                 words: ['Forbid', 'Ban', 'Bar', 'Prohibit'] 
             },
-            // --- Group 29: 意識到 ---
+                { 
+                id: 'extensive', 
+                color: '#8080f0',
+                meaning: '廣泛', 
+                words: [
+                    { t: 'Extensive', m: '廣泛' },
+                    { t: 'Comprehensive', m: '全面' }
+                ] 
+            },
+                        { 
+                id: 'desire', 
+                color: '#e3db00', // Blue
+                meaning: '渴望', 
+                words: [
+                    { t: 'Crave', m: '渴望' },
+                    { t: 'Desire', m: '渴望' },
+                    { t: 'Long for', m: '渴望' }
+                ] 
+            },
+                    { 
+                id: 'perfect', 
+                color: '#991140', // Blue
+                meaning: '完美的', 
+                words: [
+                    { t: 'Perfect', m: '完美的' },
+                    { t: 'Flawless', m: '完美無瑕的' },
+                    { t: 'Impeccable', m: '無懈可擊的' }
+                ] 
+            },
                 { 
                 id: 'eliminate', 
                 color: '#ff91a4', // Blue
@@ -2040,6 +2110,12 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 color: '#606c38', // Purple
                 meaning: '有毒的', 
                 words: ['Toxic', 'Venomous', 'Poisonous'] 
+            },
+            { 
+                id: 'dispose of', 
+                color: '#91918c',
+                meaning: '棄置', 
+                words: ['Dispose of', 'Discard', 'Throw away'] 
             },
             { 
                 id: 'addition', 
