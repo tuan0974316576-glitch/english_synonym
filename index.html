@@ -613,18 +613,19 @@
             content: "";
             position: absolute;
             left: 50%;
-            top: 12px;
-            bottom: 12px;
-            width: 6px;
+            top: 36px;
+            bottom: 36px;
+            width: 8px;
             transform: translateX(-50%);
-            background: linear-gradient(180deg, #d8f3dc 0%, #74c69d 100%);
+            background: linear-gradient(180deg, #e9ecef 0%, #dee2e6 100%);
             border-radius: 999px;
             opacity: 0.9;
         }
         .route-stop {
             position: relative;
             display: flex;
-            margin: 18px 0;
+            margin: 16px 0;
+            min-height: 86px;
         }
         .route-stop.left {
             justify-content: flex-start;
@@ -633,35 +634,45 @@
             justify-content: flex-end;
         }
         .route-stop-card {
-            width: min(320px, calc(50% - 26px));
+            width: 92px;
             position: relative;
         }
         .route-stop-card::after {
             content: "";
             position: absolute;
             top: 50%;
-            width: 34px;
-            height: 4px;
-            background: #b7e4c7;
+            width: calc(50vw - 116px);
+            max-width: 248px;
+            height: 8px;
+            background: #dee2e6;
             transform: translateY(-50%);
             border-radius: 999px;
         }
         .route-stop.left .route-stop-card::after {
-            right: -34px;
+            right: -248px;
         }
         .route-stop.right .route-stop-card::after {
-            left: -34px;
+            left: -248px;
         }
         .route-node {
-            width: 100%;
+            width: 92px;
+            height: 92px;
             border: none;
-            border-radius: 22px;
-            padding: 16px 18px;
-            text-align: left;
+            border-radius: 999px;
+            padding: 0;
+            text-align: center;
             cursor: pointer;
-            box-shadow: 0 12px 24px rgba(0,0,0,0.08);
-            background: linear-gradient(145deg, #ffffff 0%, #edf6f9 100%);
+            box-shadow: 0 12px 24px rgba(0,0,0,0.10);
+            background: #adb5bd;
             transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: "Hiragino Maru Gothic ProN", "Yu Gothic", "Meiryo", sans-serif;
+            font-size: 2rem;
+            font-weight: 900;
+            color: white;
         }
         .route-node:hover {
             transform: translateY(-2px);
@@ -669,65 +680,42 @@
         }
         .route-node.locked {
             cursor: not-allowed;
-            filter: grayscale(0.2);
-            opacity: 0.72;
-            background: linear-gradient(145deg, #f1f3f5 0%, #e9ecef 100%);
+            filter: grayscale(0.12);
+            opacity: 0.95;
+            background: #adb5bd;
         }
         .route-node.completed {
-            background: linear-gradient(145deg, #f1fff7 0%, #d8f3dc 100%);
-            border: 2px solid #74c69d;
+            background: #2fb344;
+            box-shadow: 0 10px 22px rgba(47, 179, 68, 0.28);
         }
         .route-node.current {
-            background: linear-gradient(145deg, #fff9db 0%, #ffe8a1 100%);
-            border: 2px solid #ffba08;
-            box-shadow: 0 0 0 6px rgba(255, 186, 8, 0.16), 0 16px 30px rgba(255, 186, 8, 0.28);
+            background: #e03131;
+            box-shadow: 0 0 0 8px rgba(224, 49, 49, 0.15), 0 16px 30px rgba(224, 49, 49, 0.34);
             animation: routeGlow 1.8s ease-in-out infinite;
         }
-        .route-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            font-size: 0.8rem;
-            font-weight: 800;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-            color: #386641;
-            background: rgba(255,255,255,0.72);
-            border-radius: 999px;
-            padding: 6px 10px;
-            margin-bottom: 10px;
-        }
-        .route-title {
-            font-size: 1.15rem;
-            font-weight: 900;
-            color: #1d3557;
-            margin-bottom: 6px;
-        }
-        .route-meta {
-            color: #5c677d;
-            font-size: 0.92rem;
-            line-height: 1.45;
-        }
-        .route-preview {
-            margin-top: 10px;
-            font-size: 0.84rem;
-            color: #6c757d;
+        .route-number {
+            line-height: 1;
+            text-shadow: 0 2px 0 rgba(0,0,0,0.08);
         }
         .route-rewards {
+            position: absolute;
+            right: -6px;
+            bottom: -4px;
             display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin-top: 12px;
+            gap: 4px;
+            flex-wrap: nowrap;
         }
         .route-reward {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            padding: 6px 10px;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
             border-radius: 999px;
-            font-size: 0.78rem;
+            font-size: 0.9rem;
             font-weight: 800;
-            letter-spacing: 0.02em;
+            border: 3px solid white;
+            box-shadow: 0 6px 14px rgba(0,0,0,0.16);
         }
         .route-reward.clear {
             background: #e8f7ee;
@@ -744,24 +732,28 @@
             width: 18px;
             height: 18px;
             border-radius: 999px;
-            background: #74c69d;
+            background: #ced4da;
             border: 4px solid white;
-            box-shadow: 0 0 0 4px rgba(116, 198, 157, 0.2);
+            box-shadow: 0 0 0 4px rgba(206, 212, 218, 0.35);
             transform: translate(-50%, -50%);
             z-index: 1;
         }
+        .route-stop.completed .route-milestone {
+            background: #2fb344;
+            box-shadow: 0 0 0 4px rgba(47, 179, 68, 0.22);
+        }
         .route-stop.current .route-milestone {
-            background: #ffba08;
-            box-shadow: 0 0 0 6px rgba(255, 186, 8, 0.2);
+            background: #e03131;
+            box-shadow: 0 0 0 6px rgba(224, 49, 49, 0.2);
         }
         .route-stop.locked .route-milestone {
             background: #adb5bd;
             box-shadow: none;
         }
         @keyframes routeGlow {
-            0% { transform: translateY(0); box-shadow: 0 0 0 6px rgba(255, 186, 8, 0.12), 0 14px 28px rgba(255, 186, 8, 0.2); }
-            50% { transform: translateY(-3px); box-shadow: 0 0 0 10px rgba(255, 186, 8, 0.18), 0 18px 32px rgba(255, 186, 8, 0.28); }
-            100% { transform: translateY(0); box-shadow: 0 0 0 6px rgba(255, 186, 8, 0.12), 0 14px 28px rgba(255, 186, 8, 0.2); }
+            0% { transform: translateY(0) scale(1); box-shadow: 0 0 0 8px rgba(224, 49, 49, 0.12), 0 14px 28px rgba(224, 49, 49, 0.2); }
+            50% { transform: translateY(-3px) scale(1.04); box-shadow: 0 0 0 12px rgba(224, 49, 49, 0.18), 0 18px 32px rgba(224, 49, 49, 0.28); }
+            100% { transform: translateY(0) scale(1); box-shadow: 0 0 0 8px rgba(224, 49, 49, 0.12), 0 14px 28px rgba(224, 49, 49, 0.2); }
         }
         .learning-header {
             text-align: center;
@@ -875,25 +867,18 @@
         }
         @media (max-width: 720px) {
             .learning-map::before {
-                left: 20px;
-                transform: none;
-            }
-            .route-stop,
-            .route-stop.left,
-            .route-stop.right {
-                justify-content: flex-start;
-                padding-left: 48px;
+                left: 50%;
+                transform: translateX(-50%);
             }
             .route-stop-card {
-                width: 100%;
+                width: 86px;
             }
             .route-stop-card::after {
-                left: -34px !important;
-                right: auto !important;
-                width: 30px;
+                width: calc(50vw - 104px);
+                max-width: 180px;
             }
             .route-milestone {
-                left: 20px;
+                left: 50%;
             }
         }
     </style>
@@ -1723,13 +1708,11 @@ tick: () => {
                 const award = awards[String(levelNumber)];
                 const positionClass = index % 2 === 0 ? 'left' : 'right';
                 const stateClass = isCurrent ? 'current' : isCompleted ? 'completed' : isLocked ? 'locked' : '';
-                const statusText = isCurrent ? '目前挑戰' : isCompleted ? '已完成' : '尚未解鎖';
-                const previewText = getRoutePreviewText(groups);
                 const clickAction = isLocked ? '' : `onclick="startLearningLevel(${index})"`;
                 const rewardHtml = award ? `
                     <div class="route-rewards">
-                        <span class="route-reward clear">🏅 過關</span>
-                        ${award.perfect ? '<span class="route-reward perfect">👑 完美通關</span>' : ''}
+                        <span class="route-reward clear" title="過關">🏅</span>
+                        ${award.perfect ? '<span class="route-reward perfect" title="完美通關">👑</span>' : ''}
                     </div>
                 ` : '';
 
@@ -1738,10 +1721,7 @@ tick: () => {
                         <div class="route-milestone"></div>
                         <div class="route-stop-card">
                             <button class="route-node ${stateClass}" ${clickAction} ${isLocked ? 'disabled' : ''}>
-                                <div class="route-badge">${statusText}</div>
-                                <div class="route-title">第 ${levelNumber} 關</div>
-                                <div class="route-meta">7 組同義詞 · 先溫習，再做 Quiz 1，最後翻卡配對</div>
-                                <div class="route-preview">${previewText}</div>
+                                <span class="route-number">${levelNumber}</span>
                                 ${rewardHtml}
                             </button>
                         </div>
@@ -1754,12 +1734,10 @@ tick: () => {
             document.getElementById('inGameButtons').style.display = 'none';
             showLearningPanel(`
                 <div class="learning-header">
-                    <div class="learning-progress">學習模式 · 路線圖</div>
-                    <div class="learning-prompt">30 關闖關地圖</div>
-                    <div class="learning-subtitle">已完成 ${completedCount} / ${learningLevels.length} 關。發光嗰關就係你而家要挑戰嘅下一關。</div>
+                    <div class="learning-progress">${completedCount}/${learningLevels.length}</div>
                 </div>
                 <div class="learning-map-wrap">
-                    <div class="learning-map-progress">${progress > learningLevels.length ? '已全破 30 關' : `目前進度：第 ${progress} 關`}</div>
+                    <div class="learning-map-progress">${progress > learningLevels.length ? 'ALL CLEAR' : `${progress}`}</div>
                     <div class="learning-map">${nodesHtml}</div>
                 </div>
                 <div class="learning-actions">
