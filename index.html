@@ -1036,6 +1036,7 @@
         <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="vocab.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging-compat.js"></script>
     <div class="info-panel">
         <div class="user-panel" id="userPanel" style="display:none;">
             👤 <span id="currentUserDisplay">Player</span>
@@ -1389,6 +1390,9 @@
             unlockedLevel: 1,
             awards: {}
         };
+        let messagingClient = null;
+        let messagingRegistrationPromise = null;
+        let messagingForegroundBound = false;
         let reminderTimeout = null;
         let deferredInstallPrompt = null;
 
@@ -1398,6 +1402,7 @@
         const LEARNING_PROGRESS_PREFIX = 'synonym_learning_progress_';
         const LEARNING_AWARDS_PREFIX = 'synonym_learning_awards_';
         const INSTALL_DISMISSED_AT_KEY = 'synonym_install_dismissed_at';
+        const FCM_VAPID_PUBLIC_KEY = 'PASTE_YOUR_FIREBASE_WEB_PUSH_CERTIFICATE_KEY_HERE';
 
         let mistakeReplayQueue = [];
         let currentRunMistakeQueue = [];
@@ -1422,6 +1427,11 @@
         function getLearningProgressRef() {
             if (!db || !currentPlayer) return null;
             return db.ref(`${USERS_PATH}/${currentPlayer}/learningProgress`);
+        }
+
+        function getFcmTokensRef() {
+            if (!db || !currentPlayer) return null;
+            return db.ref(`${USERS_PATH}/${currentPlayer}/fcmTokens`);
         }
 
         function getLegacyLearningProgressKey() {
@@ -1714,6 +1724,7 @@
             scheduleDailyReminder();
             renderTopInfoBar();
             refreshPlayerProfileStats();
+            initFcmForCurrentPlayer();
         }
 
         // =========================================================
@@ -2467,6 +2478,110 @@ tick: () => {
 
         function markAppActivity() {
             localStorage.setItem(LAST_ACTIVE_AT_KEY, String(Date.now()));
+        }
+
+        function isFcmReady() {
+            return Boolean(
+                window.firebase &&
+                firebase.messaging &&
+                'Notification' in window &&
+                'serviceWorker' in navigator &&
+                'PushManager' in window &&
+                FCM_VAPID_PUBLIC_KEY &&
+                !FCM_VAPID_PUBLIC_KEY.includes('PASTE_YOUR')
+            );
+        }
+
+        function hashFcmToken(token) {
+            let hash = 0;
+            for (let i = 0; i < token.length; i++) {
+                hash = ((hash << 5) - hash) + token.charCodeAt(i);
+                hash |= 0;
+            }
+            return `token_${Math.abs(hash)}`;
+        }
+
+        function getFcmDevicePayload(token) {
+            return {
+                token,
+                platform: navigator.platform || 'unknown',
+                userAgent: navigator.userAgent || 'unknown',
+                lastSeenAt: firebase.database.ServerValue.TIMESTAMP
+            };
+        }
+
+        function saveFcmToken(token) {
+            const ref = getFcmTokensRef();
+            if (!ref || !token) return Promise.resolve();
+            const key = hashFcmToken(token);
+            return ref.child(key).update(getFcmDevicePayload(token)).catch(error => {
+                console.error('[FCM] Failed to save token:', error);
+            });
+        }
+
+        function getMessagingRegistration() {
+            if (messagingRegistrationPromise) return messagingRegistrationPromise;
+            if (!('serviceWorker' in navigator)) return Promise.reject(new Error('serviceWorker unsupported'));
+            messagingRegistrationPromise = navigator.serviceWorker.register('./sw.js');
+            return messagingRegistrationPromise;
+        }
+
+        function getMessagingClient() {
+            if (messagingClient) return messagingClient;
+            if (!isFcmReady()) return null;
+            try {
+                messagingClient = firebase.messaging();
+                return messagingClient;
+            } catch (error) {
+                console.error('[FCM] Messaging init failed:', error);
+                return null;
+            }
+        }
+
+        function shouldPromptNotificationPermission() {
+            const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone;
+            return isStandalone || Boolean(deferredInstallPrompt === null && !isIosSafariInstallable());
+        }
+
+        async function initFcmForCurrentPlayer() {
+            const messaging = getMessagingClient();
+            if (!messaging || !currentPlayer || !db) return;
+
+            if (Notification.permission === 'default' && shouldPromptNotificationPermission()) {
+                const permission = await Notification.requestPermission();
+                if (permission !== 'granted') return;
+            }
+
+            if (Notification.permission !== 'granted') return;
+
+            try {
+                const registration = await getMessagingRegistration();
+                const token = await messaging.getToken({
+                    vapidKey: FCM_VAPID_PUBLIC_KEY,
+                    serviceWorkerRegistration: registration
+                });
+
+                if (token) {
+                    await saveFcmToken(token);
+                }
+
+                if (!messagingForegroundBound) {
+                    messagingForegroundBound = true;
+                    messaging.onMessage(payload => {
+                        const title = payload.notification?.title || '同義詞の鬼';
+                        const options = {
+                            body: payload.notification?.body || '有新挑戰等緊你。',
+                            icon: 'icon.png'
+                        };
+
+                        if (Notification.permission === 'granted') {
+                            new Notification(title, options);
+                        }
+                    });
+                }
+            } catch (error) {
+                console.error('[FCM] Token registration failed:', error);
+            }
         }
 
         function isIosSafariInstallable() {
