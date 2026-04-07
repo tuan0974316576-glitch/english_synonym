@@ -6,7 +6,7 @@ const { logger } = require('firebase-functions');
 admin.initializeApp();
 
 const GAME_URL = defineString('GAME_URL', {
-  default: 'https://YOUR-GAME-URL.example.com/index.html'
+  default: 'https://tuan0974316576-glitch.github.io/english_synonym/'
 });
 
 exports.sendDailyChallengeReminder = onSchedule(
