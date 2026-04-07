@@ -1390,6 +1390,10 @@
         let currentLearningLevelIndex = null;
         let currentLearningRunStats = null;
         let currentLearningSelectedSynonyms = [];
+        let learningProgressState = {
+            unlockedLevel: 1,
+            awards: {}
+        };
         let reminderTimeout = null;
         let deferredInstallPrompt = null;
 
@@ -1418,6 +1422,85 @@
         function getMistakeReplayQueueRef() {
             if (!db || !currentPlayer) return null;
             return db.ref(`${USERS_PATH}/${currentPlayer}/mistakeReplayQueue`);
+        }
+
+        function getLearningProgressRef() {
+            if (!db || !currentPlayer) return null;
+            return db.ref(`${USERS_PATH}/${currentPlayer}/learningProgress`);
+        }
+
+        function getLegacyLearningProgressKey() {
+            return `${LEARNING_PROGRESS_PREFIX}${currentPlayer || 'guest'}`;
+        }
+
+        function getLegacyLearningAwardsKey() {
+            return `${LEARNING_AWARDS_PREFIX}${currentPlayer || 'guest'}`;
+        }
+
+        function getLegacyLearningSnapshot() {
+            let awards = {};
+            try {
+                awards = JSON.parse(localStorage.getItem(getLegacyLearningAwardsKey()) || '{}');
+            } catch (error) {
+                awards = {};
+            }
+            return {
+                unlockedLevel: Number(localStorage.getItem(getLegacyLearningProgressKey()) || 1),
+                awards
+            };
+        }
+
+        function saveLearningProgressState() {
+            const progressRef = getLearningProgressRef();
+            if (!progressRef) return Promise.resolve();
+            return progressRef.set(learningProgressState).catch(error => {
+                console.error('[LearningProgress] Failed to save progress:', error);
+            });
+        }
+
+        function loadLearningProgressState() {
+            const progressRef = getLearningProgressRef();
+            if (!progressRef) {
+                learningProgressState = { unlockedLevel: 1, awards: {} };
+                return Promise.resolve(learningProgressState);
+            }
+
+            const legacy = getLegacyLearningSnapshot();
+
+            return progressRef.once('value')
+                .then(snapshot => {
+                    const remote = snapshot.val() || {};
+                    const remoteUnlockedLevel = Number(remote.unlockedLevel || 1);
+                    const mergedUnlockedLevel = Math.max(remoteUnlockedLevel, Number(legacy.unlockedLevel || 1), 1);
+                    const mergedAwards = {
+                        ...(legacy.awards || {}),
+                        ...(remote.awards || {})
+                    };
+
+                    learningProgressState = {
+                        unlockedLevel: mergedUnlockedLevel,
+                        awards: mergedAwards
+                    };
+
+                    const needsMigration =
+                        !snapshot.exists() ||
+                        mergedUnlockedLevel !== remoteUnlockedLevel ||
+                        JSON.stringify(mergedAwards) !== JSON.stringify(remote.awards || {});
+
+                    if (needsMigration) {
+                        return saveLearningProgressState().then(() => learningProgressState);
+                    }
+
+                    return learningProgressState;
+                })
+                .catch(error => {
+                    console.error('[LearningProgress] Failed to load progress:', error);
+                    learningProgressState = {
+                        unlockedLevel: Number(legacy.unlockedLevel || 1),
+                        awards: legacy.awards || {}
+                    };
+                    return learningProgressState;
+                });
         }
 
         function loadMistakeReplayQueue() {
@@ -1564,7 +1647,10 @@
             if (savedUser) {
                 currentPlayer = savedUser;
                 showGameUI();
-                loadMistakeReplayQueue().finally(() => {
+                Promise.all([
+                    loadMistakeReplayQueue(),
+                    loadLearningProgressState()
+                ]).finally(() => {
                     backToLobby();
                 });
             } else {
@@ -1606,7 +1692,10 @@
             localStorage.setItem('synonym_player', name); 
             document.getElementById('loginModal').classList.add('hidden');
             showGameUI();
-            loadMistakeReplayQueue().finally(() => {
+            Promise.all([
+                loadMistakeReplayQueue(),
+                loadLearningProgressState()
+            ]).finally(() => {
                 backToLobby();
             }); 
         }
@@ -1616,6 +1705,7 @@
                 localStorage.removeItem('synonym_player');
                 mistakeReplayQueue = [];
                 mistakeReplayQueueLoaded = false;
+                learningProgressState = { unlockedLevel: 1, awards: {} };
                 location.reload(); 
             }
         }
@@ -1868,34 +1958,24 @@ tick: () => {
             return levels.slice(0, 30);
         }
 
-        function getLearningProgressKey() {
-            return `${LEARNING_PROGRESS_PREFIX}${currentPlayer || 'guest'}`;
-        }
-
-        function getLearningAwardsKey() {
-            return `${LEARNING_AWARDS_PREFIX}${currentPlayer || 'guest'}`;
-        }
-
         function getLearningProgress() {
-            const rawValue = Number(localStorage.getItem(getLearningProgressKey()) || 1);
             if (!learningLevels.length) learningLevels = buildLearningLevels();
+            const rawValue = Number(learningProgressState.unlockedLevel || 1);
             return Math.min(Math.max(rawValue, 1), learningLevels.length + 1);
         }
 
         function setLearningProgress(levelNumber) {
-            localStorage.setItem(getLearningProgressKey(), String(levelNumber));
+            learningProgressState.unlockedLevel = levelNumber;
+            saveLearningProgressState();
         }
 
         function getLearningAwards() {
-            try {
-                return JSON.parse(localStorage.getItem(getLearningAwardsKey()) || '{}');
-            } catch (error) {
-                return {};
-            }
+            return learningProgressState.awards || {};
         }
 
         function saveLearningAwards(awards) {
-            localStorage.setItem(getLearningAwardsKey(), JSON.stringify(awards));
+            learningProgressState.awards = awards || {};
+            saveLearningProgressState();
         }
 
         function getLearningRunSummary() {
