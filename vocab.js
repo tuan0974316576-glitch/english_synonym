@@ -8,6 +8,7 @@
             { id: 'be that as it may', color: 'burlywood', meaning: '話雖如此', words: ['Be that as it may', 'That said', 'Having said that', 'With that said'] },
             { id: 'especially', color: 'burlywood', meaning: '尤其是', words: ['Especially', 'Particularly', 'In particular'] },
             { id: 'specific', color: 'coral', meaning: '特定', words: ['Specific', 'Particular'] },
+            { id: 'unbelievable', color: 'coral', meaning: '難以置信的', words: ['Unbelievable', 'Increidble'] },
             { id: 'benefit', color: 'cadetblue', meaning: '好處', words: [{ t: 'Benefit', m: '益處' }, { t: 'Merit', m: '優點' }, { t: 'Pros', m: '利(必須眾數)' }, { t: 'Upside', m: '好處(不可加s)' }, { t: 'Advantage', m: '優點' }] },
             { id: 'drawback', color: 'chocolate', meaning: '壞處', words: [{ t: 'Drawback', m: '弊處' }, { t: 'Demerit', m: '缺點' }, { t: 'Cons', m: '弊(必須眾數)' }, { t: 'Downside', m: '壞處(不可加s)' },{ t: 'Disadvantage', m: '缺點' }] },
             { id: 'foster', color: 'green', meaning: '促進', words: [{ t: 'Foster', m: '促進' }, { t: 'Facilitate', m: '促進' }, { t: 'Promote', m: '促進' }] },
@@ -20,6 +21,7 @@
             { id: 'suffer from', color: 'fuchsia', meaning: '患上', words: ['Suffer from', 'Develop', 'Afflicted with'] }, 
             { id: 'enormous', color: 'navy', meaning: '巨大的', words: ['Enormous', 'Immense', 'Massive', 'Tremendous'] },
             { id: 'enormous', color: 'tailor', meaning: '訂造', words: ['Tailor', 'Customize'] },
+            { id: 'bow to', color: 'coral', meaning: '向...屈服', words: ['Bow to', 'Succumb to'] },
             { id: 'situation', color: 'teal', meaning: '情況', words: ['Situation', 'Condition', 'Circumstances', 'Scenario'] },
             { id: 'Amend', color: 'coral', meaning: '修改', words: [{ t: 'Amend', m: '修改(文件)' }, { t: 'Modify', m: '調整' }, { t: 'Adjust ', m: '調節' }, { t: 'Tune', m: '微調(工具)' }] },
             { id: 'tackle', color: 'cornflowerblue', meaning: '應付/處理', words: ['Handle', 'Tackle', 'Deal with', 'Cope with', 'Address'] },
@@ -34,6 +36,17 @@
                 id: 'inevitable', color: '#a53860', meaning: '無可避免', 
                 words: ['Inevitable','Unavoidable'] 
             },
+                        { 
+                id: 'inevitable', color: '#762e44', meaning: '調查', 
+                words: ['Inspect','Investigate'] 
+            },
+          { 
+                id: 'Perish', color: '#ad4463', meaning: '死亡', 
+                words: [{ t: 'Perish', m: '喪生' }, { t: 'Pass away', m: '去世' }] },
+          { 
+                id: 'Mature', color: '#4498ad', meaning: '成熟的', 
+                words: [{ t: 'Mature', m: '成熟的' }, { t: 'Sophisticated', m: '老練的' }] },
+                        { 
                                 { 
                 id: 'importance', color: '#a53860', meaning: '重要性', 
                 words: ['Importance','Significance'] 
@@ -46,9 +59,29 @@
                 id: 'headwind', color: '#8e44ad', meaning: '難關 / 逆境', 
                 words: [{t:'Headwind', m:'難關(逆境)'}, {t:'Uphill battle', m:'難關(硬仗)'}, {t:'Obstacle', m:'障礙'}] 
             },
+            { 
+                id: 'blame', color: '#ad4498', meaning: '怪責', 
+                words: [{t:'Blame', m:'怪責'}, {t:'Put the blame on', m:'怪罪'}, {t:'Point the finger at', m:'指責'}] 
+            },
+                { 
+                id: 'rival', color: '#44AD8E', meaning: '對手', 
+                words: ['Rival', 'Opponent', 'Contestant', 'Contender', 'Foe', 'Competitior'] 
+            },
                 { 
                 id: 'famous', color: '#2980b9', meaning: '出名的', 
                 words: ['Well-known', 'Celebrated', 'Renowned', 'Reputable', 'Venerable'] 
+            },
+{ 
+                id: 'Charming', color: '#ad8e44', meaning: '迷人的', 
+                words: [{t:'Charming', m:'迷人'}, {t:'Charismatic', m:'有魅力的'}, {t:'Stunning', m:'令人驚嘆的'}]
+            },
+{ 
+                id: 'Primary', color: '#4498ad', meaning: '主要的', 
+                words: ['Primary', 'Major', 'Principal', 'Chief', 'Main'] 
+            },
+{ 
+                id: 'Popular', color: '#ad4464', meaning: '受歡迎的', 
+                words: ['Popular', 'All the rage', 'Take ... by storm', 'Sought-after'] 
             },
 { 
                 id: 'Dire', color: 'DarkMagenta', meaning: '可怕的', 
@@ -593,8 +626,19 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 words: ['Over time', 'As time goes by'] 
             },
          { 
+                id: 'mimic', color: '#45818e', meaning: '模擬', 
+                words: [
+                    {t:'Mimic', m:'模仿'}, 
+                    {t:'Imitate', m:'模擬'}
+                ] 
+            },
+         { 
                 id: 'impressive', color: '#6f1d1b', meaning: '令人印象深刻的', 
                 words: ['Impressive', 'Remarkable'] 
+            },
+     { 
+                id: 'Marvellous', color: '#ad5a44', meaning: '極好', 
+                words: ['Marvellous', 'Excellent', 'Amazing','Splendid', 'Bravo', 'Awesome', 'Superb', 'Terrific', 'Fabulous'] 
             },
      { 
                 id: 'once in a while', color: '#6f1d1b', meaning: '有時', 
@@ -824,23 +868,14 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
             },
             // --- Group 9: 大幅度 ---
             { 
-                id: 'significant', 
+                id: 'Substantial', 
                 color: '#c0392b', // Dark Red
                 meaning: '大幅度 / 顯著', 
                 words: [
                     { t: 'Substantial', m: '可觀的' },
                     { t: 'Drastic', m: '激烈的' },
+                    { t: 'Considerable', m: '相當大的' },
                     { t: 'Radical', m: '徹底的' }
-                ] 
-            },
-            // --- Group 10: 反而/相反 ---
-            { 
-                id: 'In contrast', 
-                color: 'darkgoldenrod', 
-                meaning: '相反', 
-                words: [
-                    { t: 'In contrast', m: '相反' },
-                    { t: 'On the contrary', m: '相反' }
                 ] 
             },
                           { 
