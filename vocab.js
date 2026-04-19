@@ -916,7 +916,7 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 meaning: '庇護所', 
                 words: [
                     { t: 'Shelter', m: '庇護所' },
-                    { t: 'Sanctuary o', m: '避難所' },
+                    { t: 'Sanctuary', m: '避難所' },
                     { t: 'Haven', m: '安全的地方' }
                 ] 
             },
