@@ -1295,7 +1295,7 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 id: 'addition', 
                 color: '#8e44ad', // Purple
                 meaning: '另外 / 此外', 
-                words: ['In addition', 'Furthermore', 'Moreover', 'Besides', 'On top of that', 'Plus'] 
+                words: ['In addition', 'Furthermore', 'Moreover', 'Besides', 'On top of that', 'Plus', "What's more"] 
             },
             // --- Group 31: 明顯 ---
             { 
@@ -1334,5 +1334,23 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 color: '#27ae60', // Green
                 meaning: '可行的', 
                 words: ['Feasible', 'Viable', 'Workable'] 
+            },
+            {
+                id: 'gadget',
+                color: '#5c2a9d',
+                meaning: '電子工具',
+                words: ['Gadget', 'Device']
+            },
+            {
+                id: 'bear',
+                color: '#7a3e0b',
+                meaning: '忍受',
+                words: ['Bear', 'Stand', 'Endure']
+            },
+            {
+                id: 'versatile',
+                color: '#1f6f78',
+                meaning: '多功能的',
+                words: ['Versatile', 'Multifunctional']
             }
         ];
