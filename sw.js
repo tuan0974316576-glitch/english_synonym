@@ -21,10 +21,6 @@ self.addEventListener('activate', event => {
   event.waitUntil(self.clients.claim());
 });
 
-self.addEventListener('fetch', () => {
-  // Lightweight service worker for installability and FCM background handling.
-});
-
 messaging.onBackgroundMessage(payload => {
   const title = payload.notification?.title || '同義詞の鬼';
   const options = {
