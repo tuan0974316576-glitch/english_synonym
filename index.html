@@ -2269,7 +2269,7 @@ tick: () => {
                 <div class="learning-question-box">
                     <div class="learning-progress">STEP 2 / 3 · QUIZ 1 · ${learningQuizIndex + 1} / ${learningQuizQueue.length}</div>
                     <div class="learning-prompt">「${item.targetWord}」係邊個中文意思？</div>
-                    <div class="learning-help">今關 ${learningGroups.length} 組入面抽 6 個選擇。答中意思，之後要揀晒同組同義詞。</div>
+                    <div class="learning-help"></div>
                     <div class="learning-options">
                         ${options.map(option => `<button class="option-btn" onclick="handleLearningMeaningAnswer('${option.replace(/'/g, "\\'")}')">${option}</button>`).join('')}
                     </div>
