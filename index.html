@@ -679,6 +679,7 @@
             color: #2c3e50;
         }
         .learning-panel {
+            position: relative;
             width: 100%;
             max-width: 920px;
             margin: 0 auto 24px;
@@ -691,6 +692,24 @@
         }
         .learning-panel.visible {
             display: block;
+        }
+        .learning-panel-close {
+            position: absolute;
+            top: 14px;
+            right: 18px;
+            width: 40px;
+            height: 40px;
+            border: none;
+            background: transparent;
+            color: #7f8c8d;
+            font-size: 2rem;
+            line-height: 1;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2;
+            box-shadow: none;
         }
         .learning-map-wrap {
             position: relative;
@@ -1844,6 +1863,7 @@ tick: () => {
 
                     // 滑鼠指住 (Hover)
                     el.addEventListener('mouseenter', () => {
+                        if (el.closest('#learningPanel')) return;
                         if (!el.disabled) cuteSfx.hover();
                     });
 
@@ -1920,9 +1940,30 @@ tick: () => {
             panel.innerHTML = '';
         }
 
+        function handleLearningPanelClose() {
+            if (currentMode === 'learning-map') {
+                backToLobby();
+                return;
+            }
+            if (currentMode === 'learning-study') {
+                goToLearningMap();
+                return;
+            }
+            if (currentMode === 'learning-quiz' || currentMode === 'learning-quiz-2') {
+                currentMode = 'learning-study';
+                renderTopInfoBar();
+                renderLearningStudyStep();
+                return;
+            }
+            if (currentMode === 'learning-finished') {
+                goToLearningMap();
+                return;
+            }
+        }
+
         function showLearningPanel(html) {
             const panel = document.getElementById('learningPanel');
-            panel.innerHTML = html;
+            panel.innerHTML = `<button class="learning-panel-close" onclick="handleLearningPanelClose()">&times;</button>${html}`;
             panel.classList.add('visible');
             document.getElementById('gameGrid').style.display = 'none';
         }
@@ -2154,7 +2195,6 @@ tick: () => {
                     <div class="learning-map">${nodesHtml}</div>
                 </div>
                 <div class="learning-actions">
-                    <button class="btn-restart" onclick="backToLobby()">返回主選單</button>
                 </div>
             `);
         }
@@ -2239,7 +2279,6 @@ tick: () => {
                 <div class="learning-study-grid">${cardsHtml}</div>
                 <div class="learning-actions">
                     <button class="btn-learning" onclick="startLearningQuizOne()">開始 QUIZ 1</button>
-                    <button class="btn-restart" onclick="goToLearningMap()">返回路線圖</button>
                 </div>
             `);
         }
@@ -2275,7 +2314,6 @@ tick: () => {
                     </div>
                     <div class="learning-feedback ${isError ? 'error' : 'success'}">${feedback}</div>
                     <div class="learning-actions">
-                        <button class="btn-restart" onclick="goToLearningMap()">返回路線圖</button>
                     </div>
                 </div>
             `);
@@ -2326,7 +2364,6 @@ tick: () => {
                     <div class="learning-feedback ${isError ? 'error' : 'success'}">${feedback}</div>
                     <div class="learning-actions">
                         <button class="btn-learning" onclick="submitLearningSynonymAnswer()">確認答案</button>
-                        <button class="btn-restart" onclick="goToLearningMap()">返回路線圖</button>
                     </div>
                 </div>
             `);
@@ -2369,7 +2406,6 @@ tick: () => {
                     <div class="learning-help">而家會用返翻卡模式，玩本關 7 組加之前關卡隨機 3 組，總共 ${learningGroups.length} 組同義詞。</div>
                     <div class="learning-actions">
                         <button class="btn-learning" onclick="startLearningCardMode()">開始 QUIZ 2</button>
-                        <button class="btn-restart" onclick="goToLearningMap()">返回路線圖</button>
                     </div>
                 </div>
             `);
