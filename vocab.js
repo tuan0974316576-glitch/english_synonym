@@ -921,7 +921,7 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
           { 
                 id: 'ethical', 
                 color: '#00a896', 
-                meaning: '道德', 
+                meaning: '道德的', 
                 words: [
                     { t: 'Ethical', m: '倫理的' },
                     { t: 'Moral', m: '道德的' }
@@ -1256,7 +1256,7 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
             { 
                 id: 'aware', 
                 color: '#2980b9', // Blue
-                meaning: '意識到', 
+                meaning: '複雜', 
                 words: [
                     { t: 'Aware of', m: '意識到' },
                     { t: 'Realise', m: '意識到/實現' },
@@ -1266,7 +1266,7 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
  { 
                 id: 'complex', 
                 color: '#d67f46', 
-                meaning: '意識到', 
+                meaning: '複雜', 
                 words: [
                     { t: 'Complex', m: '複雜(中性)' },
                     { t: 'Complicated', m: '複雜(負面)' },
