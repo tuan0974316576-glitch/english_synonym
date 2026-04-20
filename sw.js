@@ -22,9 +22,9 @@ self.addEventListener('activate', event => {
 });
 
 messaging.onBackgroundMessage(payload => {
-  const title = payload.notification?.title || '同義詞の鬼';
+  const title = payload.notification?.title || '\u540c\u7fa9\u8a5e\u306e\u9b3c';
   const options = {
-    body: payload.notification?.body || '有新挑戰等緊你。',
+    body: payload.notification?.body || '\u6709\u65b0\u6311\u6230\u7b49\u7dca\u4f60\u3002',
     icon: 'icon.png',
     data: {
       url: payload.fcmOptions?.link || payload.data?.link || 'index.html'

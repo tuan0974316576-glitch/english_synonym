@@ -183,7 +183,7 @@
             100% { text-shadow: 0 0 0 rgba(231, 76, 60, 0); transform: scale(1); }
         }
 
-        /* --- 閬婃埐缍叉牸 --- */
+        /* --- 遊戲網格 --- */
         .game-grid {
             display: grid;
             grid-template-columns: repeat(4, 1fr);
@@ -192,7 +192,7 @@
             width: 100%;
         }
 
-        /* --- 鍗＄墖妯ｅ紡 --- */
+        /* --- 卡片樣式 --- */
         .card {
             background-color: transparent;
             height: 120px;
@@ -240,7 +240,7 @@
         }
         .word-badge.active:hover { transform: scale(1.1); }
 
-        /* 鍚岀祫浣嗘矑鍑虹従鐨勫瓧 (鏆楁贰) */
+        /* 同組但沒出現的字 (暗淡) */
         .word-badge.passive {
             font-size: 0.85rem; color: #95a5a6;
             padding: 4px 8px; border: 1px dashed #bdc3c7;
@@ -316,7 +316,7 @@
     display: flex;
     gap: 15px;
     margin-top: 30px;
-    justify-content: center; /* 馃憟 闂滈嵉锛氳畵鎸夐垥姘村钩缃腑 */
+    justify-content: center; /* 👈 闂滈嵉锛氳畵鎸夐垥姘村钩缃腑 */
     width: 100%;             /* 纰轰繚瀹瑰櫒浣旀豢瀵害锛岄€欐ǎ缃腑鎵嶆湁鏁?*/
 }
 
@@ -336,12 +336,12 @@
         .btn-study { background: #3498db; color: white; }
         .btn-rank { background: #f1c40f; color: #2c3e50; }
 
-        /* --- 褰堢獥閫氱敤 --- */
+        /* --- 彈窗通用 --- */
         .modal-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: rgba(0, 0, 0, 0.6);
             backdrop-filter: blur(5px);
-            display: flex; /* 闋愯ō椤ず锛岀敱 JS 鎺у埗 */
+            display: flex; /* 闋愯ō椤ず锛岀敱 JS 控制 */
             justify-content: center; align-items: center;
             z-index: 1000;
             opacity: 1; transition: opacity 0.3s;
@@ -367,7 +367,7 @@
         .modal-title { font-size: 1.5rem; color: #333; font-weight: 800; }
         .close-btn { font-size: 2rem; cursor: pointer; color: #999; line-height: 1; }
         
-        /* 鐧诲叆浠嬮潰妯ｅ紡 */
+        /* 登入介面樣式 */
         .login-box h2 { color: #2c3e50; margin-bottom: 10px; }
         .login-box p { color: #7f8c8d; margin-bottom: 20px; }
         .login-input {
@@ -401,29 +401,29 @@
         transform: scale(1.25); /* 绋嶅井鏀惧ぇ涓€榛為粸锛岄厤鍚堥暦涓€榛炵殑鏅傞枔 */
         background-color: #fff; 
         border-color: var(--pop-color); /* 閭婃璁婅壊 */
-        box-shadow: 0 0 15px var(--pop-color); /* 鐧煎厜璁婅壊 */
+        box-shadow: 0 0 15px var(--pop-color); /* 發光變色 */
     }
     100% { transform: scale(1); }
 }
 
-/* 閫欏€?class 鏈冪敱 JS 鍕曟厠鍔犲叆 */
+/* 閫欏€?class 會由 JS 動態加入 */
 .pop-active {
     animation: pop-effect 0.6s ease-out; /* 鏅傞枔鍔犻暦鑷?0.6s */
 }
 
-        /* --- 馃攳 鎼滃皨鍔熻兘妯ｅ紡 (鏂? --- */
+        /* --- 🔍 搜尋功能樣式 (鏂? --- */
         .search-trigger-icon {
             font-size: 1.5rem;
             cursor: pointer;
-            margin-right: 15px; /* 鑸?X 鎸夐垥淇濇寔璺濋洟 */
+            margin-right: 15px; /* 鑸?X 按鈕保持距離 */
             transition: transform 0.2s;
         }
         .search-trigger-icon:hover { transform: scale(1.2); }
 
         .search-bar-wrapper {
-            max-height: 0; /* 闋愯ō闅辫棌 (楂樺害鐐?0) */
+            max-height: 0; /* 預設隱藏 (楂樺害鐐?0) */
             overflow: hidden;
-            transition: max-height 0.3s ease-out; /* 婊戝嫊鍕曠暙 */
+            transition: max-height 0.3s ease-out; /* 滑動動畫 */
             background: white;
             border-bottom: 1px solid #eee;
         }
@@ -458,7 +458,7 @@
         }
         .shake { animation: shake 0.4s; }
 
-        /* --- 馃敟 鏂板锛氬懠鍚哥噲鍕曠暙 (Breathing Effect) --- */
+        /* --- 🔥 鏂板锛氬懠鍚哥噲鍕曠暙 (Breathing Effect) --- */
         @keyframes breathing {
             0% { transform: scale(1); box-shadow: 0 0 0 rgba(142, 68, 173, 0.4); }
             50% { transform: scale(1.08); box-shadow: 0 0 20px rgba(142, 68, 173, 0.7); }
@@ -469,39 +469,39 @@
             animation: breathing 2s infinite ease-in-out !important;
         }
 
-        /* 纰轰繚 Result Modal 鐨勫収瀹规暣楂旀嵅鍕曪紝鑰屼笉鏄垎闁嬫嵅鍕?*/
+        /* 確保 Result Modal 鐨勫収瀹规暣楂旀嵅鍕曪紝鑰屼笉鏄垎闁嬫嵅鍕?*/
         .modal-content {
             overflow-y: auto; /* 纰轰繚鏁村€嬪綀绐楀収瀹归兘鍙嵅鍕?*/
         }
-/* --- 馃敟 婧繏琛?UI 淇京 (鍥哄畾 Header + 瀹岀編鍦撹) --- */
+/* --- 🔥 婧繏琛?UI 淇京 (固定 Header + 瀹岀編鍦撹) --- */
 
 /* 1. 淇敼褰堢獥瀹瑰櫒锛氳畩鎴?Flex 浣堝眬锛屽妗嗚矤璨湏瑙掞紝鍏ч儴璨犺铂鎹插嫊 */
 .modal-content {
-    padding: 0 !important; /* 绉婚櫎鍏ц窛锛岃畵 Header 鍙互璨奸倞 */
+    padding: 0 !important; /* 移除內距，讓 Header 鍙互璨奸倞 */
     display: flex;
     flex-direction: column;
-    overflow: hidden; /* 闂滈嵉锛佸皣瓒呭嚭鐨勫収瀹?鍖呮嫭 Scrollbar) 闅辫棌鍦ㄥ湏瑙掑収 */
+    overflow: hidden; /* 闂滈嵉锛佸皣瓒呭嚭鐨勫収瀹?包括 Scrollbar) 隱藏在圓角內 */
     max-height: 85vh;
     border-radius: 20px; /* 纰轰繚鍥涘€嬭閮藉湏 */
 }
 
 /* 2. 鍥哄畾妯欓牠鍗€锛氫笉鏈冮毃鍏у鎹插嫊 */
 .modal-header {
-    padding: 20px 25px; /* 瑁滃洖 Padding */
+    padding: 20px 25px; /* 補回 Padding */
     background: white;
     z-index: 10;
     flex-shrink: 0; /* 绂佹琚绺?*/
     border-bottom: 2px solid #f0f0f0;
 }
 
-/* 3. 鎼滃皨娆勫崁鍩燂細鍚屾ǎ鍥哄畾 */
+/* 3. 搜尋欄區域：同樣固定 */
 .search-bar-wrapper {
     flex-shrink: 0;
     background: white;
     width: 100%;
 }
 
-/* 4. 鎻愮ず鏂囧瓧 (榛炴搳鐧奸煶)锛氬悓妯ｅ浐瀹?*/
+/* 4. 提示文字 (點擊發音)锛氬悓妯ｅ浐瀹?*/
 .study-hint-text {
     flex-shrink: 0;
     padding: 10px 25px 0 25px;
@@ -532,7 +532,7 @@
     border: 2px solid transparent;
     background-clip: content-box;
 }
-/* --- 馃 AI 鍔╂墜灏堢敤妯ｅ紡 --- */
+/* --- 馃 AI 助手專用樣式 --- */
         .btn-ai-ask {
             background: #9b59b6; /* 绱壊 */
             color: white;
@@ -562,11 +562,11 @@
     line-height: 1.6;
     color: #2c3e50;
     
-    display: none; /* 闋愯ō闅辫棌 */
+    display: none; /* 預設隱藏 */
     white-space: pre-wrap;
     text-align: left;
     
-    /* 鉁?鏀圭敤鏂板嫊鐣細鏅傞枔 0.5绉掞紝浣跨敤 ease-out 浠ょ祼灏炬笡閫?*/
+    /* 鉁?鏀圭敤鏂板嫊鐣細鏅傞枔 0.5秒，使用 ease-out 浠ょ祼灏炬笡閫?*/
     animation: aiPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
     transform-origin: top center; /* 瑷畾璁婂舰璧烽粸鍦ㄩ爞閮?*/
     overflow: hidden; /* 纰轰繚灞曢枊鏅傚収瀹瑰敂鏈冩孩鍑?*/
@@ -576,7 +576,7 @@
 }
         
         .ai-loading { color: #9b59b6; font-weight: bold; margin-top: 5px; display: none; }
-        /* --- 馃 AI 鍔╂墜灏堢敤妯ｅ紡 (浠跨収鏃ユ枃Game) --- */
+        /* --- 馃 AI 助手專用樣式 (仿照日文Game) --- */
         .ai-btn {
             background: #9b59b6; /* 绱壊 */
             color: white;
@@ -607,11 +607,11 @@
     line-height: 1.6;
     color: #2c3e50;
     
-    display: none; /* 闋愯ō闅辫棌 */
+    display: none; /* 預設隱藏 */
     white-space: pre-wrap;
     text-align: left;
     
-    /* 鉁?鏀圭敤鏂板嫊鐣細鏅傞枔 0.5绉掞紝浣跨敤 ease-out 浠ょ祼灏炬笡閫?*/
+    /* 鉁?鏀圭敤鏂板嫊鐣細鏅傞枔 0.5秒，使用 ease-out 浠ょ祼灏炬笡閫?*/
     animation: aiPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
     transform-origin: top center; /* 瑷畾璁婂舰璧烽粸鍦ㄩ爞閮?*/
     overflow: hidden; /* 纰轰繚灞曢枊鏅傚収瀹瑰敂鏈冩孩鍑?*/
@@ -1049,39 +1049,39 @@
 </head>
 <body>
 
-    <h1>馃懟鍚岀京瑭炪伄楝拣煈?/h1>
+    <h1>&#128123;&#21516;&#32681;&#35422;&#12398;&#39740;&#128123;</h1>
     <p>Presented by Enguistics Learning Centre</p>
 
-        <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="vocab.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging-compat.js"></script>
     <div class="info-panel">
         <div class="user-panel" id="userPanel" style="display:none;">
-            馃懁 <span id="currentUserDisplay">Player</span>
-            <button class="logout-btn" onclick="logout()">鐧诲嚭</button>
+            👤 <span id="currentUserDisplay">Player</span>
+            <button class="logout-btn" onclick="logout()">&#30331;&#20986;</button>
         </div>
         <div class="info-group" id="gameStatsGroup">
             <div class="stat-box">LEVEL <span id="level-display">1</span></div>
-            <div class="stat-box">鈴憋笍 <span id="timer">100</span>s</div>
-            <div class="stat-box"> <span id="lives">10</span></div> 
-            <div class="stat-box score-box">馃弳 Score: <span id="total-score">0</span></div>
+            <div class="stat-box">⏱️ <span id="timer">100</span>s</div>
+            <div class="stat-box"><span id="lives">10</span></div>
+            <div class="stat-box score-box">🏆 Score: <span id="total-score">0</span></div>
         </div>
         <div class="info-group" id="overviewStatsGroup" style="display:none;">
-            <div class="stat-box overview-box">宸插緛鏈嶇殑鐢熷瓧 <span id="mastered-vocab-display">[0 / 0]</span></div>
-            <div class="stat-box overview-box">鏈€楂樺垎鏁? <span id="best-score-display">0</span></div>
-            <div class="stat-box overview-box">鎺掑悕: <span id="best-rank-display">--</span></div>
+            <div class="stat-box overview-box">&#24050;&#24449;&#26381;&#30340;&#29983;&#23383; <span id="mastered-vocab-display">[0 / 0]</span></div>
+            <div class="stat-box overview-box">&#26368;&#39640;&#20998;&#25976;: <span id="best-score-display">0</span></div>
+            <div class="stat-box overview-box">&#25490;&#21517;: <span id="best-rank-display">--</span></div>
         </div>
     </div>
 
-<div id="startOverlay" style="text-align: center; margin: 20px 0; width: 100%;">
-        <h2 style="color: #2c3e50; margin-bottom: 15px;">婧栧倷濂芥帴鍙楁寫鎴颁簡鍡庯紵</h2>
+    <div id="startOverlay" style="text-align: center; margin: 20px 0; width: 100%;">
+        <h2 style="color: #2c3e50; margin-bottom: 15px;">&#28310;&#20633;&#22909;&#25509;&#21463;&#25361;&#25136;&#20102;&#21966;&#65311;</h2>
         <div class="start-mode-buttons">
             <button onclick="startGameSession()" style="background: #e74c3c; color: white; padding: 15px 40px; font-size: 1.2rem; border-radius: 50px; border:none; cursor:pointer; box-shadow: 0 5px 15px rgba(231, 76, 60, 0.4); font-weight:bold;">
-                鈻?缍撳吀妯″紡
+                &#9654; &#32147;&#20856;&#27169;&#24335;
             </button>
             <button class="btn-learning" onclick="startLearningMode()">
-                馃槇 闂栭棞妯″紡
+                &#128520; &#38318;&#38364;&#27169;&#24335;
             </button>
         </div>
     </div>
@@ -1091,39 +1091,38 @@
 
     <div class="action-buttons">
         <div id="preGameButtons" style="display: flex; gap: 15px;">
-            <button class="btn-study" onclick="openStudyModal()">馃摉 婧繏琛?/button>
-            <button class="btn-rank" onclick="openRankModal()">馃憫 鎺掕姒?/button>
+            <button class="btn-study" onclick="openStudyModal()">&#128214; &#28331;&#32722;&#34920;</button>
+            <button class="btn-rank" onclick="openRankModal()">&#128081; &#25490;&#34892;&#27036;</button>
         </div>
-        
+
         <div id="inGameButtons" style="display: none; gap: 15px;">
-            <button class="btn-restart" id="btn-giveup" onclick="onGiveUp()">馃彸锔?鏀炬 & 鍥炰富閬稿柈</button>
+            <button class="btn-restart" id="btn-giveup" onclick="onGiveUp()">&#127987;&#65039; &#25918;&#26820; &amp; &#22238;&#20027;&#36984;&#21934;</button>
             <button class="btn-study" id="btn-review-level" onclick="goToResultPage()" style="display:none; background: #8e44ad; color: white;">
-                馃搳 闂滃崱瑭炶獮鍥為¨ (Review)
+                &#128202; &#38364;&#21345;&#35422;&#35486;&#22238;&#39015;
             </button>
         </div>
     </div>
 
-<div class="modal-overlay hidden" id="resultModal">
+    <div class="modal-overlay hidden" id="resultModal">
         <div class="modal-content" style="max-width: 600px;">
             <div class="modal-header">
-                <div class="modal-title">馃搳 鎴扮妇鍫卞憡 (Game Recap)</div>
+                <div class="modal-title">&#128202; &#25136;&#32318;&#22577;&#21578;</div>
                 <div class="close-btn" onclick="closeResultAndReset()">&times;</div>
             </div>
-            
-            <div id="resultListContainer" style="text-align: left; padding: 20px 25px; overflow-y: auto; flex: 1;">
-                </div>
+
+            <div id="resultListContainer" style="text-align: left; padding: 20px 25px; overflow-y: auto; flex: 1;"></div>
 
             <div style="padding: 20px; background: #fff; border-top: 1px solid #eee; flex-shrink: 0; display: flex; flex-direction: column; gap: 10px;">
                 <button class="btn-study" onclick="startGameSession()" style="width: 100%; justify-content: center; background: #27ae60; font-size: 1.1rem;">
-                    馃挭 鍐嶄締涓€灞€ (Play Again)
+                    &#128170; &#20877;&#29609;&#19968;&#23616;
                 </button>
 
                 <div style="display: flex; gap: 10px;">
                     <button class="btn-rank" onclick="openRankModal()" style="flex: 1; justify-content: center;">
-                        馃憫 鎺掕姒?
+                        &#128081; &#25490;&#34892;&#27036;
                     </button>
                     <button class="btn-restart" onclick="closeResultAndReset()" style="flex: 1; justify-content: center; background: #95a5a6;">
-                        馃彔 涓婚伕鍠?
+                        &#127968; &#20027;&#30059;&#38754;
                     </button>
                 </div>
             </div>
@@ -1132,83 +1131,80 @@
 
     <div class="modal-overlay" id="loginModal">
         <div class="modal-content login-box">
-            <h2>馃懟 婧栧倷濂藉仛鍚岀京瑭炪伄楝间簡鍡庯紵馃懟</h2>
-            <p>璜嬭几鍏ヤ綘鐨勫悕瀛椾互闁嬪閬婃埐<br>(濡傛灉鏄涓€娆★紝绯荤当鏈冭嚜鍕曡ɑ鍐?</p>
-            <input type="text" id="loginNameInput" class="login-input" placeholder="渚嬪: Tom A" maxlength="12">
-            <button class="btn-login" onclick="handleLogin()">闁嬪閬婃埐 (Start)</button>
-            <p style="font-size: 0.8rem; margin-top: 15px; color: #95a5a6;">*璜嬩娇鐢ㄧ崹鐗圭殑鍚嶅瓧锛屼笉鑳借垏浠栦汉閲嶈</p>
+            <h2>&#128123; &#28310;&#20633;&#22909;&#20570;&#21516;&#32681;&#35422;&#12398;&#39740;&#20102;&#21966;&#65311; &#128123;</h2>
+            <p>&#35531;&#36664;&#20837;&#20320;&#30340;&#21517;&#23383;&#20197;&#38283;&#22987;&#36938;&#25138;<br>(&#22914;&#26524;&#26159;&#31532;&#19968;&#27425;&#65292;&#31995;&#32113;&#26371;&#33258;&#21205;&#35387;&#20874;)</p>
+            <input type="text" id="loginNameInput" class="login-input" placeholder="&#20363;&#22914;: Tom A" maxlength="12">
+            <button class="btn-login" onclick="handleLogin()">&#38283;&#22987;&#36938;&#25138; (Start)</button>
+            <p style="font-size: 0.8rem; margin-top: 15px; color: #95a5a6;">*&#35531;&#20351;&#29992;&#29544;&#29305;&#30340;&#21517;&#23383;&#65292;&#19981;&#21487;&#33287;&#20182;&#20154;&#37325;&#35079;</p>
         </div>
     </div>
 
-<div class="modal-overlay hidden" id="rankModal">
+    <div class="modal-overlay hidden" id="rankModal">
         <div class="modal-content">
-            
             <div class="modal-header" style="justify-content: center; position: relative;">
-                <div class="modal-title">馃懟鏈€寮峰悓缇╄銇馃懟</div>
+                <div class="modal-title">&#128123;&#26368;&#24375;&#21516;&#32681;&#35422;&#29579;&#128123;</div>
                 <div class="close-btn" onclick="closeModal('rankModal')" style="position: absolute; right: 20px;">&times;</div>
             </div>
-            
+
             <div style="flex: 1; overflow-y: auto; padding: 0 20px 20px 20px;">
-                
-                <div id="loadingRank">杓夊叆涓?..</div>
-                
+                <div id="loadingRank">&#36617;&#20837;&#20013;...</div>
+
                 <table class="rank-table" id="rankTable">
                     <thead>
                         <tr>
                             <th width="15%">#</th>
                             <th>Player</th>
-                            <th style="text-align: right;">鎴伴鍔?/th>
+                            <th style="text-align: right;">&#32317;&#20998;</th>
                         </tr>
                     </thead>
                     <tbody id="rankListBody"></tbody>
                 </table>
-
             </div>
         </div>
     </div>
-<div class="modal-overlay hidden" id="studyModal">
+
+    <div class="modal-overlay hidden" id="studyModal">
         <div class="modal-content">
             <div class="modal-header">
                 <div style="display: flex; align-items: center;">
-                    <div class="modal-title">Reading 甯歌€冨悓缇╁瓧</div>
+                    <div class="modal-title">Reading &#24120;&#32771;&#21516;&#32681;&#23383;</div>
                 </div>
                 <div style="display: flex; align-items: center;">
-                    <div class="search-trigger-icon" onclick="toggleSearchBar()">馃攳</div>
+                    <div class="search-trigger-icon" onclick="toggleSearchBar()">🔍</div>
                     <div class="close-btn" onclick="closeModal('studyModal')">&times;</div>
                 </div>
             </div>
-            
+
             <div class="search-bar-wrapper" id="searchBarWrapper">
-                <div style="padding: 0 25px;"> <input type="text" id="studySearchInput" class="search-input" placeholder="杓稿叆闂滈嵉瀛?(渚嬪: sufficient)...">
-                </div>
+                <div style="padding: 0 25px;"><input type="text" id="studySearchInput" class="search-input" placeholder="&#36664;&#20837;&#38364;&#37749;&#23383; (&#20363;&#22914;: sufficient)..."></div>
             </div>
 
-            <p class="study-hint-text">(榛炴搳鍠瓧鍙櫦闊?馃攰)</p>
+            <p class="study-hint-text">(&#40670;&#25802;&#21934;&#23383;&#21487;&#30332;&#38899; &#128266;)</p>
 
             <div class="study-grid" id="studyListContainer"></div>
         </div>
     </div>
 
     <div id="installBanner" class="install-banner" aria-live="polite">
-        <div class="install-title">鍔犲埌涓荤暙闈紝涔嬪緦闁嬪緱鏇村揩</div>
-        <div class="install-copy" id="installBannerCopy">瀹夎鎴?app 涔嬪緦锛屽鐢熸洿瀹规槗杩斿殶绶寸繏锛屽悓鍩嬩箣寰屽厛鏂逛究鏀舵彁閱掋€?/div>
+        <div class="install-title">&#21152;&#21040;&#20027;&#30059;&#38754;&#65292;&#20043;&#24460;&#38283;&#24471;&#26356;&#24555;</div>
+        <div class="install-copy" id="installBannerCopy">&#23433;&#35037;&#25104; app &#20043;&#24460;&#65292;&#23416;&#29983;&#26356;&#23481;&#26131;&#36820;&#22148;&#28331;&#32722;&#65292;&#21516;&#20043;&#24460;&#25910;&#25552;&#37266;&#37117;&#26356;&#26041;&#20415;&#12290;</div>
         <div class="install-actions">
-            <button class="btn-install-now" id="installPrimaryBtn" onclick="triggerInstallPrompt()">绔嬪嵆瀹夎</button>
-            <button class="btn-install-later" onclick="dismissInstallPrompt()">绋嶅緦鍐嶈瑳</button>
+            <button class="btn-install-now" id="installPrimaryBtn" onclick="triggerInstallPrompt()">&#31435;&#21363;&#23433;&#35037;</button>
+            <button class="btn-install-later" onclick="dismissInstallPrompt()">&#31245;&#24460;&#20877;&#35611;</button>
         </div>
     </div>
 
     <div id="iosInstallOverlay" class="install-overlay">
         <div class="install-sheet">
-            <div class="install-title" style="color:#1d3557;">鍔犲埌涓荤暙闈?/div>
-            <div class="install-copy" style="color:#495057;">iPhone / iPad 瑕佺敤 Safari 鑷繁鍔犲埌涓荤暙闈€傝瀹屼箣寰屾渻鏇翠技鐪熸 app銆?/div>
+            <div class="install-title" style="color:#1d3557;">&#21152;&#21040;&#20027;&#30059;&#38754;</div>
+            <div class="install-copy" style="color:#495057;">iPhone / iPad &#35201;&#29992; Safari &#33258;&#24049;&#21152;&#21040;&#20027;&#30059;&#38754;&#12290;&#35037;&#23436;&#20043;&#24460;&#26371;&#26356;&#20284;&#30495;&#27491; app&#12290;</div>
             <ol class="install-steps">
-                <li>鎸?Safari 涓嬫柟銆屽垎浜€?/li>
-                <li>鎻€銆屽姞鍒颁富鐣潰銆?/li>
-                <li>鍐嶆寜鍙充笂瑙掋€屽姞鍏ャ€?/li>
+                <li>&#25353; Safari &#19979;&#26041;&#12300;&#20998;&#20139;&#12301;</li>
+                <li>&#25540;&#12300;&#21152;&#21040;&#20027;&#30059;&#38754;&#12301;</li>
+                <li>&#20877;&#25353;&#21491;&#19978;&#35282;&#12300;&#21152;&#20837;&#12301;</li>
             </ol>
             <div class="install-actions">
-                <button class="btn-install-now" onclick="hideIosInstallGuide()">鐭ラ亾浜?/button>
+                <button class="btn-install-now" onclick="hideIosInstallGuide()">&#30693;&#36947;&#20102;</button>
             </div>
         </div>
     </div>
@@ -1224,7 +1220,7 @@
     // =========================================================
     
 // =========================================================
-    // 鈽?askGemini (寮峰姏闄ら尟鐗堬細寮疯椤ず Loading + 褰堢獥鍫遍尟)
+    // 鈽?askGemini (寮峰姏闄ら尟鐗堬細寮疯椤ず Loading + 彈窗報錯)
     // =========================================================
     
     // =========================================================
@@ -1232,13 +1228,13 @@
     // =========================================================
     
    // =========================================================
-    // 鈽?askGemini (鎵撳瓧姗熺壒鏁堢増)
+    // 鈽?askGemini (打字機特效版)
     // =========================================================
     
-    // 1. 灏?Key 鍒嗛枊鍏╂埅
+    // 1. 灏?Key 分開兩截
     const keyPart1 = "sk-or-v1-";
     
-    // 馃憞 浣犵殑 OpenRouter Key
+    // 👇 你的 OpenRouter Key
     const keyPart2 = "99843d0bae6f77f25b0bf50875a3cc23d9556e7e77d73b2a8828e9b690319381"; 
     
     // 鍚堥珨锛?
@@ -1254,7 +1250,7 @@
             parentContainer.appendChild(responseBox); 
         }
 
-        // Toggle 鍔熻兘
+        // Toggle 功能
         if (responseBox.style.display === 'block' && !btn.disabled) {
             responseBox.style.display = 'none';
             return;
@@ -1262,40 +1258,37 @@
 
         const originalText = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = '馃 鍒嗘瀽涓?..'; 
+        btn.innerHTML = '\u2728 \u5206\u6790\u4e2d...'; 
         
-        // 閲嶇疆妯ｅ紡
+        // 重置樣式
         responseBox.style.display = 'block';
         responseBox.style.animation = ''; 
         responseBox.style.height = '';    
         responseBox.style.maxHeight = ''; 
         
-        responseBox.innerHTML = '<div style="color:#9b59b6; font-weight:bold; padding:5px;">鈴?AI 姝ｅ湪鍒嗘瀽鍚岀京瑭?..</div>';
+        responseBox.innerHTML = '<div style="color:#9b59b6; font-weight:bold; padding:5px;">\u2728 AI \u6b63\u5728\u5206\u6790\u540c\u7fa9\u8a5e...</div>';
 
         const wordsList = wordsArray.map(w => (typeof w === 'string' ? w : w.t)).join(', ');
 
         const prompt = `
-            浣犳槸涓€浣嶅皥妤殑鑻辨枃瑁滅繏鍚嶅斧銆?
-            閫欑祫鍚岀京瑭炵殑鎰忔€濇槸锛氥€?{meaning}銆嶃€?
-            鍠瓧鍒楄〃锛歔 ${wordsList} ]
+            \u4f60\u662f\u4e00\u4f4d\u64c5\u9577\u6559\u9999\u6e2f\u5b78\u751f\u82f1\u6587\u5beb\u4f5c\u7684\u8001\u5e2b\u3002
+            \u9019\u7d44\u540c\u7fa9\u8a5e\u7684\u4e2d\u6587\u610f\u601d\u662f\uff1a\u300c${meaning}\u300d\u3002
+            \u55ae\u5b57\u5217\u8868\uff1a[ ${wordsList} ]
 
-            璜嬬敤 **寤ｆ澅瑭?* 鍒嗘瀽銆?
-            
-            **鍤存牸閬靛畧浠ヤ笅瑕忓墖锛?*
-            1. **涓嶈**鏈変换浣曢枊鍫寸櫧锛岀洿鎺ョ敱绗竴鍊嬪柈瀛楁椤岄枊濮嬨€?
-            2. **涓嶈**鏈変换浣曠祼瑾炪€?
-            3. **涓枃瀹氱京鑸囪獮澧?* 蹇呴爤 **妤靛害绨℃綌**锛岀洿鎺ヨ瑳閲嶉粸銆?
+            \u8acb\u7528\u7e41\u9ad4\u4e2d\u6587\u5206\u6790\u3002
+            \u4e0d\u8981\u5beb\u958b\u5834\u767d\uff0c\u4e0d\u8981\u5beb\u5ba2\u5957\u8a71\uff0c\u76f4\u63a5\u958b\u59cb\u3002
+            \u4e2d\u6587\u89e3\u91cb\u8981\u975e\u5e38\u7c21\u6f54\uff0c\u4f46\u91cd\u9ede\u8981\u6e05\u695a\u3002
 
-            璜嬮嚌灏嶅垪琛ㄤ腑鐨?**姣忎竴鍊嬪柈瀛?*锛屼緷鐓т互涓嬫牸寮忚几鍑猴細
-            
-            ### [鍠瓧]
-            * **绨℃綌瀹氱京**锛?绮炬簴榛炲嚭**HKDSE瀵綔鏅備娇鐢ㄧ殑瑕侀粸/閬╃敤鏂囬珨**)
-            * **渚嬪彞**锛?**鍏╁彞鍜孒KDSE鏈夐棞鐨勪綔鏂囪嫳鏂囦緥鍙?+ 涓枃缈昏**)
-            * **甯哥敤鎼厤**锛?**姣忓瓧鍒楀嚭 2-3 鍊嬬敤鍒扮殑HKDSE瀵綔閰嶆惌**)
+            \u8acb\u5c0d\u5217\u8868\u4e2d\u7684\u6bcf\u4e00\u500b\u55ae\u5b57\uff0c\u4f9d\u7167\u4ee5\u4e0b\u683c\u5f0f\u8f38\u51fa\uff1a
+
+            ### [\u55ae\u5b57]
+            * **\u7c21\u6f54\u5b9a\u7fa9**\uff1a\u7cbe\u6e96\u9ede\u51fa HKDSE \u5beb\u4f5c\u4e2d\u600e\u6a23\u7528\u3001\u9069\u5408\u4ec0\u9ebc\u8a9e\u5883
+            * **\u4f8b\u53e5**\uff1a\u5169\u53e5\u8207 HKDSE \u5e38\u898b\u984c\u6750\u76f8\u95dc\u7684\u82f1\u6587\u4f8b\u53e5\uff0c\u52a0\u4e2d\u6587\u7ffb\u8b6f
+            * **\u5e38\u7528\u642d\u914d**\uff1a\u5217\u51fa 2-3 \u500b\u5e38\u898b collocations
         `;
 
         try {
-            if (!keyPart2 || keyPart2.length < 10) throw new Error("API Key 瑷畾涓嶅畬鏁?);
+            if (!keyPart2 || keyPart2.length < 10) throw new Error("API Key \u8a2d\u5b9a\u4e0d\u5b8c\u6574");
 
             const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
                 method: "POST",
@@ -1314,35 +1307,35 @@
             if (!response.ok) {
                 const errData = await response.json();
                 console.error("OpenRouter Error:", errData);
-                throw new Error("閫ｇ窔绻佸繖锛岃珛绋嶅緦鍐嶈│");
+                throw new Error("\u9023\u7dda\u7e41\u5fd9\uff0c\u8acb\u7a0d\u5f8c\u518d\u8a66");
             }
 
             const data = await response.json();
             
-            if (!data.choices || data.choices.length === 0) throw new Error("AI 娌掓湁鍥炴噳");
+            if (!data.choices || data.choices.length === 0) throw new Error("AI \u6c92\u6709\u56de\u61c9");
 
             let aiText = data.choices[0].message.content;
             
             // 鏍煎紡鍖栨枃瀛?
             aiText = aiText.replace(/### (.*?)\n/g, '<h4 style="margin:10px 0 5px; color:#6f42c1;">$1</h4>');
             aiText = aiText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            aiText = aiText.replace(/^\* /gm, '鈥?'); 
+            aiText = aiText.replace(/^\* /gm, '• '); 
             
             // --- 婧栧倷鎾斁鍕曠暙 ---
             
-            // 1. 瑙ｉ櫎 CSS 楂樺害闄愬埗锛岃畵鎵撳瓧姗熷彲浠ョ劇闄愬欢浼?
+            // 1. 解除 CSS 楂樺害闄愬埗锛岃畵鎵撳瓧姗熷彲浠ョ劇闄愬欢浼?
             responseBox.style.animation = 'none';      
             responseBox.style.maxHeight = 'none';      
             responseBox.style.height = 'auto';         
             responseBox.style.overflow = 'visible';    
             
-            // 2. 鍛煎彨鎵撳瓧姗熷嚱鏁?(await 绛夊緟鎵撳畬)
+            // 2. 鍛煎彨鎵撳瓧姗熷嚱鏁?(await 等待打完)
             await typeWriter(responseBox, aiText, 10); // 閫熷害瑷偤 10ms锛屾劅瑕虹埥蹇暡
 
         } catch (error) {
             console.error(error);
             responseBox.style.height = 'auto';
-            responseBox.innerHTML = `<span style="color:red; font-weight:bold;">鉂?鍒嗘瀽澶辨晽: ${error.message}</span>`;
+            responseBox.innerHTML = `<span style="color:red; font-weight:bold;">鉂?分析失敗: ${error.message}</span>`;
         } finally {
             btn.disabled = false;
             btn.innerHTML = originalText;
@@ -1376,11 +1369,11 @@
         const USERS_PATH = 'users'; 
 
         // --- 2. 鏁告摎搴?---
-        // --- 2. 椤屽韩璩囨枡 ---
+        // --- 2. 題庫資料 ---
         const synonymData = window.synonymData || [];
 
 
-        // --- 閬婃埐璁婃暩 ---
+        // --- 遊戲變數 ---
         let hasFlippedCard = false, lockBoard = false;
         let firstCard, secondCard, matchedPairs = 0;
         let pairsThisLevel = 0;
@@ -1665,7 +1658,7 @@
        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
 
         // =========================================================
-        // 1. 鐧诲叆绯荤当閭忚集 (淇濈暀鍘熻鍔熻兘)
+        // 1. 登入系統邏輯 (淇濈暀鍘熻鍔熻兘)
         // =========================================================
         function checkLoginStatus() {
             const savedUser = localStorage.getItem('synonym_player');
@@ -1687,27 +1680,27 @@
             const inputName = document.getElementById('loginNameInput').value.trim();
             const loginBtn = document.querySelector('.btn-login');
 
-            if (!inputName) { alert("璜嬭几鍏ュ悕瀛?); return; }
-            if (inputName.length > 12) { alert("鍚嶅瓧澶暦鍟?(闄?2瀛?"); return; }
-            if (!db) { alert("鉂?璩囨枡搴湭閫ｆ帴"); return; }
+            if (!inputName) { alert("\u8acb\u8f38\u5165\u540d\u5b57"); return; }
+            if (inputName.length > 12) { alert("\u540d\u5b57\u592a\u9577\u4e86\uff0c\u6700\u591a 12 \u500b\u5b57"); return; }
+            if (!db) { alert("\u8cc7\u6599\u5eab\u672a\u9023\u63a5"); return; }
 
             const originalText = loginBtn.innerText;
-            loginBtn.innerText = "閫ｇ窔涓?..";
+            loginBtn.innerText = "\u767b\u5165\u4e2d...";
             loginBtn.disabled = true;
 
             db.ref(USERS_PATH + '/' + inputName).once('value')
             .then(snapshot => {
                 if (snapshot.exists()) {
-                    const confirmLogin = confirm(`鍚嶅瓧 "${inputName}" 宸插瓨鍦ㄣ€傛槸鏈汉璜嬫寜纰哄畾锛屽惁鍓囪珛鏀瑰悕銆俙);
+                    const confirmLogin = confirm(`\u540d\u5b57\u300c${inputName}\u300d\u5df2\u5b58\u5728\u3002\u5982\u679c\u662f\u4f60\u672c\u4eba\uff0c\u8acb\u6309\u78ba\u5b9a\uff1b\u5426\u5247\u8acb\u6539\u540d\u3002`);
                     if (confirmLogin) loginSuccess(inputName);
                     else { loginBtn.innerText = originalText; loginBtn.disabled = false; }
                 } else {
                     db.ref(USERS_PATH + '/' + inputName).set({ createdAt: firebase.database.ServerValue.TIMESTAMP })
-                    .then(() => { alert(`椤樹綘鑸囬鐜嬪悓鍦紒${inputName}锛乣); loginSuccess(inputName); });
+                    .then(() => { alert(`\u6b61\u8fce\u4f60\u52a0\u5165\uff0c\u540c\u7fa9\u8a5e\u4e4b\u9b3c ${inputName}\uff01`); loginSuccess(inputName); });
                 }
             })
             .catch(error => {
-                alert("鉂?閫ｇ窔閷: " + error.message);
+                alert("\u767b\u5165\u5931\u6557: " + error.message);
                 loginBtn.innerText = originalText; loginBtn.disabled = false;
             });
         }
@@ -1726,7 +1719,7 @@
         }
 
         function logout() {
-            if(confirm("纰哄畾瑕佺櫥鍑哄棊锛?)) {
+            if(confirm("\u78ba\u5b9a\u8981\u767b\u51fa\u55ce\uff1f")) {
                 localStorage.removeItem('synonym_player');
                 mistakeReplayQueue = [];
                 mistakeReplayQueueLoaded = false;
@@ -1748,10 +1741,10 @@
         }
 
         // =========================================================
-        // 2. 馃幍 鏂般兓婵€鐖介煶鏁堢郴绲?(Enhanced SFX Engine)
+        // 2. 🎵 鏂般兓婵€鐖介煶鏁堢郴绲?(Enhanced SFX Engine)
         // =========================================================
         const cuteSfx = {
-            // 鍩虹鐧艰伈鍑芥暩 (宸茶澶ч煶閲?vol 闋愯ō 0.3)
+            // 鍩虹鐧艰伈鍑芥暩 (宸茶澶ч煶閲?vol 預設 0.3)
             playTone: (freq, type, duration, vol = 0.3) => {
                 if (audioCtx.state === 'suspended') audioCtx.resume();
                 const osc = audioCtx.createOscillator();
@@ -1761,7 +1754,7 @@
                 osc.type = type;
                 osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
                 
-                // 闊抽噺鎺у埗锛氬揩閫熼€插叆 -> 淇濇寔 -> 琛版笡
+                // 闊抽噺鎺у埗锛氬揩閫熼€插叆 -> 保持 -> 衰減
                 gain.gain.setValueAtTime(0, audioCtx.currentTime);
                 gain.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + 0.02);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
@@ -1777,7 +1770,7 @@ tick: () => {
                 cuteSfx.playTone(800, 'sine', 0.05, 0.1);
             },
 
-            // 馃敇 UI Click (绡や竴涓嬶紝瀵︽法)
+            // 🔘 UI Click (篤一下，實淨)
             click: () => {
                 cuteSfx.playTone(600, 'triangle', 0.1, 0.3);
             },
@@ -1795,31 +1788,31 @@ tick: () => {
                 setTimeout(() => cuteSfx.playTone(1174.66, 'triangle', 0.14, 0.22), 55);
             },
 
-            // 馃儚 缈诲崱鑱?(Pop! 姣旇純娓呰剢)
+            // 🃏 缈诲崱鑱?(Pop! 比較清脆)
             flip: () => {
                 cuteSfx.playTone(400, 'sine', 0.1, 0.2);
                 setTimeout(() => cuteSfx.playTone(600, 'sine', 0.1, 0.1), 50);
             },
 
-            // 鉁?閰嶅皪鎴愬姛 (Match! 闊夸寒 High Key 闆欓煶)
+            // 鉁?配對成功 (Match! 響亮 High Key 雙音)
             match: () => {
-                // 鍙?榫嶏紒(C6 -> E6 -> G6) 鏇村姞鑸堝ギ
+                // 鍙?龍！(C6 -> E6 -> G6) 更加興奮
                 const now = audioCtx.currentTime;
                 // 绗竴鑱?
                 cuteSfx.playTone(1046.50, 'triangle', 0.4, 0.4); 
                 // 绗簩鑱?(寤堕伈涓€榛?
                 setTimeout(() => cuteSfx.playTone(1318.51, 'triangle', 0.4, 0.4), 80);
-                // 绗笁鑱?(鍜岄煶)
+                // 绗笁鑱?(和音)
                 setTimeout(() => cuteSfx.playTone(1567.98, 'sine', 0.6, 0.3), 150);
             },
 
-            // 鉂?閰嶅皪澶辨晽 (Fail! 鏇村姞浣庢矆鏈夊姏)
+            // 鉂?配對失敗 (Fail! 更加低沈有力)
             fail: () => {
                 cuteSfx.playTone(150, 'sawtooth', 0.3, 0.4);
                 setTimeout(() => cuteSfx.playTone(100, 'sawtooth', 0.4, 0.4), 100);
             },
 
-            // 馃帀 閬庨棞鍕濆埄 (Victory! 璞彲鐗堢惗闊?
+            // 🎉 過關勝利 (Victory! 璞彲鐗堢惗闊?
             victory: () => {
                 // 蹇€?C Major Arpeggio
                 const notes = [523.25, 659.25, 783.99, 1046.50, 1318.51, 1567.98];
@@ -1832,7 +1825,7 @@ tick: () => {
                 setTimeout(() => cuteSfx.playTone(523.25, 'triangle', 1.0, 0.5), 600);
             },
 
-            // 馃拃 Game Over
+            // 💀 Game Over
             gameover: () => {
                 cuteSfx.playTone(300, 'sawtooth', 0.5, 0.4);
                 setTimeout(() => cuteSfx.playTone(250, 'sawtooth', 0.5, 0.4), 400);
@@ -1852,17 +1845,17 @@ tick: () => {
             else if (type === 'confirm') cuteSfx.confirm();
         }
 
-        // --- 鑷嫊缍佸畾 UI 闊虫晥 (鎵€鏈?Button 閮芥湁鑱? ---
+        // --- 鑷嫊缍佸畾 UI 音效 (鎵€鏈?Button 閮芥湁鑱? ---
         (function initAutoSound() {
             const attachSounds = () => {
-                // 鎹変綇鎵€鏈?button, 閬搁爡, 婧繏鍗?
+                // 鎹変綇鎵€鏈?button, 選項, 婧繏鍗?
                 const targets = document.querySelectorAll('button, .option-btn, .word-badge, .study-tag, .learning-word-chip, .route-node, .close-btn');
                 
                 targets.forEach(el => {
                     if (el.dataset.soundReady) return; // 閬垮厤閲嶈鍔?
                     el.dataset.soundReady = "true";
 
-                    // 婊戦紶鎸囦綇 (Hover)
+                    // 滑鼠指住 (Hover)
                     el.addEventListener('mouseenter', () => {
                         if (el.closest('#learningPanel')) return;
                         if (!el.disabled) cuteSfx.hover();
@@ -1878,7 +1871,7 @@ tick: () => {
             // 1. 绔嬪嵆鍩疯涓€娆?
             attachSounds();
 
-            // 2. 鐩ｈ伣鐣潰璁婂寲 (闃叉鍕曟厠鍔犲槄 Button 鐒¤伈)
+            // 2. 鐩ｈ伣鐣潰璁婂寲 (闃叉鍕曟厠鍔犲槄 Button 無聲)
             const observer = new MutationObserver(attachSounds);
             observer.observe(document.body, { childList: true, subtree: true });
         })();
@@ -2069,9 +2062,9 @@ tick: () => {
         function formatRankLabel(rank) {
             if (!rank || typeof rank !== 'number') return '--';
             const text = `${rank}${getOrdinalSuffix(rank)}`;
-            if (rank === 1) return `<span class="rank-pill gold">馃憫 ${text}</span>`;
-            if (rank === 2) return `<span class="rank-pill silver">馃憫 ${text}</span>`;
-            if (rank >= 3 && rank <= 10) return `<span class="rank-pill bronze">馃憫 ${text}</span>`;
+            if (rank === 1) return `<span class="rank-pill gold">👑 ${text}</span>`;
+            if (rank === 2) return `<span class="rank-pill silver">👑 ${text}</span>`;
+            if (rank >= 3 && rank <= 10) return `<span class="rank-pill bronze">👑 ${text}</span>`;
             return `<span class="rank-pill default">${text}</span>`;
         }
 
@@ -2165,8 +2158,8 @@ tick: () => {
                 const clickAction = isLocked ? '' : `onclick="startLearningLevel(${index})"`;
                 const rewardHtml = award ? `
                     <div class="route-rewards">
-                        <span class="route-reward clear" title="閬庨棞">馃弲</span>
-                        ${award.perfect ? '<span class="route-reward perfect" title="瀹岀編閫氶棞">馃憫</span>' : ''}
+                        <span class="route-reward clear" title="過關">🏅</span>
+                        ${award.perfect ? '<span class="route-reward perfect" title="完美通關">👑</span>' : ''}
                     </div>
                 ` : '';
 
@@ -2266,7 +2259,7 @@ tick: () => {
                     <div class="learning-card" style="border-color:${group.color}33;">
                         <div class="learning-card-header">
                             <h3 style="color:${group.color};">${index + 1}. ${group.meaning}</h3>
-                            <button class="ai-btn" onclick="askGemini(this, '${group.meaning.replace(/\\/g, "\\\\").replace(/'/g, "\\'")}', learningGroups[${index}].words)">鉁ㄤ綔鏂囬粸鐢?/button>
+                            <button class="ai-btn" onclick="askGemini(this, '${group.meaning.replace(/\\/g, "\\\\").replace(/'/g, "\\'")}', learningGroups[${index}].words)">\u2728 \u4f5c\u6587\u9ede\u7528</button>
                         </div>
                         <div class="learning-words">${wordsHtml}</div>
                     </div>
@@ -2276,12 +2269,12 @@ tick: () => {
             showLearningPanel(`
                 <div class="learning-header">
                     <div class="learning-progress">STEP 1 / 3</div>
-                    <div class="learning-prompt">绗?${currentLearningLevelIndex + 1} 闂滐細鍏堟韩 ${learningCoreGroups.length} 绲勫悓缇╄</div>
-                    <div class="learning-subtitle">榛炲瓧鍙互鐧奸煶銆傜潎鐔熶腑鏂囨剰鎬濆悓鍚岀京瑭炰箣寰岋紝鍐嶉枊濮嬫脯椹椼€?/div>
+                    <div class="learning-prompt">第 ${currentLearningLevelIndex + 1} 關：先溫 ${learningCoreGroups.length} 組同義詞</div>
+                    <div class="learning-subtitle">黑字可以發音。熟習中文意思同同義詞之後，再開始 Quiz 1。</div>
                 </div>
                 <div class="learning-study-grid">${cardsHtml}</div>
                 <div class="learning-actions">
-                    <button class="btn-learning" onclick="startLearningQuizOne()">闁嬪 QUIZ 1</button>
+                    <button class="btn-learning" onclick="startLearningQuizOne()">開始 QUIZ 1</button>
                 </div>
             `);
         }
@@ -2309,8 +2302,8 @@ tick: () => {
 
             showLearningPanel(`
                 <div class="learning-question-box">
-                    <div class="learning-progress">STEP 2 / 3 路 QUIZ 1 路 ${learningQuizIndex + 1} / ${learningQuizQueue.length}</div>
-                    <div class="learning-prompt">銆?{item.targetWord}銆嶄總閭婂€嬩腑鏂囨剰鎬濓紵</div>
+                    <div class="learning-progress">STEP 2 / 3 · QUIZ 1 · ${learningQuizIndex + 1} / ${learningQuizQueue.length}</div>
+                    <div class="learning-prompt">「${item.targetWord}」係邊個中文意思？</div>
                     <div class="learning-help"></div>
                     <div class="learning-options">
                         ${options.map(option => `<button class="option-btn" onclick="handleLearningMeaningAnswer('${option.replace(/'/g, "\\'")}')">${option}</button>`).join('')}
@@ -2327,7 +2320,7 @@ tick: () => {
             if (selectedMeaning !== group.meaning) {
                 if (currentLearningRunStats) currentLearningRunStats.quizMistakes++;
                 playSound('fail');
-                renderLearningMeaningQuestion(`鏈暠锛屽啀瑭︿竴娆°€傛彁绀猴細${item.targetWord} 灞柤浣犲暠鍟辨韩閬庡槄鍏朵腑涓€绲勩€俙, true);
+                renderLearningMeaningQuestion(`未答啱，再試一次。提示：${item.targetWord} 屬於你剛剛溫過其中一組。`, true);
                 return;
             }
             playSound('match');
@@ -2354,9 +2347,9 @@ tick: () => {
 
             showLearningPanel(`
                 <div class="learning-question-box">
-                    <div class="learning-progress">STEP 2 / 3 路 QUIZ 1 路 ${learningQuizIndex + 1} / ${learningQuizQueue.length}</div>
-                    <div class="learning-prompt">鎻€鏅掑悓銆?{item.targetWord}銆嶅悓绲勫槄鍚岀京瑭?/div>
-                    <div class="learning-help">鍥哄畾椤ず涓€绲勯伕闋呫€傚彲浠ュ閬革紝瑕佹弨鍟辨檼鍏堟渻閬庡憿涓€椤屻€?/div>
+                    <div class="learning-progress">STEP 2 / 3 · QUIZ 1 · ${learningQuizIndex + 1} / ${learningQuizQueue.length}</div>
+                    <div class="learning-prompt">揀出同「${item.targetWord}」同組嘅同義詞</div>
+                    <div class="learning-help">選項位置固定，可以多選，要揀晒先算過關。</div>
                     <div class="learning-options">
                         ${options.map(option => {
                             const normalized = option.trim().toLowerCase();
@@ -2366,7 +2359,7 @@ tick: () => {
                     </div>
                     <div class="learning-feedback ${isError ? 'error' : 'success'}">${feedback}</div>
                     <div class="learning-actions">
-                        <button class="btn-learning" onclick="submitLearningSynonymAnswer()">纰鸿獚绛旀</button>
+                        <button class="btn-learning" onclick="submitLearningSynonymAnswer()">確認答案</button>
                     </div>
                 </div>
             `);
@@ -2381,7 +2374,7 @@ tick: () => {
             if (!isMatch) {
                 if (currentLearningRunStats) currentLearningRunStats.quizMistakes++;
                 playSound('fail');
-                renderLearningSynonymQuestion(`鏈綂鎴栬€呮弨澶氬挆銆傝鎻€鏅掑悓銆?{item.targetWord}銆嶅悓绲勫槄瀛楀厛绠楅亷銆俙, true);
+                renderLearningSynonymQuestion(`未揀啱或者揀多咗。要揀出同「${item.targetWord}」同組嘅字先算過。`, true);
                 return;
             }
 
@@ -2395,7 +2388,7 @@ tick: () => {
                 return;
             }
 
-            renderLearningMeaningQuestion('绛斿緱濂斤紝涓嬩竴绲勩€?, false);
+            renderLearningMeaningQuestion('答得好，下一組。', false);
         }
 
         function renderLearningQuizTwoIntro() {
@@ -2405,10 +2398,10 @@ tick: () => {
             showLearningPanel(`
                 <div class="learning-question-box">
                     <div class="learning-progress">STEP 3 / 3</div>
-                    <div class="learning-prompt">绗?${currentLearningLevelIndex + 1} 闂滐細QUIZ 2 缈诲崱鐗岄厤灏?/div>
-                    <div class="learning-help">鑰屽鏈冪敤杩旂炕鍗℃ā寮忥紝鐜╂湰闂?7 绲勫姞涔嬪墠闂滃崱闅ㄦ 3 绲勶紝绺藉叡 ${learningGroups.length} 绲勫悓缇╄銆?/div>
+                    <div class="learning-prompt">第 ${currentLearningLevelIndex + 1} 關：QUIZ 2 翻卡挑戰</div>
+                    <div class="learning-help">而家會用返翻卡模式，玩本關 7 組加之前關卡隨機 3 組，總共 ${learningGroups.length} 組同義詞。</div>
                     <div class="learning-actions">
-                        <button class="btn-learning" onclick="startLearningCardMode()">闁嬪 QUIZ 2</button>
+                        <button class="btn-learning" onclick="startLearningCardMode()">開始 QUIZ 2</button>
                     </div>
                 </div>
             `);
@@ -2450,13 +2443,13 @@ tick: () => {
             renderTopInfoBar();
             showLearningPanel(`
                 <div class="learning-question-box">
-                    <div class="learning-progress">瀹屾垚</div>
-                    <div class="learning-prompt">绗?${justClearedLevel} 闂滃畬鎴?/div>
-                    <div class="learning-help">Quiz 1 鍚?Quiz 2 閮藉畬鎴愬挆銆備笅涓€闂滃凡缍撳公浣犺В閹栵紝鍙互绻肩簩鎺ㄥ湒銆?/div>
-                    <div class="learning-note">${summary.perfect ? '馃憫 瀹岀編閫氶棞锛氫粖闂?Quiz 1 鍐囩瓟閷紝鑰屼笖 Quiz 2 鍐囧け琛€銆? : `馃弲 宸茬嵅寰楅亷闂滅崕绔犮€備粖闂滅瓟閷?${summary.quizMistakes} 娆★紝缈诲崱澶辨墜 ${summary.cardMistakes} 娆°€傛兂鎷庣殗鍐犲彲浠ュ啀鎸戞埌銆俙}</div>
+                    <div class="learning-progress">完成</div>
+                    <div class="learning-prompt">第 ${justClearedLevel} 關完成</div>
+                    <div class="learning-help">Quiz 1 同 Quiz 2 都完成咗。下一關已經解鎖，可以繼續推圖。</div>
+                    <div class="learning-note">${summary.perfect ? '👑 完美通關：今關 Quiz 1 冇答錯，而且 Quiz 2 冇失血。' : `🏅 已獲得過關獎章。今關答錯 ${summary.quizMistakes} 次，翻卡失手 ${summary.cardMistakes} 次。想拎皇冠可以再挑戰。`}</div>
                     <div class="learning-actions">
-                        <button class="btn-learning" onclick="goToLearningMap()">鍥炲埌璺窔鍦?/button>
-                        <button class="btn-restart" onclick="startLearningLevel(${currentLearningLevelIndex})">閲嶇帺閫欎竴闂?/button>
+                        <button class="btn-learning" onclick="goToLearningMap()">回到路線圖</button>
+                        <button class="btn-restart" onclick="startLearningLevel(${currentLearningLevelIndex})">重玩這一關</button>
                     </div>
                 </div>
             `);
@@ -2468,7 +2461,7 @@ tick: () => {
 
         function toggleDailyReminder() {
             if (!('Notification' in window)) {
-                alert("浣犵殑瑁濈疆/鐎忚鍣ㄦ湭鏀彺閫氱煡鍔熻兘銆?);
+                alert("\u4f60\u7684\u88dd\u7f6e\u6216\u700f\u89bd\u5668\u672a\u652f\u63f4\u901a\u77e5\u529f\u80fd\u3002");
                 return;
             }
 
@@ -2476,18 +2469,18 @@ tick: () => {
             if (enabled) {
                 localStorage.setItem(DAILY_REMINDER_KEY, 'false');
                 clearTimeout(reminderTimeout);
-                alert("宸查棞闁夋瘡鏃ユ彁閱掋€?);
+                alert("\u5df2\u95dc\u9589\u6bcf\u65e5\u63d0\u9192\u3002");
                 return;
             }
 
             Notification.requestPermission().then(permission => {
                 if (permission !== 'granted') {
-                    alert("鏈兘闁嬪暉閫氱煡娆婇檺銆?);
+                    alert("\u672a\u80fd\u555f\u7528\u901a\u77e5\u6b0a\u9650\u3002");
                     return;
                 }
                 localStorage.setItem(DAILY_REMINDER_KEY, 'true');
                 scheduleDailyReminder();
-                alert("宸查枊鍟熸彁閱掋€傛彁绀猴細绱?Web App 鎻愰啋鍙楄缃垏鐎忚鍣ㄦ敮鎻撮檺鍒讹紝濡傝绌╁畾鑳屾櫙姣忔棩鎺ㄦ挱锛屼箣寰屼粛寤鸿鎺?push service銆?);
+                alert("\u5df2\u958b\u555f\u63d0\u9192\u3002\u63d0\u793a\uff1a\u7d14 Web App \u63d0\u9192\u6703\u53d7\u88dd\u7f6e\u8207\u700f\u89bd\u5668\u9650\u5236\uff0c\u5982\u8981\u7a69\u5b9a\u6bcf\u65e5\u80cc\u666f\u63a8\u64ad\uff0c\u4ecd\u5efa\u8b70\u914d\u5408 push service\u3002");
             });
         }
 
@@ -2497,8 +2490,8 @@ tick: () => {
             if (!('Notification' in window) || Notification.permission !== 'granted') return;
 
             reminderTimeout = setTimeout(() => {
-                new Notification('鍚岀京瑭炪伄楝?, {
-                    body: '浠婃棩鏈反 synonym锛岃姳 5 鍒嗛悩鐜╀竴灞€瀛哥繏妯″紡鍟︺€?,
+                new Notification('\u540c\u7fa9\u8a5e\u306e\u9b3c', {
+                    body: '\u4eca\u65e5\u672a\u7df4 synonym\uff0c\u82b1 5 \u5206\u9418\u73a9\u4e00\u5c40\u95d6\u95dc\u6a21\u5f0f\u5566\u3002',
                     icon: 'icon.png'
                 });
                 localStorage.setItem(LAST_REMINDER_AT_KEY, String(Date.now()));
@@ -2515,8 +2508,8 @@ tick: () => {
             const now = Date.now();
 
             if (lastActiveAt && now - lastActiveAt >= 24 * 60 * 60 * 1000 && now - lastReminderAt >= 12 * 60 * 60 * 1000) {
-                new Notification('鍚岀京瑭炪伄楝?, {
-                    body: '闅斿挆涓€鏃ュ枃锛岃繑鍤熸帹涓嬩竴闂?synonym 璺窔鍦栧暒銆?,
+                new Notification('\u540c\u7fa9\u8a5e\u306e\u9b3c', {
+                    body: '\u9694\u5497\u4e00\u65e5\u5587\uff0c\u8fd4\u56b2\u63a8\u4e0b\u4e00\u95dc synonym \u8def\u7dda\u5716\u5566\u3002',
                     icon: 'icon.png'
                 });
                 localStorage.setItem(LAST_REMINDER_AT_KEY, String(now));
@@ -2615,9 +2608,9 @@ tick: () => {
                 if (!messagingForegroundBound) {
                     messagingForegroundBound = true;
                     messaging.onMessage(payload => {
-                        const title = payload.notification?.title || '鍚岀京瑭炪伄楝?;
+                        const title = payload.notification?.title || '\u540c\u7fa9\u8a5e\u306e\u9b3c';
                         const options = {
-                            body: payload.notification?.body || '鏈夋柊鎸戞埌绛夌穵浣犮€?,
+                            body: payload.notification?.body || '\u6709\u65b0\u6311\u6230\u7b49\u7dca\u4f60\u3002',
                             icon: 'icon.png'
                         };
 
@@ -2660,7 +2653,7 @@ tick: () => {
             const copy = document.getElementById('installBannerCopy');
             const primaryBtn = document.getElementById('installPrimaryBtn');
             if (copyText) copy.innerText = copyText;
-            primaryBtn.innerText = isIos ? '榛炴ǎ瀹夎' : '绔嬪嵆瀹夎';
+            primaryBtn.innerText = isIos ? '\u52a0\u5230\u4e3b\u756b\u9762' : '\u7acb\u5373\u5b89\u88dd';
             primaryBtn.onclick = isIos ? showIosInstallGuide : triggerInstallPrompt;
             banner.classList.add('visible');
         }
@@ -2686,7 +2679,7 @@ tick: () => {
             window.addEventListener('beforeinstallprompt', event => {
                 event.preventDefault();
                 deferredInstallPrompt = event;
-                showInstallBanner('鍔犲埌涓荤暙闈箣寰岋紝瀛哥敓涔嬪緦涓€鎸夊氨鍏ュ埌 game锛屼害鏇存柟渚挎敹鎻愰啋銆?);
+                showInstallBanner('\u52a0\u5230\u4e3b\u756b\u9762\u4e4b\u5f8c\uff0c\u5b78\u751f\u4e4b\u5f8c\u4e00\u6309\u5c31\u5165\u5230 game\uff0c\u4ea6\u66f4\u65b9\u4fbf\u6536\u63d0\u9192\u3002');
             });
 
             window.addEventListener('appinstalled', () => {
@@ -2696,7 +2689,7 @@ tick: () => {
 
             if (isIosSafariInstallable()) {
                 setTimeout(() => {
-                    showInstallBanner('鐢?Safari 鍔犲埌涓荤暙闈箣寰岋紝涔嬪緦闁?game 鏈冩洿浼肩湡姝?app銆?, true);
+                    showInstallBanner('\u7528 Safari \u52a0\u5230\u4e3b\u756b\u9762\u4e4b\u5f8c\uff0c\u4e4b\u5f8c\u958b game \u6703\u66f4\u4f3c\u771f\u6b63 app\u3002', true);
                 }, 1400);
             }
         }
@@ -2710,13 +2703,13 @@ tick: () => {
             });
         }
 
-        // --- 閬婃埐閭忚集 ---
+        // --- 遊戲邏輯 ---
  // ------------------------------------------------------------------
         // 馃 Google Gemini AI 瑷畾 (鏈€鏂颁慨寰╃増)
         // ------------------------------------------------------------------
         
         // ------------------------------------------------------------------
-        // 馃幃 閬婃埐鏍稿績閭忚集 (瀹屾暣淇京鐗?
+        // 🎮 遊戲核心邏輯 (瀹屾暣淇京鐗?
         // ------------------------------------------------------------------
         function generateMasterDeck(excludedGroupIds = new Set(), sourceGroups = synonymData) {
             let tempDeck = [];
@@ -2740,14 +2733,14 @@ tick: () => {
             hasFlippedCard = false; lockBoard = false; firstCard = null; secondCard = null; matchedPairs = 0;
             
 if (!isNextLevel) { 
-        currentLevel = 1; totalScore = 0; lives = 10; // 鉁?10姊濆懡
+        currentLevel = 1; totalScore = 0; lives = 10; // 鉁?10條命
         if (!useFiniteDeck) globalPairDeck = [];
         sessionHistory = []; 
         currentRunMistakeQueue = [];
         currentRunMistakeCounts = {};
     } else { // 鉁?淇锛氱洿鎺?else锛屽敂濂藉姞澶氬€?}
         currentLevel++; 
-        lives = Math.min(lives + 3, 10); // 鉁?閬庨棞 +3 琛€
+        lives = Math.min(lives + 3, 10); // 鉁?過關 +3 琛€
     }
 
             const sourceGroups = activeGameGroups || synonymData;
@@ -2827,9 +2820,9 @@ deck.forEach(item => {
         }
 
         function updateUI() {
-            let h = ""; for(let i=0; i<lives; i++) h+="鉂わ笍";
+            let h = ""; for(let i=0; i<lives; i++) h+="❤️";
             const l = document.getElementById('lives');
-            l.innerText = h || "馃拃";
+            l.innerText = h || "💀";
             l.className = lives<=2 ? "stat-box low-health" : "stat-box";
             document.getElementById('total-score').innerText = totalScore;
             document.getElementById('level-display').innerText = currentLevel;
@@ -2847,7 +2840,7 @@ function checkForMatch() {
             const g1 = firstCard.dataset.group;
             const g2 = secondCard.dataset.group;
 
-            // 蹇呴爤鏄悓涓€鍊?Group ID 鎵嶈兘娑堥櫎
+            // 蹇呴爤鏄悓涓€鍊?Group ID 才能消除
             if (g1 === g2) {
                 disableCards();
             } else {
@@ -2908,7 +2901,7 @@ function checkForMatch() {
                     if (useFiniteDeck && globalPairDeck.length === 0) {
                         renderLearningCompletion();
                     } else {
-                        alert(`馃帀 Level ${currentLevel} Complete! 鍔犵暘3鍊嬧潳锔忎烤浣?\n绺藉垎: ${totalScore}`);
+                        alert(`🎉 Level ${currentLevel} Complete! 加番3鍊嬧潳锔忎烤浣?\n總分: ${totalScore}`);
                         initGame(true);
                     }
                 }, 800);
@@ -2948,7 +2941,7 @@ function checkForMatch() {
             updateUI();
 
             if (lives === 0) {
-                revealAndEndGame('HP 姝搁浂'); 
+                revealAndEndGame('HP 歸零'); 
                 return;
             }
 
@@ -2979,25 +2972,25 @@ function startTimer() {
                 remainingTime--;
                 timerDisplay.innerText = remainingTime;
 
-                // --- 鈴?鍊掓暩 10 绉掔壒鏁?---
+                // --- 鈴?倒數 10 绉掔壒鏁?---
                 if (remainingTime <= 10 && remainingTime > 0) {
                     cuteSfx.tick(); // 鎾斁婊寸瓟鑱?
                     timerDisplay.style.color = '#e74c3c'; // 璁婄磪鑹?
-                    timerDisplay.classList.add('pulse-red'); // (濡傛灉鏈夊嫊鐣玞lass鐨勮┍)
+                    timerDisplay.classList.add('pulse-red'); // (如果有動畫class的話)
                 } else if (remainingTime > 10) {
-                    timerDisplay.style.color = ''; // 姝ｅ父椤忚壊
+                    timerDisplay.style.color = ''; // 正常顏色
                 }
 
                 if (remainingTime <= 0) { 
-                    revealAndEndGame('鏅傞枔鍒?); 
+                    revealAndEndGame('\u6642\u9593\u5230');
                 }
             }, 1000);
         }
         function resetTimer() { clearInterval(timer); remainingTime = timeLimit; document.getElementById('timer').innerText = remainingTime; }
 
-        // --- 鏍稿績鍔熻兘锛氱祼鏉熻垏鍥為¨ ---
+        // --- 核心功能：結束與回顧 ---
 
-        // 1. 杓告帀/绲愭潫鏅傜殑铏曠悊
+        // 1. 輸掉/結束時的處理
         function revealAndEndGame(reason) {
             clearInterval(timer);
             lastGameEndReason = reason;
@@ -3049,32 +3042,32 @@ function startTimer() {
             autoSubmitScore(true);
         }
 
-        // 2. 鎸夐垥瑙哥櫦
+        // 2. 按鈕觸發
         function goToResultPage() {
             showResultPage(lastGameEndReason);
         }
 
-        // 3. 椤ず绲愭灉闋?(鏂扮増)
+        // 3. 椤ず绲愭灉闋?(新版)
 function showResultPage(reason) {
             closeModal('rankModal'); 
             
             const container = document.getElementById('resultListContainer');
             container.innerHTML = ''; 
 
-            // A. 鍒嗘暩闈㈡澘
+            // A. 分數面板
             const dashboard = document.createElement('div');
             dashboard.style.cssText = "text-align: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px dashed #ddd;";
             
             let rankDisplay = `#${lastGameRank}`;
-            if(lastGameRank == 1) rankDisplay = "馃弳 鍐犺粛";
-            if(lastGameRank == 2) rankDisplay = "馃 浜炶粛";
-            if(lastGameRank == 3) rankDisplay = "馃 瀛ｈ粛";
+            if(lastGameRank == 1) rankDisplay = "\ud83c\udfc6 \u51a0\u8ecd";
+            if(lastGameRank == 2) rankDisplay = "\ud83e\udd48 \u4e9e\u8ecd";
+            if(lastGameRank == 3) rankDisplay = "\ud83e\udd49 \u5b63\u8ecd";
             const rankLabel = lastGameRankUsesCurrentScore
-                ? `鏈鎺掑悕: ${rankDisplay}`
-                : `鏈埛鏂板€嬩汉鏈€浣筹紝鎺掕姒滀粛浠ユ渶楂樺垎瑷? ${rankDisplay}`;
+                ? `\u672c\u6b21\u6392\u540d: ${rankDisplay}`
+                : `\u672a\u5237\u65b0\u500b\u4eba\u6700\u4f73\uff0c\u6392\u884c\u699c\u4ecd\u4ee5\u6700\u9ad8\u5206\u8a08: ${rankDisplay}`;
 
             dashboard.innerHTML = `
-                <div style="font-size: 1.1rem; color: #7f8c8d; margin-bottom: 5px;">杈涜嫤鏇紒鏈寰楀垎鐐?/div>
+                <div style="font-size: 1.1rem; color: #7f8c8d; margin-bottom: 5px;">\u8f9b\u82e6\u4e86\uff0c\u4f60\u4eca\u6b21\u5f97\u5230</div>
                 <div style="font-size: 3rem; font-weight: 900; color: #e74c3c; line-height: 1.2; margin: 5px 0;">
                     ${totalScore}
                 </div>
@@ -3084,9 +3077,9 @@ function showResultPage(reason) {
             `;
             container.appendChild(dashboard);
 
-            // B. 鍒楄〃
+            // B. 列表
             if(sessionHistory.length === 0) {
-                container.innerHTML += '<p style="text-align:center;">鐒￠亰鎴茬磤閷?/p>';
+                container.innerHTML += '<p style="text-align:center;">\u4eca\u5c40\u66ab\u6642\u672a\u6709\u914d\u5c0d\u7d00\u9304\u3002</p>';
             }
 
             [...sessionHistory].reverse().forEach(record => {
@@ -3106,19 +3099,19 @@ function showResultPage(reason) {
                     meaningDiv.className = 'result-meaning';
                     meaningDiv.style.color = pair.color;
 
-                    // 1. 婧栧倷鏁告摎
+                    // 1. 準備數據
                     const allWordsInGroup = fullGroupData ? fullGroupData.words : pair.words;
-                    const meaningText = fullGroupData ? fullGroupData.meaning : '鎰忔€?;
+                    const meaningText = fullGroupData ? fullGroupData.meaning : '\u610f\u601d';
 
                     // 2. 寤虹珛涓枃鎰忔€濈殑 Span (閫欐槸宸﹂倞鐨勫厓绱?
                     const textSpan = document.createElement('span');
                     textSpan.innerText = meaningText;
                     meaningDiv.appendChild(textSpan); 
 
-                    // 3. 寤虹珛 AI 鎸夐垥 (閫欐槸鍙抽倞鐨勫厓绱?
+                    // 3. 建立 AI 按鈕 (閫欐槸鍙抽倞鐨勫厓绱?
                     const aiBtn = document.createElement('button');
                     aiBtn.className = 'ai-btn';
-                    aiBtn.innerHTML = '鉁?鍒嗘瀽姝ょ祫瀛?;
+                    aiBtn.innerHTML = '\u2728 \u4f5c\u6587\u9ede\u7528';
                     aiBtn.onclick = function() { askGemini(this, meaningText, allWordsInGroup); };
                     
                     // 4. 灏囨寜閳曟斁鍏?meaningDiv
@@ -3159,7 +3152,7 @@ function showResultPage(reason) {
             
             if (totalScore === 0) {
                  if (!isSilent) {
-                     alert("馃拃 Game Over! \n0鍒?.. 涓嬫鍔姏锛?);
+                     alert("\ud83d\udc80 Game Over!\n0 \u5206\u3002\u4e0b\u6b21\u518d\u52aa\u529b\uff01");
                      backToLobby();
                  }
                  return;
@@ -3188,7 +3181,8 @@ function showResultPage(reason) {
                 let uniqueScores = getUniqueScores(rawScores);
                 syncCurrentPlayerProfile(uniqueScores);
 
-                // 鎵惧嚭鑷繁鍦ㄦ鍠腑鐨勪綅缃?                let myRank = "鏈笂姒?;
+                // 找出自己在排行榜中的位置
+                let myRank = "\u672a\u4e0a\u699c";
                 for (let i = 0; i < uniqueScores.length; i++) {
                     if (uniqueScores[i].name === currentPlayer) {
                         myRank = i + 1;
@@ -3200,18 +3194,18 @@ function showResultPage(reason) {
                 lastGameRank = myRank;
                 lastGameRankUsesCurrentScore = (typeof myRank === 'number') && (lastGameBestScoreUsed === totalScore);
 
-                // 绔嬪嵆鏇存柊 UI (濡傛灉绲愭灉闋佸凡缍撴墦闁?
+                // 立即更新 UI (濡傛灉绲愭灉闋佸凡缍撴墦闁?
                 const displayDiv = document.getElementById('resultPageRankDisplay');
                 if (displayDiv) {
                     let rankText = (typeof myRank === 'number') ? `#${myRank}` : myRank;
                     
-                    if(myRank == 1) rankText = "馃弳 鍐犺粛";
-                    if(myRank == 2) rankText = "馃 浜炶粛";
-                    if(myRank == 3) rankText = "馃 瀛ｈ粛";
+                    if(myRank == 1) rankText = "\ud83c\udfc6 \u51a0\u8ecd";
+                    if(myRank == 2) rankText = "\ud83e\udd48 \u4e9e\u8ecd";
+                    if(myRank == 3) rankText = "\ud83e\udd49 \u5b63\u8ecd";
                     
                     displayDiv.innerText = lastGameRankUsesCurrentScore
-                        ? `鏈鎺掑悕: ${rankText}`
-                        : `鏈埛鏂板€嬩汉鏈€浣筹紝鎺掕姒滀粛浠ユ渶楂樺垎瑷? ${rankText}`;
+                        ? `\u672c\u6b21\u6392\u540d: ${rankText}`
+                        : `\u672a\u5237\u65b0\u500b\u4eba\u6700\u4f73\uff0c\u6392\u884c\u699c\u4ecd\u4ee5\u6700\u9ad8\u5206\u8a08: ${rankText}`;
                 }
             });
         }
@@ -3241,7 +3235,7 @@ function showResultPage(reason) {
 
 uniqueScores = uniqueScores.slice(0, 100);
                 if(uniqueScores.length === 0) {
-                    listBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">鏆劇绱€閷?/td></tr>';
+                    listBody.innerHTML = '<tr><td colspan="3" style="text-align:center;">\u66ab\u6642\u672a\u6709\u7d00\u9304</td></tr>';
                     return;
                 }
 
@@ -3250,9 +3244,9 @@ uniqueScores = uniqueScores.slice(0, 100);
                     row.className = 'rank-row';
                     
                     let rankIcon = `<span class="rank-num">${index + 1}</span>`;
-                    if(index===0) rankIcon = '馃';
-                    if(index===1) rankIcon = '馃';
-                    if(index===2) rankIcon = '馃';
+                    if(index===0) rankIcon = '\ud83c\udfc6';
+                    if(index===1) rankIcon = '\ud83e\udd48';
+                    if(index===2) rankIcon = '\ud83e\udd49';
 
                     const isMe = (s.name === currentPlayer) ? 'background:#fffde7;' : '';
 
@@ -3263,11 +3257,11 @@ uniqueScores = uniqueScores.slice(0, 100);
                     `;
                     listBody.appendChild(row);
                 });
-            }) // 閫欒！姝ｇ⒑闁夊悎 .then
+            }) // 這裡正確閉合 .then
             .catch(err => {
-                loading.innerText = "杓夊叆澶辨晽";
+                loading.innerText = "載入失敗";
                 console.error(err);
-            }); // 閫欒！姝ｇ⒑闁夊悎 .catch
+            }); // 這裡正確閉合 .catch
         }
 
         // --- 灏庤埅鑸囦粙闈㈡帶鍒?---
@@ -3281,7 +3275,7 @@ uniqueScores = uniqueScores.slice(0, 100);
             document.getElementById('preGameButtons').style.display = 'flex';
             document.getElementById('inGameButtons').style.display = 'none';
             document.getElementById('timer').innerText = timeLimit;
-document.getElementById('lives').innerText = "鉂わ笍鉂わ笍鉂わ笍鉂わ笍鉂わ笍鉂わ笍鉂わ笍鉂わ笍鉂わ笍鉂わ笍";
+document.getElementById('lives').innerText = "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️";
     lives = 10; 
     hideLearningPanel();
     resetLearningState();
@@ -3291,18 +3285,18 @@ document.getElementById('lives').innerText = "鉂わ笍鉂わ笍鉂わ笍鉂わ�
 
         function onGiveUp() {
             if (isLearningFlow()) {
-                if(confirm("纰哄畾瑕侀洟闁嬪缈掓ā寮忎甫杩斿洖涓婚伕鍠棊锛?)) {
+                if(confirm("\u78ba\u5b9a\u8981\u96e2\u958b\u95d6\u95dc\u6a21\u5f0f\u4e26\u8fd4\u56de\u4e3b\u9078\u55ae\u55ce\uff1f")) {
                     backToLobby();
                 }
                 return;
             }
-            if(confirm("纰哄畾瑕佹斁妫勯亰鎴蹭甫绲愮畻鍒嗘暩鍡庯紵")) {
-                revealAndEndGame('涓诲嫊鏀炬');
+            if(confirm("\u78ba\u5b9a\u8981\u653e\u68c4\u904a\u6232\u4e26\u7d50\u7b97\u5206\u6578\u55ce\uff1f")) {
+                revealAndEndGame('\u4e3b\u52d5\u653e\u68c4');
             }
         }
 
         async function startGameSession() {
-            // 馃敟 淇敼榛烇細鍐嶄締涓€灞€鏅傦紝寮峰埗闂滈枆 Result Modal
+            // 🔥 淇敼榛烇細鍐嶄締涓€灞€鏅傦紝寮峰埗闂滈枆 Result Modal
             document.getElementById('resultModal').classList.add('hidden');
             if (!mistakeReplayQueueLoaded) {
                 await loadMistakeReplayQueue();
@@ -3367,7 +3361,7 @@ document.getElementById('lives').innerText = "鉂わ笍鉂わ笍鉂わ笍鉂わ�
         }
 
         // --- 婧繏琛ㄥ姛鑳?---
-// --- 婧繏琛ㄥ姛鑳?(宸蹭慨寰╋細椤ず鍊嬪垾瀛楃京 + 榛炴搳鍕曠暙 + 绉婚櫎鍠囧彮鍦栫ず) ---
+// --- 婧繏琛ㄥ姛鑳?(宸蹭慨寰╋細椤ず鍊嬪垾瀛楃京 + 點擊動畫 + 移除喇叭圖示) ---
         // --- 婧繏琛ㄥ姛鑳?(宸叉洿鏂帮細鏀彺鍕曟厠椤忚壊鍏? ---
 function openStudyModal() {
             const container = document.getElementById('studyListContainer');
@@ -3386,18 +3380,18 @@ function openStudyModal() {
                 groupDiv.style.borderLeftColor = group.color;
 
                 const meaningDiv = document.createElement('div');
-                meaningDiv.className = 'study-meaning'; // 姝?class 宸叉湁 space-between
+                meaningDiv.className = 'study-meaning'; // 姝?class 已有 space-between
                 meaningDiv.style.color = group.color;
                 
-                // 1. 寤虹珛宸﹂倞鏂囧瓧 Span
+                // 1. 建立左邊文字 Span
                 const textSpan = document.createElement('span');
                 textSpan.innerText = group.meaning;
                 meaningDiv.appendChild(textSpan);
 
-                // 2. 寤虹珛鍙抽倞 AI 鎸夐垥
+                // 2. 建立右邊 AI 按鈕
                 const aiBtn = document.createElement('button');
                 aiBtn.className = 'ai-btn';
-                aiBtn.innerHTML = '鉁ㄤ綔鏂囬粸鐢?;
+                aiBtn.innerHTML = '\u2728 \u4f5c\u6587\u9ede\u7528';
                 aiBtn.onclick = function() { askGemini(this, group.meaning, group.words); };
                 
                 meaningDiv.appendChild(aiBtn); 
@@ -3457,7 +3451,7 @@ function openStudyModal() {
             });
         }
 // =========================================================
-    // 馃 鎵撳瓧姗熺壒鏁堝嚱鏁?(绉绘鑷?N4 Game锛屽凡閬╅厤 Synonym Game)
+    // 馃 鎵撳瓧姗熺壒鏁堝嚱鏁?(绉绘鑷?N4 Game，已適配 Synonym Game)
     // =========================================================
     async function typeWriter(element, htmlContent, speed = 10) {
         element.innerHTML = '';
@@ -3480,7 +3474,7 @@ function openStudyModal() {
                 for (let i = 0; i < text.length; i++) {
                     textNode.textContent += text[i];
                     
-                    // --- 鑷嫊鎹插嫊閭忚集 (閬╅厤 Modal) ---
+                    // --- 鑷嫊鎹插嫊閭忚集 (適配 Modal) ---
                     // 鍢楄│鎼靛嚭鏈€杩戠殑鍙嵅鍕曞鍣?(Modal Content)
                     const scrollableParent = element.closest('.modal-content') || element.closest('.result-list-container');
                     if (scrollableParent) {
@@ -3491,11 +3485,11 @@ function openStudyModal() {
                         }
                     }
 
-                    // 姣忎竴闅诲瓧鍋滈爴妤电煭鏅傞枔 (10ms 姣?N4 蹇皯灏戯紝鍥犵偤閫欓亰鎴茬瘈濂忚純蹇?
+                    // 每一隻字停頓極短時間 (10ms 姣?N4 蹇皯灏戯紝鍥犵偤閫欓亰鎴茬瘈濂忚純蹇?
                     await new Promise(r => setTimeout(r, speed));
                 }
             } else if (node.nodeType === Node.ELEMENT_NODE) {
-                // 铏曠悊妯欑堡 (h4, strong 绛?
+                // 處理標籤 (h4, strong 绛?
                 const el = document.createElement(node.tagName);
                 Array.from(node.attributes).forEach(attr => {
                     el.setAttribute(attr.name, attr.value);
