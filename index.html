@@ -1964,6 +1964,14 @@ tick: () => {
             return levels;
         }
 
+        function getLearningLevelGroups(levelIndex) {
+            if (!learningLevels.length) learningLevels = buildLearningLevels();
+            const coreGroups = learningLevels[levelIndex] || [];
+            const previousPool = learningLevels.slice(0, levelIndex).flat();
+            const reviewGroups = pickRandomItems(previousPool, Math.min(3, previousPool.length));
+            return [...coreGroups, ...reviewGroups];
+        }
+
         function getLearningProgress() {
             if (!learningLevels.length) learningLevels = buildLearningLevels();
             const rawValue = Number(learningProgressState.unlockedLevel || 1);
@@ -2185,7 +2193,7 @@ tick: () => {
             };
             activeGameGroups = null;
             useFiniteDeck = false;
-            learningGroups = learningLevels[levelIndex];
+            learningGroups = getLearningLevelGroups(levelIndex);
             learningQuizQueue = shuffleArray(learningGroups.map(group => {
                 const words = shuffleArray(group.words.map(getWordText));
                 return {
@@ -2225,7 +2233,7 @@ tick: () => {
             showLearningPanel(`
                 <div class="learning-header">
                     <div class="learning-progress">STEP 1 / 3</div>
-                    <div class="learning-prompt">第 ${currentLearningLevelIndex + 1} 關：先溫 7 組同義詞</div>
+                    <div class="learning-prompt">第 ${currentLearningLevelIndex + 1} 關：先溫 ${learningGroups.length} 組同義詞</div>
                     <div class="learning-subtitle">點字可以發音。睇熟中文意思同同義詞之後，再開始測驗。</div>
                 </div>
                 <div class="learning-study-grid">${cardsHtml}</div>
@@ -2261,7 +2269,7 @@ tick: () => {
                 <div class="learning-question-box">
                     <div class="learning-progress">STEP 2 / 3 · QUIZ 1 · ${learningQuizIndex + 1} / ${learningQuizQueue.length}</div>
                     <div class="learning-prompt">「${item.targetWord}」係邊個中文意思？</div>
-                    <div class="learning-help">今關 7 組入面抽 6 個選擇。答中意思，之後要揀晒同組同義詞。</div>
+                    <div class="learning-help">今關 ${learningGroups.length} 組入面抽 6 個選擇。答中意思，之後要揀晒同組同義詞。</div>
                     <div class="learning-options">
                         ${options.map(option => `<button class="option-btn" onclick="handleLearningMeaningAnswer('${option.replace(/'/g, "\\'")}')">${option}</button>`).join('')}
                     </div>
@@ -2358,7 +2366,7 @@ tick: () => {
                 <div class="learning-question-box">
                     <div class="learning-progress">STEP 3 / 3</div>
                     <div class="learning-prompt">第 ${currentLearningLevelIndex + 1} 關：QUIZ 2 翻卡牌配對</div>
-                    <div class="learning-help">而家會用返翻卡模式，只玩你頭先學過嘅 7 組同義詞。</div>
+                    <div class="learning-help">而家會用返翻卡模式，玩本關 7 組加之前關卡隨機 3 組，總共 ${learningGroups.length} 組同義詞。</div>
                     <div class="learning-actions">
                         <button class="btn-learning" onclick="startLearningCardMode()">開始 QUIZ 2</button>
                         <button class="btn-restart" onclick="goToLearningMap()">返回路線圖</button>
