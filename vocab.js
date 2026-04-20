@@ -20,7 +20,7 @@
             { id: 'instead of', color: 'purple', meaning: '而不是', words: ['Instead of', 'Rather than', 'As opposed to'] }, // 
             { id: 'suffer from', color: 'fuchsia', meaning: '患上', words: ['Suffer from', 'Develop', 'Afflicted with'] }, 
             { id: 'enormous', color: 'navy', meaning: '巨大的', words: ['Enormous', 'Immense', 'Massive', 'Tremendous'] },
-            { id: 'enormous', color: 'tailor', meaning: '訂造', words: ['Tailor', 'Customize'] },
+            { id: 'tailor', color: 'tailor', meaning: '訂造', words: ['Tailor', 'Customize'] },
             { id: 'bow to', color: 'coral', meaning: '向...屈服', words: ['Bow to', 'Succumb to'] },
             { id: 'situation', color: 'teal', meaning: '情況', words: ['Situation', 'Condition', 'Circumstances', 'Scenario'] },
             { id: 'Amend', color: 'coral', meaning: '修改', words: [{ t: 'Amend', m: '修改(文件)' }, { t: 'Modify', m: '調整' }, { t: 'Adjust ', m: '調節' }, { t: 'Tune', m: '微調(工具)' }] },
@@ -766,7 +766,7 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 words: ['Affordable', 'Economical', 'Budget-friendly'] 
             },
             { 
-                id: 'affordable', color: '#B8860B', meaning: '基礎的', 
+                id: 'basic', color: '#B8860B', meaning: '基礎的', 
                 words: ['Foundational', 'Elementary', 'Basic', 'Fundamental'] 
             },
             { 
