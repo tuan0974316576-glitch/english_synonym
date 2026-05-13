@@ -15,7 +15,7 @@
             { id: 'decrease', color: 'olive', meaning: '減少', words: [{ t: 'Decrease', m: '減少' }, { t: 'Shrink', m: '減少' },{ t: 'Dwindle', m: '減少' },  { t: 'Decline', m: '減少' },{ t: 'Reduce ', m: '減少(+n)' }, { t: 'Lower ', m: '減少(+n)' }, { t: 'Minimise ', m: '減少(+n)' }] },
             { id: 'plunge', color: 'red', meaning: '急跌', words: ['Plunge', 'Plummet', 'Slump', 'Sink'] },
             { id: 'staggering', color: '#FFC72C', meaning: '大(數字)', words: [{ t: 'Staggering', m: '大(數字)' }, { t: 'Whopping', m: '大(數字)' }] },
-            { id: 'important', color: 'blue', meaning: '重要', words: [{ t: 'Crucial', m: '極重要' }, { t: 'Significant', m: '重要/顯著' }, { t: 'Vital', m: '必不可少' }, { t: 'Indispensable', m: '不可或缺' }, { t: 'Key', m: '關鍵性的' }, { t: 'Critical', m: '關鍵性的' }] },
+            { id: 'important', color: 'blue', meaning: '重要', words: [{ t: 'Crucial', m: '極重要' }, { t: 'Imperative', m: '至關重要' },{ t: 'Significant', m: '重要/顯著' }, { t: 'Vital', m: '必不可少' }, { t: 'Indispensable', m: '不可或缺' }, { t: 'Key', m: '關鍵性的' }, { t: 'Critical', m: '關鍵性的' }] },
             { id: 'Cultivate', color: 'lime', meaning: '培育', words: [{ t: 'Cultivate', m: '培養' }, { t: 'Nurture', m: '孕育' }] },
             { id: 'instead of', color: 'purple', meaning: '而不是', words: ['Instead of', 'Rather than', 'As opposed to'] }, // 
             { id: 'suffer from', color: 'fuchsia', meaning: '患上', words: ['Suffer from', 'Develop', 'Afflicted with'] }, 
