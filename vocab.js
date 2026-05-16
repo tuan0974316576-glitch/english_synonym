@@ -12,7 +12,7 @@
             { id: 'benefit', color: 'cadetblue', meaning: '好處', words: [{ t: 'Benefit', m: '益處' }, { t: 'Merit', m: '優點' }, { t: 'Pros', m: '利(必須眾數)' }, { t: 'Upside', m: '好處(不可加s)' }, { t: 'Advantage', m: '優點' }] },
             { id: 'drawback', color: 'chocolate', meaning: '壞處', words: [{ t: 'Drawback', m: '弊處' }, { t: 'Demerit', m: '缺點' }, { t: 'Cons', m: '弊(必須眾數)' }, { t: 'Downside', m: '壞處(不可加s)' },{ t: 'Disadvantage', m: '缺點' }] },
             { id: 'foster', color: 'green', meaning: '促進', words: [{ t: 'Foster', m: '促進' }, { t: 'Facilitate', m: '促進' }, { t: 'Promote', m: '促進' }] },
-            { id: 'decrease', color: 'olive', meaning: '減少', words: [{ t: 'Decrease', m: '減少' }, { t: 'Shrink', m: '減少' },{ t: 'Dwindle', m: '減少' },  { t: 'Decline', m: '減少' },{ t: 'Reduce ', m: '減少(+n)' }, { t: 'Lower ', m: '減少(+n)' }, { t: 'Minimise ', m: '減少(+n)' }] },
+            { id: 'decrease', color: 'olive', meaning: '減少', words: [{ t: 'Decrease', m: '減少' }, { t: 'Shrink', m: '減少' },{ t: 'Dwindle', m: '減少' },  { t: 'Decline', m: '減少/下降' },{ t: 'Reduce ', m: '減少(+n)' }, { t: 'Lower ', m: '減少(+n)' }, { t: 'Minimise ', m: '減少(+n)' }] },
             { id: 'plunge', color: 'red', meaning: '急跌', words: ['Plunge', 'Plummet', 'Slump', 'Sink'] },
             { id: 'staggering', color: '#FFC72C', meaning: '大(數字)', words: [{ t: 'Staggering', m: '大(數字)' }, { t: 'Whopping', m: '大(數字)' }] },
             { id: 'important', color: 'blue', meaning: '重要', words: [{ t: 'Crucial', m: '極重要' }, { t: 'Imperative', m: '至關重要' },{ t: 'Significant', m: '重要/顯著' }, { t: 'Vital', m: '必不可少' }, { t: 'Indispensable', m: '不可或缺' }, { t: 'Key', m: '關鍵性的' }, { t: 'Critical', m: '關鍵性的' }] },
@@ -51,6 +51,14 @@
                                 { 
                 id: 'importance', color: '#a53860', meaning: '重要性', 
                 words: ['Importance','Significance'] 
+            },
+            { 
+                id: 'holy', color: '#c4b808', meaning: '神聖的', 
+                words: ['Holy', 'Sacred'] 
+            },
+            { 
+                id: 'bleak', color: '#707070', meaning: '灰暗的', 
+                words: ['Bleak', 'Gloomy'] 
             },
             { 
                 id: 'extraordinary', color: '#da627d', meaning: '出眾 / 傑出', 
@@ -283,6 +291,14 @@
                     {t:'Beef up', m:'增強(口語)'}
                 ] 
             },
+            {
+               id: 'arouse', color: '#81b507', meaning: '引起', 
+                words: [
+                    {t:'Arouse', m:'引起'}, 
+                    {t:'Ignite', m:'燃起'}, 
+                    {t:'Pique', m:'引起(好奇/興趣)'}
+                ] 
+            }, 
             {
                id: 'unable to', color: '#ff006e', meaning: '未能', 
                 words: [
@@ -1191,6 +1207,7 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 meaning: '熱衷於', 
                 words: [
                     { t: 'Enthusiastic about', m: '熱衷' },
+                    { t: 'Avid', m: '熱忱的' },
                     { t: 'Passionate about', m: '充滿熱誠' },
                     { t: 'Keen to', m: '渴望/熱衷' }
                 ] 
@@ -1256,11 +1273,11 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
             { 
                 id: 'aware', 
                 color: '#2980b9', // Blue
-                meaning: '複雜', 
+                meaning: '意識到', 
                 words: [
                     { t: 'Aware of', m: '意識到' },
                     { t: 'Realise', m: '意識到/實現' },
-                    { t: 'Conscious of', m: '察覺到' }
+                    { t: 'Conscious of', m: '具...意識' }
                 ] 
             },
  { 
@@ -1352,5 +1369,88 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 color: '#1f6f78',
                 meaning: '多功能的',
                 words: ['Versatile', 'Multifunctional']
-            }
+            },
+                            { 
+                id: 'gain', 
+                color: '#2980b9', // Blue
+                meaning: '取得', 
+                words: [
+                    { t: 'Gain', m: '取得' },
+                    { t: 'Obtain', m: '獲得' },
+                    { t: 'Acquire', m: '獲取' },
+                { t: 'Reap', m: '取得(正面)' }
+                ] 
+            },
+                            { 
+                id: 'teenager', 
+                color: '#ac67c7', // Blue
+                meaning: '青少年', 
+                words: [
+                    { t: 'Teenager', m: '青少年' },
+                    { t: 'Adolescent', m: '青少年(學術)' },
+                { t: 'Juvenile', m: '青少年(犯罪)' }
+                ] 
+            },
+                            { 
+                id: 'negative', 
+                color: '#6232a8', // Blue
+                meaning: '負面的', 
+                words: [
+                    { t: 'Negative', m: '負面的' },
+                    { t: 'Adverse', m: '不利的' }
+                ] 
+            },
+                            { 
+                id: 'border', 
+                color: '#b000a1', // Blue
+                meaning: '邊界', 
+                words: [
+                    { t: 'Border', m: '邊界(國家)' },
+                    { t: 'Boundary', m: '邊界(限制)' }
+                ] 
+            },
+                            { 
+                id: 'acknowledge', 
+                color: '#b00000', // Blue
+                meaning: '承認', 
+                words: [
+                { t: 'Acknowledge', m: '承認/致謝' },
+                { t: 'Admit', m: '承認' },
+                { t: 'Confess', m: '承認(負面)' },
+                { t: 'Recognise', m: '承認/認可/認出' }
+                ] 
+            },
+                            { 
+                id: 'formulate', 
+                color: '#00b0a4', // Blue
+                meaning: '制定', 
+                words: [
+                    { t: 'Formulate', m: '制定' },
+                    { t: 'Devise', m: '構思' }
+                ] 
+            },
+                    {
+                id: 'in proximity to',
+                color: '#d60d61',
+                meaning: '鄰近',
+                words: ['In proximity to', 'Adjacent to']
+            },
+                    {
+                id: 'committee',
+                color: '#d18100',
+                meaning: '委員會',
+                words: ['Committee', 'Commission']
+            },
+                        { 
+                id: 'lay off', color: '#5200b0', meaning: '解雇', 
+                words: ['Make redundant','Lay off'] 
+            },
+                        { 
+                id: 'marvel at', color: '#b0ad00', meaning: '驚嘆於', 
+                words: ['Marvel at','Amazed at'] 
+            },
+                        { 
+                id: 'reasonable', color: '#00b061', meaning: '合理的', 
+                words: ['Reasonable','Sensible'] 
+            },
         ];
