@@ -1,0 +1,86 @@
+{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "users": {
+      "$name": {
+        ".read": "$name.length > 0 && $name.length <= 12",
+        ".write": "$name.length > 0 && $name.length <= 12 && newData.exists()",
+        ".validate": "newData.hasChild('createdAt')",
+        "createdAt": {
+          ".validate": "newData.isNumber() && (!data.exists() || newData.val() === data.val())"
+        },
+        "learningProgress": {
+          ".validate": "newData.hasChild('unlockedLevel')",
+          "unlockedLevel": {
+            ".validate": "newData.isNumber() && newData.val() >= 1"
+          },
+          "awards": {
+            "$level": {
+              ".validate": "newData.hasChildren(['cleared', 'perfect']) && newData.child('cleared').isBoolean() && newData.child('perfect').isBoolean()",
+              "$other": {
+                ".validate": false
+              }
+            }
+          },
+          "$other": {
+            ".validate": false
+          }
+        },
+        "mistakeReplayQueue": {
+          "$index": {
+            ".validate": "newData.hasChildren(['gid', 'word', 'color']) && newData.child('gid').isString() && newData.child('word').isString() && newData.child('color').isString()",
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "fcmTokens": {
+          "$tokenKey": {
+            ".validate": "newData.hasChildren(['token', 'lastSeenAt']) && newData.child('token').isString() && newData.child('lastSeenAt').isNumber()",
+            "token": {
+              ".validate": "newData.isString()"
+            },
+            "platform": {
+              ".validate": "newData.isString()"
+            },
+            "userAgent": {
+              ".validate": "newData.isString()"
+            },
+            "lastSeenAt": {
+              ".validate": "newData.isNumber()"
+            },
+            "$other": {
+              ".validate": false
+            }
+          }
+        },
+        "$other": {
+          ".validate": false
+        }
+      }
+    },
+    "leaderboards": {
+      "synonym_hunter": {
+        ".read": true,
+        ".indexOn": ["score"],
+        "$scoreId": {
+          ".write": "!data.exists() && newData.exists()",
+          ".validate": "newData.hasChildren(['name', 'score', 'timestamp'])",
+          "name": {
+            ".validate": "newData.isString() && newData.val().length > 0 && newData.val().length <= 12"
+          },
+          "score": {
+            ".validate": "newData.isNumber() && newData.val() >= 0"
+          },
+          "timestamp": {
+            ".validate": "newData.isNumber()"
+          },
+          "$other": {
+            ".validate": false
+          }
+        }
+      }
+    }
+  }
+}
