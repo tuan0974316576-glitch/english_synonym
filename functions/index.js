@@ -22,7 +22,7 @@ exports.sendDailyChallengeReminder = onSchedule(
     snapshot.forEach(userSnap => {
       const tokenMap = userSnap.child('fcmTokens').val() || {};
       Object.entries(tokenMap).forEach(([tokenKey, tokenInfo]) => {
-        if (!tokenInfo || !tokenInfo.token) return;
+        if (!tokenInfo || !tokenInfo.token || tokenInfo.enabled !== true) return;
         tokens.push({
           userKey: userSnap.key,
           tokenKey,

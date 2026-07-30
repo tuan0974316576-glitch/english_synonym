@@ -1415,7 +1415,7 @@
         const LEARNING_PROGRESS_PREFIX = 'synonym_learning_progress_';
         const LEARNING_AWARDS_PREFIX = 'synonym_learning_awards_';
         const INSTALL_DISMISSED_AT_KEY = 'synonym_install_dismissed_at';
-        const FCM_VAPID_PUBLIC_KEY = 'BMlgwl5pbHZ9okYqM7QIF03kkG_waiy0-f4K0CHJWtFzPWCxSEkHWfXKVd7Snh0En1ZDLRS5chCio624vL_tOFg';
+        const FCM_TOKEN_KEY = 'synonym_fcm_token_key';
 
         let mistakeReplayQueue = [];
         let currentRunMistakeQueue = [];
@@ -1737,7 +1737,9 @@
             scheduleDailyReminder();
             renderTopInfoBar();
             refreshPlayerProfileStats();
-            initFcmForCurrentPlayer();
+            if (localStorage.getItem(DAILY_REMINDER_KEY) === 'true') {
+                initFcmForCurrentPlayer();
+            }
         }
 
         // =========================================================
@@ -2459,7 +2461,7 @@ tick: () => {
             return currentMode.startsWith('learning');
         }
 
-        function toggleDailyReminder() {
+        async function toggleDailyReminder() {
             if (!('Notification' in window)) {
                 alert("\u4f60\u7684\u88dd\u7f6e\u6216\u700f\u89bd\u5668\u672a\u652f\u63f4\u901a\u77e5\u529f\u80fd\u3002");
                 return;
@@ -2469,25 +2471,34 @@ tick: () => {
             if (enabled) {
                 localStorage.setItem(DAILY_REMINDER_KEY, 'false');
                 clearTimeout(reminderTimeout);
+                await unregisterFcmForCurrentPlayer();
                 alert("\u5df2\u95dc\u9589\u6bcf\u65e5\u63d0\u9192\u3002");
                 return;
             }
 
-            Notification.requestPermission().then(permission => {
-                if (permission !== 'granted') {
-                    alert("\u672a\u80fd\u555f\u7528\u901a\u77e5\u6b0a\u9650\u3002");
-                    return;
-                }
-                localStorage.setItem(DAILY_REMINDER_KEY, 'true');
-                scheduleDailyReminder();
-                alert("\u5df2\u958b\u555f\u63d0\u9192\u3002\u63d0\u793a\uff1a\u7d14 Web App \u63d0\u9192\u6703\u53d7\u88dd\u7f6e\u8207\u700f\u89bd\u5668\u9650\u5236\uff0c\u5982\u8981\u7a69\u5b9a\u6bcf\u65e5\u80cc\u666f\u63a8\u64ad\uff0c\u4ecd\u5efa\u8b70\u914d\u5408 push service\u3002");
-            });
+            const permission = await Notification.requestPermission();
+            if (permission !== 'granted') {
+                alert("\u672a\u80fd\u555f\u7528\u901a\u77e5\u6b0a\u9650\u3002");
+                return;
+            }
+
+            localStorage.setItem(DAILY_REMINDER_KEY, 'true');
+            const pushRegistered = await initFcmForCurrentPlayer();
+            if (!pushRegistered) {
+                localStorage.setItem(DAILY_REMINDER_KEY, 'false');
+                alert("\u63d0\u9192\u8a3b\u518a\u5931\u6557\uff0c\u8acb\u7a0d\u5f8c\u518d\u8a66\u3002");
+                return;
+            }
+
+            scheduleDailyReminder();
+            alert("\u5df2\u958b\u555f\u6bcf\u65e5\u63d0\u9192\u3002");
         }
 
         function scheduleDailyReminder() {
             clearTimeout(reminderTimeout);
             if (localStorage.getItem(DAILY_REMINDER_KEY) !== 'true') return;
             if (!('Notification' in window) || Notification.permission !== 'granted') return;
+            if (localStorage.getItem(FCM_TOKEN_KEY)) return;
 
             reminderTimeout = setTimeout(() => {
                 new Notification('\u540c\u7fa9\u8a5e\u306e\u9b3c', {
@@ -2502,6 +2513,7 @@ tick: () => {
         function maybeShowComebackReminder() {
             if (localStorage.getItem(DAILY_REMINDER_KEY) !== 'true') return;
             if (!('Notification' in window) || Notification.permission !== 'granted') return;
+            if (localStorage.getItem(FCM_TOKEN_KEY)) return;
 
             const lastActiveAt = Number(localStorage.getItem(LAST_ACTIVE_AT_KEY) || 0);
             const lastReminderAt = Number(localStorage.getItem(LAST_REMINDER_AT_KEY) || 0);
@@ -2526,9 +2538,7 @@ tick: () => {
                 firebase.messaging &&
                 'Notification' in window &&
                 'serviceWorker' in navigator &&
-                'PushManager' in window &&
-                FCM_VAPID_PUBLIC_KEY &&
-                !FCM_VAPID_PUBLIC_KEY.includes('PASTE_YOUR')
+                'PushManager' in window
             );
         }
 
@@ -2546,6 +2556,7 @@ tick: () => {
                 token,
                 platform: navigator.platform || 'unknown',
                 userAgent: navigator.userAgent || 'unknown',
+                enabled: true,
                 lastSeenAt: firebase.database.ServerValue.TIMESTAMP
             };
         }
@@ -2554,15 +2565,38 @@ tick: () => {
             const ref = getFcmTokensRef();
             if (!ref || !token) return Promise.resolve();
             const key = hashFcmToken(token);
-            return ref.child(key).update(getFcmDevicePayload(token)).catch(error => {
+            return ref.child(key).update(getFcmDevicePayload(token)).then(() => {
+                localStorage.setItem(FCM_TOKEN_KEY, key);
+                return true;
+            }).catch(error => {
                 console.error('[FCM] Failed to save token:', error);
+                return false;
             });
+        }
+
+        async function unregisterFcmForCurrentPlayer() {
+            const ref = getFcmTokensRef();
+            const tokenKey = localStorage.getItem(FCM_TOKEN_KEY);
+
+            if (ref && tokenKey) {
+                await ref.child(tokenKey).remove().catch(error => {
+                    console.error('[FCM] Failed to remove token:', error);
+                });
+            }
+
+            localStorage.removeItem(FCM_TOKEN_KEY);
+            if (messagingClient && typeof messagingClient.deleteToken === 'function') {
+                await messagingClient.deleteToken().catch(error => {
+                    console.error('[FCM] Failed to delete browser token:', error);
+                });
+            }
         }
 
         function getMessagingRegistration() {
             if (messagingRegistrationPromise) return messagingRegistrationPromise;
             if (!('serviceWorker' in navigator)) return Promise.reject(new Error('serviceWorker unsupported'));
-            messagingRegistrationPromise = navigator.serviceWorker.register('./sw.js');
+            messagingRegistrationPromise = navigator.serviceWorker.register('./sw.js')
+                .then(() => navigator.serviceWorker.ready);
             return messagingRegistrationPromise;
         }
 
@@ -2585,24 +2619,22 @@ tick: () => {
 
         async function initFcmForCurrentPlayer() {
             const messaging = getMessagingClient();
-            if (!messaging || !currentPlayer || !db) return;
+            if (!messaging || !currentPlayer || !db) return false;
 
             if (Notification.permission === 'default' && shouldPromptNotificationPermission()) {
                 const permission = await Notification.requestPermission();
-                if (permission !== 'granted') return;
+                if (permission !== 'granted') return false;
             }
 
-            if (Notification.permission !== 'granted') return;
+            if (Notification.permission !== 'granted') return false;
 
             try {
                 const registration = await getMessagingRegistration();
-                const token = await messaging.getToken({
-                    vapidKey: FCM_VAPID_PUBLIC_KEY,
-                    serviceWorkerRegistration: registration
-                });
+                const token = await messaging.getToken({ serviceWorkerRegistration: registration });
 
                 if (token) {
-                    await saveFcmToken(token);
+                    const saved = await saveFcmToken(token);
+                    if (!saved) return false;
                 }
 
                 if (!messagingForegroundBound) {
@@ -2619,8 +2651,10 @@ tick: () => {
                         }
                     });
                 }
+                return Boolean(token);
             } catch (error) {
                 console.error('[FCM] Token registration failed:', error);
+                return false;
             }
         }
 

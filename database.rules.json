@@ -37,7 +37,7 @@
         },
         "fcmTokens": {
           "$tokenKey": {
-            ".validate": "newData.hasChildren(['token', 'lastSeenAt']) && newData.child('token').isString() && newData.child('lastSeenAt').isNumber()",
+            ".validate": "newData.hasChildren(['token', 'enabled', 'lastSeenAt']) && newData.child('token').isString() && newData.child('enabled').val() === true && newData.child('lastSeenAt').isNumber()",
             "token": {
               ".validate": "newData.isString()"
             },
@@ -46,6 +46,9 @@
             },
             "userAgent": {
               ".validate": "newData.isString()"
+            },
+            "enabled": {
+              ".validate": "newData.val() === true"
             },
             "lastSeenAt": {
               ".validate": "newData.isNumber()"
