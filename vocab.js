@@ -148,6 +148,7 @@
                 id: 'the same', color: '#8c0ff1 ', meaning: '一模一樣', 
                 words: ['Homogeneous', 'The same', 'Identical'] 
             },
+        
                 { 
                 id: 'force', color: '#780000', meaning: '強迫', 
                 words: [
@@ -175,6 +176,12 @@
             },
             {id: 'indeed', color: '#ffb703', meaning: '的確', 
                 words: ['Indeed', 'Admittedly', 'Granted'] 
+            },
+            {id: 'solution', color: '#fb6500', meaning: '解決方法', 
+                words: [
+                    {t:'solution', m:'解決方法'},
+                    {t:'Antidote', m:'解決方法/解毒劑'}
+                ] 
             },
             {id: 'a handful of', color: '#fb8500', meaning: '一小撮', 
                 words: [
@@ -608,7 +615,7 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
             },
 { 
                 id: 'In contrast', color: '#b88944', meaning: '相反', 
-                words: ['In contrast', 'On the contrary']
+                words: ['In contrast','Conversely, 'On the contrary']
             },
 { 
                 id: 'deep-rooted', color: '#66065c', meaning: '根深柢固', 
@@ -1452,5 +1459,13 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                         { 
                 id: 'reasonable', color: '#00b061', meaning: '合理的', 
                 words: ['Reasonable','Sensible'] 
+            },
+                        { 
+                id: 'adversity', color: '#0989B0', meaning: '困境', 
+                words: ['Adversity','Plight','Predicament'] 
+            },
+                        { 
+                id: 'adversity', color: '#0989B0', meaning: '困境', 
+                words: ['Adversity','Plight','Predicament'] 
             },
         ];
