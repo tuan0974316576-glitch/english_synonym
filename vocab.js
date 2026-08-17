@@ -615,7 +615,7 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
             },
 { 
                 id: 'In contrast', color: '#b88944', meaning: '相反', 
-                words: ['In contrast','Conversely, 'On the contrary']
+                words: ['In contrast', 'Conversely', 'On the contrary']
             },
 { 
                 id: 'deep-rooted', color: '#66065c', meaning: '根深柢固', 
@@ -1459,10 +1459,6 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                         { 
                 id: 'reasonable', color: '#00b061', meaning: '合理的', 
                 words: ['Reasonable','Sensible'] 
-            },
-                        { 
-                id: 'adversity', color: '#0989B0', meaning: '困境', 
-                words: ['Adversity','Plight','Predicament'] 
             },
                         { 
                 id: 'adversity', color: '#0989B0', meaning: '困境', 
