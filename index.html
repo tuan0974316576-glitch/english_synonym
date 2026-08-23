@@ -1456,6 +1456,19 @@
             return `${LEARNING_AWARDS_PREFIX}${currentPlayer || 'guest'}`;
         }
 
+        function normalizeLearningAwards(awards) {
+            if (!awards || typeof awards !== 'object') return {};
+            if (Array.isArray(awards)) {
+                return awards.reduce((normalized, award, level) => {
+                    if (level > 0 && award && typeof award === 'object' && !Array.isArray(award)) {
+                        normalized[String(level)] = award;
+                    }
+                    return normalized;
+                }, {});
+            }
+            return awards;
+        }
+
         function getLegacyLearningSnapshot() {
             let awards = {};
             try {
@@ -1463,7 +1476,7 @@
             } catch (error) {
                 awards = {};
             }
-            if (!awards || typeof awards !== 'object' || Array.isArray(awards)) awards = {};
+            awards = normalizeLearningAwards(awards);
 
             const unlockedLevel = Number(localStorage.getItem(getLegacyLearningProgressKey()) || 1);
             return {
@@ -1474,10 +1487,9 @@
 
         function normalizeLearningProgressState(value) {
             const unlockedLevel = Number(value?.unlockedLevel || 1);
-            const awards = value?.awards;
             return {
                 unlockedLevel: Number.isFinite(unlockedLevel) ? Math.max(1, unlockedLevel) : 1,
-                awards: awards && typeof awards === 'object' && !Array.isArray(awards) ? awards : {}
+                awards: normalizeLearningAwards(value?.awards)
             };
         }
 
@@ -2065,9 +2077,7 @@ tick: () => {
         }
 
         function saveLearningAwards(awards) {
-            learningProgressState.awards = awards && typeof awards === 'object' && !Array.isArray(awards)
-                ? { ...awards }
-                : {};
+            learningProgressState.awards = { ...normalizeLearningAwards(awards) };
             saveLearningProgressState();
         }
 
