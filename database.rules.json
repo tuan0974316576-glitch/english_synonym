@@ -18,6 +18,12 @@
           "awards": {
             "$level": {
               ".validate": "newData.hasChildren(['cleared', 'perfect']) && newData.child('cleared').isBoolean() && newData.child('perfect').isBoolean()",
+              "cleared": {
+                ".validate": "newData.isBoolean()"
+              },
+              "perfect": {
+                ".validate": "newData.isBoolean()"
+              },
               "$other": {
                 ".validate": false
               }

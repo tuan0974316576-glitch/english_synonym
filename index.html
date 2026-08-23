@@ -1403,6 +1403,7 @@
             unlockedLevel: 1,
             awards: {}
         };
+        let learningProgressSaveQueue = Promise.resolve();
         let messagingClient = null;
         let messagingRegistrationPromise = null;
         let messagingForegroundBound = false;
@@ -1462,34 +1463,68 @@
             } catch (error) {
                 awards = {};
             }
+            if (!awards || typeof awards !== 'object' || Array.isArray(awards)) awards = {};
+
+            const unlockedLevel = Number(localStorage.getItem(getLegacyLearningProgressKey()) || 1);
             return {
-                unlockedLevel: Number(localStorage.getItem(getLegacyLearningProgressKey()) || 1),
+                unlockedLevel: Number.isFinite(unlockedLevel) ? Math.max(1, unlockedLevel) : 1,
                 awards
             };
         }
 
+        function normalizeLearningProgressState(value) {
+            const unlockedLevel = Number(value?.unlockedLevel || 1);
+            const awards = value?.awards;
+            return {
+                unlockedLevel: Number.isFinite(unlockedLevel) ? Math.max(1, unlockedLevel) : 1,
+                awards: awards && typeof awards === 'object' && !Array.isArray(awards) ? awards : {}
+            };
+        }
+
+        function saveLearningProgressToLocal() {
+            try {
+                localStorage.setItem(getLegacyLearningProgressKey(), String(learningProgressState.unlockedLevel));
+                localStorage.setItem(getLegacyLearningAwardsKey(), JSON.stringify(learningProgressState.awards || {}));
+            } catch (error) {
+                console.warn('[LearningProgress] Local backup unavailable:', error);
+            }
+        }
+
         function saveLearningProgressState() {
+            // Keep a local copy first so a refresh or offline login cannot reset progress.
+            saveLearningProgressToLocal();
+
             const progressRef = getLearningProgressRef();
-            if (!progressRef) return Promise.resolve();
-            return progressRef.set(learningProgressState).catch(error => {
-                console.error('[LearningProgress] Failed to save progress:', error);
-            });
+            if (!progressRef) return Promise.resolve(learningProgressState);
+
+            const snapshot = {
+                unlockedLevel: learningProgressState.unlockedLevel,
+                awards: { ...(learningProgressState.awards || {}) }
+            };
+
+            // Serialize writes so an awards write cannot race an unlock write.
+            learningProgressSaveQueue = learningProgressSaveQueue
+                .catch(() => {})
+                .then(() => progressRef.set(snapshot))
+                .catch(error => {
+                    console.error('[LearningProgress] Failed to save progress:', error);
+                });
+            return learningProgressSaveQueue;
         }
 
         function loadLearningProgressState() {
             const progressRef = getLearningProgressRef();
+            const legacy = normalizeLearningProgressState(getLegacyLearningSnapshot());
+
             if (!progressRef) {
-                learningProgressState = { unlockedLevel: 1, awards: {} };
+                learningProgressState = legacy;
                 return Promise.resolve(learningProgressState);
             }
 
-            const legacy = getLegacyLearningSnapshot();
-
             return progressRef.once('value')
                 .then(snapshot => {
-                    const remote = snapshot.val() || {};
-                    const remoteUnlockedLevel = Number(remote.unlockedLevel || 1);
-                    const mergedUnlockedLevel = Math.max(remoteUnlockedLevel, Number(legacy.unlockedLevel || 1), 1);
+                    const remote = normalizeLearningProgressState(snapshot.val() || {});
+                    const mergedUnlockedLevel = Math.max(remote.unlockedLevel, legacy.unlockedLevel, 1);
                     const mergedAwards = {
                         ...(legacy.awards || {}),
                         ...(remote.awards || {})
@@ -1502,21 +1537,20 @@
 
                     const needsMigration =
                         !snapshot.exists() ||
-                        mergedUnlockedLevel !== remoteUnlockedLevel ||
+                        mergedUnlockedLevel !== remote.unlockedLevel ||
                         JSON.stringify(mergedAwards) !== JSON.stringify(remote.awards || {});
 
                     if (needsMigration) {
                         return saveLearningProgressState().then(() => learningProgressState);
                     }
 
+                    saveLearningProgressToLocal();
                     return learningProgressState;
                 })
                 .catch(error => {
                     console.error('[LearningProgress] Failed to load progress:', error);
-                    learningProgressState = {
-                        unlockedLevel: Number(legacy.unlockedLevel || 1),
-                        awards: legacy.awards || {}
-                    };
+                    learningProgressState = legacy;
+                    saveLearningProgressToLocal();
                     return learningProgressState;
                 });
         }
@@ -2016,7 +2050,13 @@ tick: () => {
         }
 
         function setLearningProgress(levelNumber) {
-            learningProgressState.unlockedLevel = levelNumber;
+            const nextLevel = Number(levelNumber);
+            if (Number.isFinite(nextLevel)) {
+                learningProgressState.unlockedLevel = Math.max(
+                    learningProgressState.unlockedLevel || 1,
+                    Math.max(1, nextLevel)
+                );
+            }
             saveLearningProgressState();
         }
 
@@ -2025,7 +2065,9 @@ tick: () => {
         }
 
         function saveLearningAwards(awards) {
-            learningProgressState.awards = awards || {};
+            learningProgressState.awards = awards && typeof awards === 'object' && !Array.isArray(awards)
+                ? { ...awards }
+                : {};
             saveLearningProgressState();
         }
 
@@ -3549,4 +3591,3 @@ function openStudyModal() {
     </script>
 </body>
 </html>
-
