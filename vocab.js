@@ -1464,4 +1464,12 @@ id: 'appreciate', color: '#43aa8b', meaning: '欣賞',
                 id: 'adversity', color: '#0989B0', meaning: '困境', 
                 words: ['Adversity','Plight','Predicament'] 
             },
+                        {
+                id: 'ailment', color: '#2E8B57', meaning: '疾病',
+                words: [
+                    { t: 'Ailment', m: '小病' },
+                    { t: 'Disease', m: '疾病' },
+                    { t: 'Illness', m: '病' }
+                ]
+            },
         ];
