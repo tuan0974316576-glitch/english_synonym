@@ -1401,7 +1401,8 @@
         let currentLearningSelectedSynonyms = [];
         let learningProgressState = {
             unlockedLevel: 1,
-            awards: {}
+            awards: {},
+            planVersion: 2
         };
         let learningProgressSaveQueue = Promise.resolve();
         let messagingClient = null;
@@ -1415,6 +1416,8 @@
         const LAST_REMINDER_AT_KEY = 'synonym_last_reminder_at';
         const LEARNING_PROGRESS_PREFIX = 'synonym_learning_progress_';
         const LEARNING_AWARDS_PREFIX = 'synonym_learning_awards_';
+        const LEARNING_PLAN_VERSION_KEY = 'synonym_learning_plan_version';
+        const CURRENT_LEARNING_PLAN_VERSION = 2;
         const INSTALL_DISMISSED_AT_KEY = 'synonym_install_dismissed_at';
         const FCM_TOKEN_KEY = 'synonym_fcm_token_key';
 
@@ -1479,17 +1482,21 @@
             awards = normalizeLearningAwards(awards);
 
             const unlockedLevel = Number(localStorage.getItem(getLegacyLearningProgressKey()) || 1);
+            const planVersion = Number(localStorage.getItem(LEARNING_PLAN_VERSION_KEY) || 1);
             return {
                 unlockedLevel: Number.isFinite(unlockedLevel) ? Math.max(1, unlockedLevel) : 1,
-                awards
+                awards,
+                planVersion: Number.isFinite(planVersion) ? Math.max(1, planVersion) : 1
             };
         }
 
         function normalizeLearningProgressState(value) {
             const unlockedLevel = Number(value?.unlockedLevel || 1);
+            const planVersion = Number(value?.planVersion || 1);
             return {
                 unlockedLevel: Number.isFinite(unlockedLevel) ? Math.max(1, unlockedLevel) : 1,
-                awards: normalizeLearningAwards(value?.awards)
+                awards: normalizeLearningAwards(value?.awards),
+                planVersion: Number.isFinite(planVersion) ? Math.max(1, planVersion) : 1
             };
         }
 
@@ -1497,6 +1504,7 @@
             try {
                 localStorage.setItem(getLegacyLearningProgressKey(), String(learningProgressState.unlockedLevel));
                 localStorage.setItem(getLegacyLearningAwardsKey(), JSON.stringify(learningProgressState.awards || {}));
+                localStorage.setItem(LEARNING_PLAN_VERSION_KEY, String(learningProgressState.planVersion || CURRENT_LEARNING_PLAN_VERSION));
             } catch (error) {
                 console.warn('[LearningProgress] Local backup unavailable:', error);
             }
@@ -1511,7 +1519,8 @@
 
             const snapshot = {
                 unlockedLevel: learningProgressState.unlockedLevel,
-                awards: { ...(learningProgressState.awards || {}) }
+                awards: { ...(learningProgressState.awards || {}) },
+                planVersion: CURRENT_LEARNING_PLAN_VERSION
             };
 
             // Serialize writes so an awards write cannot race an unlock write.
@@ -1524,33 +1533,81 @@
             return learningProgressSaveQueue;
         }
 
+        function migrateLearningProgressToCurrentPlan(legacyState) {
+            const legacyLevels = buildLegacyLearningLevels();
+            const currentLevels = buildLearningLevels();
+            const completedLegacyLevels = Math.min(
+                legacyLevels.length,
+                Math.max(0, Number(legacyState.unlockedLevel || 1) - 1)
+            );
+            const completedGroupIds = new Set(
+                legacyLevels
+                    .slice(0, completedLegacyLevels)
+                    .flat()
+                    .map(group => group.id)
+            );
+            const perfectGroupIds = new Set();
+
+            Object.entries(legacyState.awards || {}).forEach(([level, award]) => {
+                if (!award || award.perfect !== true) return;
+                const legacyLevel = Number(level) - 1;
+                (legacyLevels[legacyLevel] || []).forEach(group => perfectGroupIds.add(group.id));
+            });
+
+            const awards = {};
+            let contiguousCompleted = 0;
+            currentLevels.forEach((groups, index) => {
+                const isCompleted = groups.length > 0 && groups.every(group => completedGroupIds.has(group.id));
+                if (!isCompleted) return;
+
+                const perfect = perfectGroupIds.size > 0 && groups.every(group => perfectGroupIds.has(group.id));
+                awards[String(index + 1)] = { cleared: true, perfect };
+                if (index === contiguousCompleted) contiguousCompleted++;
+            });
+
+            return {
+                unlockedLevel: Math.min(currentLevels.length + 1, contiguousCompleted + 1),
+                awards,
+                planVersion: CURRENT_LEARNING_PLAN_VERSION
+            };
+        }
+
         function loadLearningProgressState() {
             const progressRef = getLearningProgressRef();
-            const legacy = normalizeLearningProgressState(getLegacyLearningSnapshot());
+            const localState = normalizeLearningProgressState(getLegacyLearningSnapshot());
+            const migratedLocal = localState.planVersion < CURRENT_LEARNING_PLAN_VERSION
+                ? migrateLearningProgressToCurrentPlan(localState)
+                : localState;
 
             if (!progressRef) {
-                learningProgressState = legacy;
+                learningProgressState = migratedLocal;
+                saveLearningProgressToLocal();
                 return Promise.resolve(learningProgressState);
             }
 
             return progressRef.once('value')
                 .then(snapshot => {
                     const remote = normalizeLearningProgressState(snapshot.val() || {});
-                    const mergedUnlockedLevel = Math.max(remote.unlockedLevel, legacy.unlockedLevel, 1);
+                    const migratedRemote = remote.planVersion < CURRENT_LEARNING_PLAN_VERSION
+                        ? migrateLearningProgressToCurrentPlan(remote)
+                        : remote;
+                    const mergedUnlockedLevel = Math.max(migratedRemote.unlockedLevel, migratedLocal.unlockedLevel, 1);
                     const mergedAwards = {
-                        ...(legacy.awards || {}),
-                        ...(remote.awards || {})
+                        ...(migratedLocal.awards || {}),
+                        ...(migratedRemote.awards || {})
                     };
 
                     learningProgressState = {
                         unlockedLevel: mergedUnlockedLevel,
-                        awards: mergedAwards
+                        awards: mergedAwards,
+                        planVersion: CURRENT_LEARNING_PLAN_VERSION
                     };
 
                     const needsMigration =
                         !snapshot.exists() ||
-                        mergedUnlockedLevel !== remote.unlockedLevel ||
-                        JSON.stringify(mergedAwards) !== JSON.stringify(remote.awards || {});
+                        remote.planVersion !== CURRENT_LEARNING_PLAN_VERSION ||
+                        mergedUnlockedLevel !== migratedRemote.unlockedLevel ||
+                        JSON.stringify(mergedAwards) !== JSON.stringify(migratedRemote.awards || {});
 
                     if (needsMigration) {
                         return saveLearningProgressState().then(() => learningProgressState);
@@ -1561,7 +1618,7 @@
                 })
                 .catch(error => {
                     console.error('[LearningProgress] Failed to load progress:', error);
-                    learningProgressState = legacy;
+                    learningProgressState = migratedLocal;
                     saveLearningProgressToLocal();
                     return learningProgressState;
                 });
@@ -1769,7 +1826,7 @@
                 localStorage.removeItem('synonym_player');
                 mistakeReplayQueue = [];
                 mistakeReplayQueueLoaded = false;
-                learningProgressState = { unlockedLevel: 1, awards: {} };
+                learningProgressState = { unlockedLevel: 1, awards: {}, planVersion: CURRENT_LEARNING_PLAN_VERSION };
                 location.reload(); 
             }
         }
@@ -2035,7 +2092,15 @@ tick: () => {
             renderLearningSynonymQuestion();
         }
 
-        function buildLearningLevels() {
+        function getLearningGroupWordCount(group) {
+            return Array.isArray(group?.words) ? group.words.length : 0;
+        }
+
+        function getLearningLevelWordCount(groups) {
+            return groups.reduce((total, group) => total + getLearningGroupWordCount(group), 0);
+        }
+
+        function buildLegacyLearningLevels() {
             const levels = [];
             for (let start = 0; start < synonymData.length; start += 14) {
                 const chunk = synonymData.slice(start, start + 14);
@@ -2047,11 +2112,60 @@ tick: () => {
             return levels;
         }
 
+        function buildLearningLevels() {
+            const targetWordCount = 16;
+            const finalLevelMinimum = 10;
+            const mergeMaximum = 22;
+            const levels = [];
+
+            let currentLevel = [];
+            let currentWordCount = 0;
+            synonymData.forEach(group => {
+                const groupWordCount = getLearningGroupWordCount(group);
+                if (currentLevel.length && currentWordCount + groupWordCount > targetWordCount) {
+                    levels.push(currentLevel);
+                    currentLevel = [];
+                    currentWordCount = 0;
+                }
+                currentLevel.push(group);
+                currentWordCount += groupWordCount;
+            });
+
+            if (currentLevel.length) levels.push(currentLevel);
+
+            // Avoid ending with a tiny final stage when the previous stage can absorb it.
+            if (levels.length > 1) {
+                const lastLevel = levels[levels.length - 1];
+                const previousLevel = levels[levels.length - 2];
+                const combinedWordCount = getLearningLevelWordCount(previousLevel) + getLearningLevelWordCount(lastLevel);
+                if (getLearningLevelWordCount(lastLevel) < finalLevelMinimum && combinedWordCount <= mergeMaximum) {
+                    levels[levels.length - 2] = previousLevel.concat(lastLevel);
+                    levels.pop();
+                }
+            }
+            return levels;
+        }
+
         function getLearningLevelGroups(levelIndex) {
             if (!learningLevels.length) learningLevels = buildLearningLevels();
             const coreGroups = learningLevels[levelIndex] || [];
             const previousPool = learningLevels.slice(0, levelIndex).flat();
-            const reviewGroups = pickRandomItems(previousPool, Math.min(3, previousPool.length));
+            const reviewBudget = Math.max(0, 20 - getLearningLevelWordCount(coreGroups));
+            const reviewGroupLimit = levelIndex === 0
+                ? 0
+                : Math.min(2, Math.max(1, Math.floor(coreGroups.length / 3)));
+            const reviewGroups = [];
+            let reviewWordCount = 0;
+            pickRandomItems(previousPool, previousPool.length).some(group => {
+                const groupWordCount = getLearningGroupWordCount(group);
+                if (
+                    reviewGroups.length >= reviewGroupLimit ||
+                    reviewWordCount + groupWordCount > reviewBudget
+                ) return reviewGroups.length >= reviewGroupLimit;
+                reviewGroups.push(group);
+                reviewWordCount += groupWordCount;
+                return reviewGroups.length >= reviewGroupLimit;
+            });
             return [...coreGroups, ...reviewGroups];
         }
 
@@ -2453,7 +2567,7 @@ tick: () => {
                 <div class="learning-question-box">
                     <div class="learning-progress">STEP 3 / 3</div>
                     <div class="learning-prompt">第 ${currentLearningLevelIndex + 1} 關：QUIZ 2 翻卡挑戰</div>
-                    <div class="learning-help">而家會用返翻卡模式，玩本關 7 組加之前關卡隨機 3 組，總共 ${learningGroups.length} 組同義詞。</div>
+                    <div class="learning-help">而家會用返翻卡模式，玩本關 ${learningCoreGroups.length} 組核心字，加 ${learningGroups.length - learningCoreGroups.length} 組重溫字，共 ${learningGroups.length} 組同義詞。</div>
                     <div class="learning-actions">
                         <button class="btn-learning" onclick="startLearningCardMode()">開始 QUIZ 2</button>
                     </div>

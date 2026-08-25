@@ -15,6 +15,9 @@
           "unlockedLevel": {
             ".validate": "newData.isNumber() && newData.val() >= 1"
           },
+          "planVersion": {
+            ".validate": "newData.isNumber() && newData.val() >= 1"
+          },
           "awards": {
             "$level": {
               ".validate": "newData.hasChildren(['cleared', 'perfect']) && newData.child('cleared').isBoolean() && newData.child('perfect').isBoolean()",
