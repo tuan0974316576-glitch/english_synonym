@@ -1241,7 +1241,11 @@
     const OPENROUTER_API_KEY = keyPart1 + keyPart2;
 
     async function askGemini(btn, meaning, wordsArray) {
-        const parentContainer = btn.closest('.study-group') || btn.closest('.result-group-box');
+        const parentContainer = btn.closest('.learning-card, .study-group, .result-group-box');
+        if (!parentContainer) {
+            console.error('[AI] Unable to find a response container for the selected button.');
+            return;
+        }
         let responseBox = parentContainer.querySelector('.ai-response-box');
         
         if (!responseBox) {
@@ -1265,6 +1269,8 @@
         responseBox.style.animation = ''; 
         responseBox.style.height = '';    
         responseBox.style.maxHeight = ''; 
+        responseBox.style.color = '';
+        responseBox.style.fontWeight = '';
         
         responseBox.innerHTML = '<div style="color:#9b59b6; font-weight:bold; padding:5px;">\u2728 AI \u6b63\u5728\u5206\u6790\u540c\u7fa9\u8a5e...</div>';
 
@@ -1305,9 +1311,25 @@
             });
 
             if (!response.ok) {
-                const errData = await response.json();
-                console.error("OpenRouter Error:", errData);
-                throw new Error("\u9023\u7dda\u7e41\u5fd9\uff0c\u8acb\u7a0d\u5f8c\u518d\u8a66");
+                let providerMessage = '';
+                try {
+                    const errData = await response.json();
+                    providerMessage = errData?.error?.message || '';
+                    console.error("OpenRouter Error:", errData);
+                } catch (parseError) {
+                    console.error("OpenRouter Error:", response.status, response.statusText);
+                }
+
+                if (response.status === 401 || response.status === 403) {
+                    throw new Error("AI API \u8a8d\u8b49\u5931\u6557\uff0c\u8acb\u806f\u7d61\u8001\u5e2b\u3002");
+                }
+                if (response.status === 402) {
+                    throw new Error("AI API \u984d\u5ea6\u5df2\u7528\u5b8c\uff0c\u8acb\u806f\u7d61\u8001\u5e2b\u3002");
+                }
+                if (response.status === 429) {
+                    throw new Error("AI \u73fe\u6642\u592a\u591a\u4eba\u4f7f\u7528\uff0c\u8acb\u7a0d\u5f8c\u518d\u8a66\u3002");
+                }
+                throw new Error(providerMessage || "AI \u670d\u52d9\u66ab\u6642\u7121\u6cd5\u9023\u7dda\uff0c\u8acb\u7a0d\u5f8c\u518d\u8a66\u3002");
             }
 
             const data = await response.json();
@@ -1335,7 +1357,9 @@
         } catch (error) {
             console.error(error);
             responseBox.style.height = 'auto';
-            responseBox.innerHTML = `<span style="color:red; font-weight:bold;">鉂?分析失敗: ${error.message}</span>`;
+            responseBox.textContent = `\u5206\u6790\u5931\u6557\uff1a${error.message}`;
+            responseBox.style.color = '#c0392b';
+            responseBox.style.fontWeight = 'bold';
         } finally {
             btn.disabled = false;
             btn.innerHTML = originalText;
