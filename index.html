@@ -5,8 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>同義詞の鬼 - Enguistics</title>
     <link rel="manifest" href="manifest.json">
-    <link rel="icon" type="image/png" href="icon.png">
-    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="icon" href="assets/icons/favicon.ico">
+    <link rel="apple-touch-icon" href="assets/icons/apple-touch-icon.png">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="theme-color" content="#0a9396">
@@ -76,6 +76,27 @@
         }
 
         .stat-box { display: flex; align-items: center; gap: 6px; white-space: nowrap;}
+        .connection-status {
+            min-width: 82px;
+            justify-content: center;
+            padding: 5px 10px;
+            border: 1px solid #b7e4c7;
+            border-radius: 18px;
+            background: #edf9f0;
+            color: #237a45;
+            font-size: 0.78rem;
+            font-weight: 800;
+        }
+        .connection-status.offline {
+            border-color: #f0c36a;
+            background: #fff7e1;
+            color: #8a5a00;
+        }
+        .connection-status.syncing {
+            border-color: #90caf9;
+            background: #eef7ff;
+            color: #1769aa;
+        }
         .score-box { color: #2980b9; }
         .overview-box { color: #34495e; }
         .rank-pill {
@@ -358,6 +379,7 @@
             overflow-y: auto;
             position: relative;
             text-align: center;
+            box-sizing: border-box;
         }
 
         .modal-header {
@@ -373,6 +395,7 @@
         .login-input {
             padding: 15px; width: 80%; font-size: 1.1rem; border: 2px solid #ddd;
             border-radius: 10px; margin-bottom: 15px; outline: none; text-align: center;
+            box-sizing: border-box;
         }
         .login-input:focus { border-color: #3498db; }
         .btn-login { background: #3498db; color: white; width: 100%; margin-top: 10px; justify-content: center;}
@@ -667,6 +690,27 @@
             align-items: center;      /* 浠ゅ収瀹规按骞崇疆涓?*/
             justify-content: center;  /* 浠ゅ収瀹瑰瀭鐩寸疆涓?(濡傛灉闇€瑕? */
             padding: 40px !important; /* 鍔犲洖鍏ц窛锛屽惁鍓囧瓧鏈冭布閭?*/
+        }
+        @media (max-width: 520px) {
+            .modal-content.login-box {
+                width: calc(100vw - 32px) !important;
+                max-width: calc(100vw - 32px) !important;
+                padding: 28px 20px !important;
+            }
+            .modal-content.login-box > * {
+                width: 100%;
+                max-width: 100%;
+                box-sizing: border-box;
+            }
+            .login-box h2 {
+                font-size: 1.35rem;
+                line-height: 1.35;
+                white-space: normal;
+                overflow-wrap: anywhere;
+            }
+            .login-input {
+                width: 100% !important;
+            }
         }
         .start-mode-buttons {
             display: flex;
@@ -1052,15 +1096,17 @@
     <h1>&#128123;&#21516;&#32681;&#35422;&#12398;&#39740;&#128123;</h1>
     <p>Presented by Enguistics Learning Centre</p>
 
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="vendor/firebase-app-compat.js"></script>
     <script src="vocab.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-database-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-messaging-compat.js"></script>
+    <script src="vendor/firebase-database-compat.js"></script>
+    <script src="vendor/firebase-messaging-compat.js"></script>
     <div class="info-panel">
         <div class="user-panel" id="userPanel" style="display:none;">
             👤 <span id="currentUserDisplay">Player</span>
+            <span id="accountDaysDisplay"></span>
             <button class="logout-btn" onclick="logout()">&#30331;&#20986;</button>
         </div>
+        <div class="stat-box connection-status" id="connectionStatus" role="status" aria-live="polite">&#24050;&#36899;&#32218;</div>
         <div class="info-group" id="gameStatsGroup">
             <div class="stat-box">LEVEL <span id="level-display">1</span></div>
             <div class="stat-box">⏱️ <span id="timer">100</span>s</div>
@@ -1254,6 +1300,14 @@
             parentContainer.appendChild(responseBox); 
         }
 
+        if (!isAppOnline()) {
+            responseBox.style.display = 'block';
+            responseBox.textContent = '\u300c\u4f5c\u6587\u9ede\u7528\u300d\u9700\u8981\u7db2\u7d61\u9023\u7dda\u3002';
+            responseBox.style.color = '#8a5a00';
+            responseBox.style.fontWeight = 'bold';
+            return;
+        }
+
         // Toggle 功能
         if (responseBox.style.display === 'block' && !btn.disabled) {
             responseBox.style.display = 'none';
@@ -1409,6 +1463,7 @@
         let lastGameRank = "瑷堢畻涓?.."; 
         let lastGameRankUsesCurrentScore = false;
         let lastGameBestScoreUsed = 0;
+        let currentScoreRunId = null;
         let currentPlayerBestScore = 0;
         let currentPlayerBestRank = null;
         let currentMode = 'menu';
@@ -1444,11 +1499,150 @@
         const CURRENT_LEARNING_PLAN_VERSION = 2;
         const INSTALL_DISMISSED_AT_KEY = 'synonym_install_dismissed_at';
         const FCM_TOKEN_KEY = 'synonym_fcm_token_key';
+        const MISTAKE_QUEUE_PREFIX = 'synonym_mistake_queue_';
+        const PROGRESS_DIRTY_PREFIX = 'synonym_progress_dirty_';
+        const MISTAKE_DIRTY_PREFIX = 'synonym_mistake_dirty_';
+        const PENDING_SCORES_KEY = 'synonym_pending_scores_v1';
+        const ACCOUNT_ACCESS_PREFIX = 'synonym_account_access_';
+        const ACCOUNT_ACCESS_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
 
         let mistakeReplayQueue = [];
         let currentRunMistakeQueue = [];
         let currentRunMistakeCounts = {};
         let mistakeReplayQueueLoaded = false;
+        let offlineSyncPromise = null;
+        let accountAccessState = null;
+
+        function isAppOnline() {
+            return navigator.onLine !== false;
+        }
+
+        function getPlayerStorageKey(prefix) {
+            return `${prefix}${currentPlayer || 'guest'}`;
+        }
+
+        function readLocalJson(key, fallback) {
+            try {
+                const value = JSON.parse(localStorage.getItem(key) || 'null');
+                return value === null ? fallback : value;
+            } catch (error) {
+                console.warn(`[Offline] Unable to read ${key}:`, error);
+                return fallback;
+            }
+        }
+
+        function writeLocalJson(key, value) {
+            try {
+                localStorage.setItem(key, JSON.stringify(value));
+            } catch (error) {
+                console.warn(`[Offline] Unable to save ${key}:`, error);
+            }
+        }
+
+        function updateConnectionStatus(state = isAppOnline() ? 'online' : 'offline') {
+            const status = document.getElementById('connectionStatus');
+            if (!status) return;
+            status.classList.toggle('offline', state === 'offline');
+            status.classList.toggle('syncing', state === 'syncing');
+            status.innerText = state === 'offline' ? '\u96e2\u7dda\u904a\u73a9' : state === 'syncing' ? '\u540c\u6b65\u4e2d' : '\u5df2\u9023\u7dda';
+        }
+
+        function getAccountAccessKey(playerName) {
+            return `${ACCOUNT_ACCESS_PREFIX}${playerName || 'guest'}`;
+        }
+
+        function getCachedAccountAccess(playerName) {
+            const cached = readLocalJson(getAccountAccessKey(playerName), null);
+            const firstLoginAt = Number(cached?.firstLoginAt || 0);
+            const lastVerifiedAt = Number(cached?.lastVerifiedAt || 0);
+            if (!Number.isFinite(firstLoginAt) || firstLoginAt <= 0) return null;
+            return {
+                firstLoginAt,
+                lastVerifiedAt: Number.isFinite(lastVerifiedAt) ? lastVerifiedAt : firstLoginAt
+            };
+        }
+
+        function cacheAccountAccess(playerName, firstLoginAt) {
+            const access = {
+                firstLoginAt,
+                lastVerifiedAt: Date.now()
+            };
+            writeLocalJson(getAccountAccessKey(playerName), access);
+            return access;
+        }
+
+        function getAccountExpiry(access) {
+            return Number(access?.firstLoginAt || 0) + ACCOUNT_ACCESS_DURATION_MS;
+        }
+
+        function isAccountExpired(access) {
+            const effectiveNow = Math.max(Date.now(), Number(access?.lastVerifiedAt || 0));
+            return !access || effectiveNow >= getAccountExpiry(access);
+        }
+
+        function renderAccountDaysRemaining() {
+            const display = document.getElementById('accountDaysDisplay');
+            if (!display || !accountAccessState) return;
+            const effectiveNow = Math.max(Date.now(), Number(accountAccessState.lastVerifiedAt || 0));
+            const days = Math.max(0, Math.ceil((getAccountExpiry(accountAccessState) - effectiveNow) / (24 * 60 * 60 * 1000)));
+            display.innerText = `\u00b7 ${days}\u65e5`;
+        }
+
+        function createAccountAccessError(code, message) {
+            const error = new Error(message);
+            error.code = code;
+            return error;
+        }
+
+        async function activateOrVerifyAccount(playerName, knownUserData = null) {
+            let access = null;
+
+            if (isAppOnline() && db) {
+                let userData = knownUserData;
+                if (!userData) {
+                    const userSnapshot = await db.ref(`${USERS_PATH}/${playerName}`).once('value');
+                    if (!userSnapshot.exists()) {
+                        throw createAccountAccessError('account-not-found', '\u627e\u4e0d\u5230\u6b64\u5e33\u6236\u3002');
+                    }
+                    userData = userSnapshot.val() || {};
+                }
+
+                let firstLoginAt = Number(userData.firstLoginAt || 0);
+                if (!Number.isFinite(firstLoginAt) || firstLoginAt <= 0) {
+                    const firstLoginRef = db.ref(`${USERS_PATH}/${playerName}/firstLoginAt`);
+                    try {
+                        await firstLoginRef.set(firebase.database.ServerValue.TIMESTAMP);
+                    } catch (error) {
+                        console.info('[Account] Another login may have activated this account first.');
+                    }
+                    const latest = await firstLoginRef.once('value');
+                    firstLoginAt = Number(latest.val() || 0);
+                }
+
+                if (!Number.isFinite(firstLoginAt) || firstLoginAt <= 0) {
+                    throw createAccountAccessError('activation-failed', '\u672a\u80fd\u555f\u7528\u5e33\u6236\uff0c\u8acb\u7a0d\u5f8c\u518d\u8a66\u3002');
+                }
+                access = cacheAccountAccess(playerName, firstLoginAt);
+            } else {
+                access = getCachedAccountAccess(playerName);
+                if (!access) {
+                    throw createAccountAccessError('first-login-online', '\u7b2c\u4e00\u6b21\u767b\u5165\u9700\u8981\u7db2\u7d61\u9023\u7dda\u3002');
+                }
+            }
+
+            if (isAccountExpired(access)) {
+                throw createAccountAccessError('account-expired', '\u6b64\u5e33\u6236\u7684 30 \u65e5\u4f7f\u7528\u671f\u5df2\u7d50\u675f\uff0c\u8acb\u806f\u7d61\u8001\u5e2b\u3002');
+            }
+            return access;
+        }
+
+        function ensureAccountIsActive() {
+            if (accountAccessState && !isAccountExpired(accountAccessState)) return true;
+            alert('\u6b64\u5e33\u6236\u7684 30 \u65e5\u4f7f\u7528\u671f\u5df2\u7d50\u675f\uff0c\u8acb\u806f\u7d61\u8001\u5e2b\u3002');
+            localStorage.removeItem('synonym_player');
+            location.reload();
+            return false;
+        }
 
         function normalizeReplayWord(word) {
             return (word || '').trim().toLowerCase();
@@ -1496,6 +1690,21 @@
             return awards;
         }
 
+        function mergeLearningAwards(localAwards, remoteAwards) {
+            const merged = {};
+            const local = normalizeLearningAwards(localAwards);
+            const remote = normalizeLearningAwards(remoteAwards);
+            new Set([...Object.keys(local), ...Object.keys(remote)]).forEach(level => {
+                const localAward = local[level] || {};
+                const remoteAward = remote[level] || {};
+                merged[level] = {
+                    cleared: localAward.cleared === true || remoteAward.cleared === true,
+                    perfect: localAward.perfect === true || remoteAward.perfect === true
+                };
+            });
+            return merged;
+        }
+
         function getLegacyLearningSnapshot() {
             let awards = {};
             try {
@@ -1537,9 +1746,10 @@
         function saveLearningProgressState() {
             // Keep a local copy first so a refresh or offline login cannot reset progress.
             saveLearningProgressToLocal();
+            localStorage.setItem(getPlayerStorageKey(PROGRESS_DIRTY_PREFIX), 'true');
 
             const progressRef = getLearningProgressRef();
-            if (!progressRef) return Promise.resolve(learningProgressState);
+            if (!progressRef || !isAppOnline()) return Promise.resolve(learningProgressState);
 
             const snapshot = {
                 unlockedLevel: learningProgressState.unlockedLevel,
@@ -1551,8 +1761,20 @@
             learningProgressSaveQueue = learningProgressSaveQueue
                 .catch(() => {})
                 .then(() => progressRef.set(snapshot))
+                .then(() => {
+                    const latestSnapshot = {
+                        unlockedLevel: learningProgressState.unlockedLevel,
+                        awards: { ...(learningProgressState.awards || {}) },
+                        planVersion: CURRENT_LEARNING_PLAN_VERSION
+                    };
+                    if (JSON.stringify(latestSnapshot) === JSON.stringify(snapshot)) {
+                        localStorage.removeItem(getPlayerStorageKey(PROGRESS_DIRTY_PREFIX));
+                    }
+                    return learningProgressState;
+                })
                 .catch(error => {
                     console.error('[LearningProgress] Failed to save progress:', error);
+                    return learningProgressState;
                 });
             return learningProgressSaveQueue;
         }
@@ -1603,7 +1825,7 @@
                 ? migrateLearningProgressToCurrentPlan(localState)
                 : localState;
 
-            if (!progressRef) {
+            if (!progressRef || !isAppOnline()) {
                 learningProgressState = migratedLocal;
                 saveLearningProgressToLocal();
                 return Promise.resolve(learningProgressState);
@@ -1616,10 +1838,7 @@
                         ? migrateLearningProgressToCurrentPlan(remote)
                         : remote;
                     const mergedUnlockedLevel = Math.max(migratedRemote.unlockedLevel, migratedLocal.unlockedLevel, 1);
-                    const mergedAwards = {
-                        ...(migratedLocal.awards || {}),
-                        ...(migratedRemote.awards || {})
-                    };
+                    const mergedAwards = mergeLearningAwards(migratedLocal.awards, migratedRemote.awards);
 
                     learningProgressState = {
                         unlockedLevel: mergedUnlockedLevel,
@@ -1650,10 +1869,18 @@
 
         function loadMistakeReplayQueue() {
             const queueRef = getMistakeReplayQueueRef();
-            if (!queueRef) {
-                mistakeReplayQueue = [];
+            const localQueue = readLocalJson(getPlayerStorageKey(MISTAKE_QUEUE_PREFIX), []);
+            mistakeReplayQueue = Array.isArray(localQueue) ? localQueue.filter(Boolean) : [];
+            const hasLocalChanges = localStorage.getItem(getPlayerStorageKey(MISTAKE_DIRTY_PREFIX)) === 'true';
+
+            if (!queueRef || !isAppOnline()) {
                 mistakeReplayQueueLoaded = true;
                 return Promise.resolve(mistakeReplayQueue);
+            }
+
+            if (hasLocalChanges) {
+                mistakeReplayQueueLoaded = true;
+                return saveMistakeReplayQueue().then(() => mistakeReplayQueue);
             }
 
             mistakeReplayQueueLoaded = false;
@@ -1661,25 +1888,48 @@
             return queueRef.once('value')
                 .then(snapshot => {
                     const queue = snapshot.val();
-                    mistakeReplayQueue = Array.isArray(queue) ? queue.filter(Boolean) : [];
+                    const remoteQueue = Array.isArray(queue) ? queue.filter(Boolean) : [];
+                    mistakeReplayQueue = remoteQueue;
+                    writeLocalJson(getPlayerStorageKey(MISTAKE_QUEUE_PREFIX), mistakeReplayQueue);
                     mistakeReplayQueueLoaded = true;
+                    localStorage.removeItem(getPlayerStorageKey(MISTAKE_DIRTY_PREFIX));
                     return mistakeReplayQueue;
                 })
                 .catch(error => {
                     console.error('[MistakeReplay] Failed to load queue:', error);
-                    mistakeReplayQueue = [];
                     mistakeReplayQueueLoaded = true;
                     return mistakeReplayQueue;
                 });
         }
 
         function saveMistakeReplayQueue() {
-            const queueRef = getMistakeReplayQueueRef();
-            if (!queueRef) return Promise.resolve();
+            writeLocalJson(getPlayerStorageKey(MISTAKE_QUEUE_PREFIX), mistakeReplayQueue);
+            localStorage.setItem(getPlayerStorageKey(MISTAKE_DIRTY_PREFIX), 'true');
 
-            return queueRef.set(mistakeReplayQueue)
+            const queueRef = getMistakeReplayQueueRef();
+            if (!queueRef || !isAppOnline()) return Promise.resolve(mistakeReplayQueue);
+
+            const snapshot = mistakeReplayQueue.map(entry => {
+                if (entry && typeof entry === 'object') return { ...entry };
+                const group = synonymData.find(item => item.id === entry);
+                if (!group || !group.words?.length) return null;
+                return {
+                    gid: group.id,
+                    word: getWordText(group.words[0]),
+                    color: group.color
+                };
+            }).filter(Boolean);
+
+            return queueRef.set(snapshot)
+                .then(() => {
+                    if (JSON.stringify(snapshot) === JSON.stringify(mistakeReplayQueue)) {
+                        localStorage.removeItem(getPlayerStorageKey(MISTAKE_DIRTY_PREFIX));
+                    }
+                    return mistakeReplayQueue;
+                })
                 .catch(error => {
                     console.error('[MistakeReplay] Failed to save queue:', error);
+                    return mistakeReplayQueue;
                 });
         }
 
@@ -1787,62 +2037,85 @@
         // =========================================================
         // 1. 登入系統邏輯 (淇濈暀鍘熻鍔熻兘)
         // =========================================================
-        function checkLoginStatus() {
+        async function checkLoginStatus() {
             const savedUser = localStorage.getItem('synonym_player');
-            if (savedUser) {
-                currentPlayer = savedUser;
-                showGameUI();
-                Promise.all([
-                    loadMistakeReplayQueue(),
-                    loadLearningProgressState()
-                ]).finally(() => {
-                    backToLobby();
-                });
-            } else {
+            if (!savedUser) {
                 document.getElementById('loginModal').classList.remove('hidden');
+                return;
+            }
+
+            try {
+                await loginSuccess(savedUser);
+            } catch (error) {
+                console.error('[Account] Saved login could not be restored:', error);
+                const cachedAccess = getCachedAccountAccess(savedUser);
+                if (cachedAccess && !isAccountExpired(cachedAccess) && error.code !== 'account-expired') {
+                    accountAccessState = cachedAccess;
+                    currentPlayer = savedUser;
+                    showGameUI();
+                    await Promise.all([
+                        loadMistakeReplayQueue(),
+                        loadLearningProgressState()
+                    ]);
+                    backToLobby();
+                    updateConnectionStatus('offline');
+                    return;
+                }
+                localStorage.removeItem('synonym_player');
+                document.getElementById('loginModal').classList.remove('hidden');
+                alert(error.message || '\u767b\u5165\u5931\u6557\uff0c\u8acb\u518d\u8a66\u3002');
             }
         }
 
-        function handleLogin() {
+        async function handleLogin() {
             const inputName = document.getElementById('loginNameInput').value.trim();
             const loginBtn = document.querySelector('.btn-login');
 
             if (!inputName) { alert("\u8acb\u8f38\u5165\u540d\u5b57"); return; }
             if (inputName.length > 12) { alert("\u540d\u5b57\u592a\u9577\u4e86\uff0c\u6700\u591a 12 \u500b\u5b57"); return; }
-            if (!db) { alert("\u8cc7\u6599\u5eab\u672a\u9023\u63a5"); return; }
+            if (!db && isAppOnline()) { alert("\u8cc7\u6599\u5eab\u672a\u9023\u63a5"); return; }
 
             const originalText = loginBtn.innerText;
             loginBtn.innerText = "\u767b\u5165\u4e2d...";
             loginBtn.disabled = true;
 
-            db.ref(USERS_PATH + '/' + inputName).once('value')
-            .then(snapshot => {
+            try {
+                if (!isAppOnline()) {
+                    await loginSuccess(inputName);
+                    return;
+                }
+
+                const userRef = db.ref(`${USERS_PATH}/${inputName}`);
+                const snapshot = await userRef.once('value');
                 if (snapshot.exists()) {
                     const confirmLogin = confirm(`\u540d\u5b57\u300c${inputName}\u300d\u5df2\u5b58\u5728\u3002\u5982\u679c\u662f\u4f60\u672c\u4eba\uff0c\u8acb\u6309\u78ba\u5b9a\uff1b\u5426\u5247\u8acb\u6539\u540d\u3002`);
-                    if (confirmLogin) loginSuccess(inputName);
-                    else { loginBtn.innerText = originalText; loginBtn.disabled = false; }
+                    if (!confirmLogin) return;
+                    await loginSuccess(inputName, snapshot.val() || {});
                 } else {
-                    db.ref(USERS_PATH + '/' + inputName).set({ createdAt: firebase.database.ServerValue.TIMESTAMP })
-                    .then(() => { alert(`\u6b61\u8fce\u4f60\u52a0\u5165\uff0c\u540c\u7fa9\u8a5e\u4e4b\u9b3c ${inputName}\uff01`); loginSuccess(inputName); });
+                    await userRef.set({ createdAt: firebase.database.ServerValue.TIMESTAMP });
+                    await loginSuccess(inputName, {});
+                    alert(`\u6b61\u8fce\u4f60\u52a0\u5165\uff0c\u540c\u7fa9\u8a5e\u4e4b\u9b3c ${inputName}\uff01`);
                 }
-            })
-            .catch(error => {
-                alert("\u767b\u5165\u5931\u6557: " + error.message);
+            } catch (error) {
+                console.error('[Account] Login failed:', error);
+                alert("\u767b\u5165\u5931\u6557\uff1a" + error.message);
+            } finally {
                 loginBtn.innerText = originalText; loginBtn.disabled = false;
-            });
+            }
         }
 
-        function loginSuccess(name) {
+        async function loginSuccess(name, knownUserData = null) {
+            accountAccessState = await activateOrVerifyAccount(name, knownUserData);
             currentPlayer = name;
             localStorage.setItem('synonym_player', name); 
             document.getElementById('loginModal').classList.add('hidden');
             showGameUI();
-            Promise.all([
+            await Promise.all([
                 loadMistakeReplayQueue(),
                 loadLearningProgressState()
-            ]).finally(() => {
-                backToLobby();
-            }); 
+            ]);
+            await syncOfflineData();
+            backToLobby();
         }
 
         function logout() {
@@ -1851,6 +2124,7 @@
                 mistakeReplayQueue = [];
                 mistakeReplayQueueLoaded = false;
                 learningProgressState = { unlockedLevel: 1, awards: {}, planVersion: CURRENT_LEARNING_PLAN_VERSION };
+                accountAccessState = null;
                 location.reload(); 
             }
         }
@@ -1859,12 +2133,13 @@
             document.getElementById('userPanel').style.display = 'flex';
             document.getElementById('currentUserDisplay').innerText = currentPlayer;
             document.getElementById('loginModal').classList.add('hidden'); 
+            renderAccountDaysRemaining();
             markAppActivity();
             maybeShowComebackReminder();
             scheduleDailyReminder();
             renderTopInfoBar();
             refreshPlayerProfileStats();
-            if (localStorage.getItem(DAILY_REMINDER_KEY) === 'true') {
+            if (isAppOnline() && localStorage.getItem(DAILY_REMINDER_KEY) === 'true') {
                 initFcmForCurrentPlayer();
             }
         }
@@ -2305,7 +2580,7 @@ tick: () => {
         }
 
         function refreshPlayerProfileStats() {
-            if (!db || !currentPlayer) {
+            if (!db || !currentPlayer || !isAppOnline()) {
                 renderTopInfoBar();
                 return;
             }
@@ -2399,6 +2674,7 @@ tick: () => {
         }
 
         function startLearningMode() {
+            if (!ensureAccountIsActive()) return;
             goToLearningMap();
         }
 
@@ -2927,6 +3203,31 @@ tick: () => {
             });
         }
 
+        function initOfflineSupport() {
+            updateConnectionStatus();
+            window.addEventListener('offline', () => updateConnectionStatus('offline'));
+            window.addEventListener('online', async () => {
+                updateConnectionStatus('syncing');
+                if (currentPlayer) {
+                    try {
+                        accountAccessState = await activateOrVerifyAccount(currentPlayer);
+                        renderAccountDaysRemaining();
+                    } catch (error) {
+                        alert(error.message || '\u5e33\u6236\u7121\u6cd5\u7e7c\u7e8c\u4f7f\u7528\u3002');
+                        localStorage.removeItem('synonym_player');
+                        location.reload();
+                        return;
+                    }
+                    await Promise.all([
+                        loadLearningProgressState(),
+                        loadMistakeReplayQueue()
+                    ]);
+                }
+                await syncOfflineData();
+                refreshPlayerProfileStats();
+            });
+        }
+
         // --- 遊戲邏輯 ---
  // ------------------------------------------------------------------
         // 馃 Google Gemini AI 瑷畾 (鏈€鏂颁慨寰╃増)
@@ -2958,6 +3259,7 @@ tick: () => {
             
 if (!isNextLevel) { 
         currentLevel = 1; totalScore = 0; lives = 10; // 鉁?10條命
+        currentScoreRunId = createPendingScoreId();
         if (!useFiniteDeck) globalPairDeck = [];
         sessionHistory = []; 
         currentRunMistakeQueue = [];
@@ -3272,7 +3574,7 @@ function startTimer() {
         }
 
         // 3. 椤ず绲愭灉闋?(新版)
-function showResultPage(reason) {
+        function showResultPage(reason) {
             closeModal('rankModal'); 
             
             const container = document.getElementById('resultListContainer');
@@ -3369,6 +3671,88 @@ function showResultPage(reason) {
             document.getElementById('resultModal').classList.remove('hidden');
         }
 
+        function getPendingScores() {
+            const pending = readLocalJson(PENDING_SCORES_KEY, []);
+            return Array.isArray(pending) ? pending.filter(item => item && item.id && item.name) : [];
+        }
+
+        function savePendingScores(scores) {
+            writeLocalJson(PENDING_SCORES_KEY, scores.slice(-100));
+        }
+
+        function createPendingScoreId() {
+            if (window.crypto?.randomUUID) return window.crypto.randomUUID().replace(/-/g, '');
+            return `${Date.now().toString(36)}${Math.random().toString(36).slice(2)}`;
+        }
+
+        function queueLeaderboardScore(score) {
+            const pending = getPendingScores();
+            if (!currentScoreRunId) currentScoreRunId = createPendingScoreId();
+            const scoreId = `${currentScoreRunId}_${Math.max(0, Number(score || 0)).toString(36)}`;
+            const duplicate = pending.find(item => item.id === scoreId);
+            if (duplicate) return duplicate;
+
+            const entry = {
+                id: scoreId,
+                name: currentPlayer,
+                score,
+                timestamp: Date.now()
+            };
+            pending.push(entry);
+            savePendingScores(pending);
+            return entry;
+        }
+
+        async function syncPendingScores() {
+            if (!db || !isAppOnline()) return false;
+
+            const pending = getPendingScores();
+            const remaining = [];
+            for (const entry of pending) {
+                try {
+                    const scoreRef = db.ref(`${LEADERBOARD_PATH}/${entry.id}`);
+                    const existing = await scoreRef.once('value');
+                    if (!existing.exists()) {
+                        await scoreRef.set({
+                            name: entry.name,
+                            score: entry.score,
+                            timestamp: entry.timestamp
+                        });
+                    }
+                } catch (error) {
+                    console.error('[Offline] Failed to sync score:', error);
+                    remaining.push(entry);
+                }
+            }
+            savePendingScores(remaining);
+            return remaining.length === 0;
+        }
+
+        function syncOfflineData() {
+            if (!isAppOnline() || offlineSyncPromise) return offlineSyncPromise || Promise.resolve(false);
+
+            updateConnectionStatus('syncing');
+            offlineSyncPromise = (async () => {
+                if (currentPlayer && localStorage.getItem(getPlayerStorageKey(PROGRESS_DIRTY_PREFIX)) === 'true') {
+                    await saveLearningProgressState();
+                }
+                if (currentPlayer && localStorage.getItem(getPlayerStorageKey(MISTAKE_DIRTY_PREFIX)) === 'true') {
+                    await saveMistakeReplayQueue();
+                }
+                await syncPendingScores();
+                return true;
+            })()
+                .catch(error => {
+                    console.error('[Offline] Sync failed:', error);
+                    return false;
+                })
+                .finally(() => {
+                    offlineSyncPromise = null;
+                    updateConnectionStatus();
+                });
+            return offlineSyncPromise;
+        }
+
         // --- 鎺掕姒滆垏鍒嗘暩 ---
         function autoSubmitScore(isSilent = false) {
             if (!currentPlayer) return;
@@ -3382,17 +3766,18 @@ function showResultPage(reason) {
                  return;
             }
 
-            db.ref(LEADERBOARD_PATH).push({
-                name: currentPlayer,
-                score: totalScore,
-                timestamp: firebase.database.ServerValue.TIMESTAMP
-            }).then(() => {
-                calculateMyRank(); 
-            });
+            queueLeaderboardScore(totalScore);
+            if (isAppOnline()) {
+                syncPendingScores().then(() => calculateMyRank());
+            } else {
+                lastGameRank = '--';
+                lastGameRankUsesCurrentScore = false;
+            }
         }
 
 
         function calculateMyRank() {
+            if (!db || !isAppOnline()) return;
             lastGameRank = "..."; 
             lastGameRankUsesCurrentScore = false;
             lastGameBestScoreUsed = 0;
@@ -3435,6 +3820,7 @@ function showResultPage(reason) {
         }
 
         function openRankModal() {
+            if (!ensureAccountIsActive()) return;
             document.getElementById('rankModal').classList.remove('hidden');
             fetchLeaderboard();
         }
@@ -3446,6 +3832,12 @@ function showResultPage(reason) {
             // 椤ず杓夊叆涓?
             loading.style.display = 'block';
             listBody.innerHTML = '';
+
+            if (!db || !isAppOnline()) {
+                loading.innerText = '\u96e2\u7dda\u6642\u672a\u80fd\u66f4\u65b0\u6392\u884c\u699c';
+                return;
+            }
+            loading.innerText = '\u8f09\u5165\u4e2d...';
 
             // 鐛插彇鏈€寰?100 绛嗘暩鎿?
             db.ref(LEADERBOARD_PATH).orderByChild('score').once('value')
@@ -3520,6 +3912,7 @@ document.getElementById('lives').innerText = "❤️❤️❤️❤️❤️❤�
         }
 
         async function startGameSession() {
+            if (!ensureAccountIsActive()) return;
             // 🔥 淇敼榛烇細鍐嶄締涓€灞€鏅傦紝寮峰埗闂滈枆 Result Modal
             document.getElementById('resultModal').classList.add('hidden');
             if (!mistakeReplayQueueLoaded) {
@@ -3557,6 +3950,7 @@ document.getElementById('lives').innerText = "❤️❤️❤️❤️❤️❤�
 
         document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible') {
+                if (currentPlayer && !ensureAccountIsActive()) return;
                 markAppActivity();
                 maybeShowComebackReminder();
                 scheduleDailyReminder();
@@ -3588,6 +3982,7 @@ document.getElementById('lives').innerText = "❤️❤️❤️❤️❤️❤�
 // --- 婧繏琛ㄥ姛鑳?(宸蹭慨寰╋細椤ず鍊嬪垾瀛楃京 + 點擊動畫 + 移除喇叭圖示) ---
         // --- 婧繏琛ㄥ姛鑳?(宸叉洿鏂帮細鏀彺鍕曟厠椤忚壊鍏? ---
 function openStudyModal() {
+            if (!ensureAccountIsActive()) return;
             const container = document.getElementById('studyListContainer');
             container.innerHTML = '';
             
@@ -3735,6 +4130,7 @@ function openStudyModal() {
     }
         initInstallPrompt();
         registerServiceWorker();
+        initOfflineSupport();
         checkLoginStatus();
     </script>
 </body>

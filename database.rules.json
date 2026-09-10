@@ -5,10 +5,13 @@
     "users": {
       "$name": {
         ".read": "$name.length > 0 && $name.length <= 12",
-        ".write": "$name.length > 0 && $name.length <= 12 && newData.exists()",
+        ".write": "$name.length > 0 && $name.length <= 12 && newData.exists() && (!data.hasChild('firstLoginAt') || newData.hasChild('firstLoginAt'))",
         ".validate": "newData.hasChild('createdAt')",
         "createdAt": {
           ".validate": "newData.isNumber() && (!data.exists() || newData.val() === data.val())"
+        },
+        "firstLoginAt": {
+          ".validate": "newData.isNumber() && newData.val() <= now && (!data.exists() || newData.val() === data.val())"
         },
         "learningProgress": {
           ".validate": "newData.hasChild('unlockedLevel')",

@@ -1,2 +1,9 @@
-firebase-debug.log
+node_modules/
 functions/node_modules/
+www/
+firebase-debug.log
+.DS_Store
+android/.gradle/
+android/app/build/
+android/build/
+ios/App/DerivedData/

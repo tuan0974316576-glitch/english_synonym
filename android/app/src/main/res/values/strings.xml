@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">同義詞の鬼</string>
+    <string name="title_activity_main">同義詞の鬼</string>
+    <string name="package_name">com.enguistics.synonym</string>
+    <string name="custom_url_scheme">com.enguistics.synonym</string>
+</resources>
