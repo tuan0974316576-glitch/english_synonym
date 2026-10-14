@@ -22,7 +22,7 @@
 
 
     <style>
-            
+
         /* --- 鍩虹瑷畾 --- */
         body {
             -webkit-tap-highlight-color: transparent;
@@ -38,7 +38,7 @@
 
         h1 { color: #2c3e50; margin-bottom: 5px; }
         p { color: #7f8c8d; margin-bottom: 20px; font-size: 0.9rem; }
-        
+
         /* 鐙€鎱嬪垪 */
         .info-panel {
             display: flex;
@@ -58,7 +58,7 @@
 
         /* 鐢ㄦ埗姝¤繋鍗€ */
         .user-panel {
-            background: #dff9fb; color: #2c3e50; 
+            background: #dff9fb; color: #2c3e50;
             padding: 5px 15px; border-radius: 20px; font-size: 0.9rem;
             display: flex; gap: 10px; align-items: center;
             border: 1px solid #b2bec3;
@@ -71,7 +71,7 @@
             justify-content: center;
         }
         .logout-btn {
-            background: none; border: none; color: #e74c3c; 
+            background: none; border: none; color: #e74c3c;
             cursor: pointer; text-decoration: underline; font-size: 0.85rem;
         }
 
@@ -194,7 +194,7 @@
         .install-steps li {
             margin-bottom: 4px;
         }
-        
+
         #lives { color: #e74c3c; transition: all 0.3s; }
         .low-health { animation: pulse-red 0.8s infinite; }
 
@@ -238,12 +238,12 @@
         }
 
 .result-meaning {
-    font-weight: 900; 
-    font-size: 1.1rem; 
+    font-weight: 900;
+    font-size: 1.1rem;
     margin-bottom: 8px;
-    display: flex; 
-    align-items: center; 
-    justify-content: space-between; 
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     width: 100%;
 }
 
@@ -283,7 +283,7 @@
 
         .card.flipped .card-inner { transform: rotateY(180deg); }
         .card.matched .card-inner { transform: rotateY(180deg); }
-        
+
         .card-front, .card-back {
             position: absolute;
             width: 100%;
@@ -306,15 +306,15 @@
             text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
             z-index: 2;
             transition: font-size 0.3s ease;
-            font-family: 'Courier New', Courier, monospace; 
+            font-family: 'Courier New', Courier, monospace;
             font-weight: bold;
         }
 
         .card-front {
             background-color: white;
-            color: #333; 
+            color: #333;
             transform: rotateY(180deg);
-            border: 2px solid #ddd; 
+            border: 2px solid #ddd;
             font-weight: bold;
             z-index: 1;
         }
@@ -324,11 +324,11 @@
 
         .meaning-text {
             font-size: 0.9rem;
-            opacity: 0; 
+            opacity: 0;
             transform: translateY(10px);
             transition: all 0.5s ease-out;
             font-weight: bold;
-            color: inherit; 
+            color: inherit;
             margin-top: 5px;
         }
 
@@ -343,12 +343,12 @@
 
         button {
             padding: 12px 30px;
-            font-size: 1rem; 
+            font-size: 1rem;
             border: none; border-radius: 50px; cursor: pointer;
             box-shadow: 0 5px 15px rgba(0,0,0,0.2);
             font-weight: bold; transition: transform 0.2s;
             display: inline-flex;
-            align-items: center; 
+            align-items: center;
             gap: 8px;
         }
         button:hover { transform: translateY(-2px); }
@@ -388,7 +388,7 @@
         }
         .modal-title { font-size: 1.5rem; color: #333; font-weight: 800; }
         .close-btn { font-size: 2rem; cursor: pointer; color: #999; line-height: 1; }
-        
+
         /* 登入介面樣式 */
         .login-box h2 { color: #2c3e50; margin-bottom: 10px; }
         .login-box p { color: #7f8c8d; margin-bottom: 20px; }
@@ -416,13 +416,13 @@
         .study-meaning { font-size: 1.1rem; font-weight: bold; color: #333; margin-bottom: 8px; }
         .study-words { display: flex; flex-wrap: wrap; gap: 8px; }
         .study-tag { background: white; padding: 6px 14px; border-radius: 20px; border: 1px solid #eee; font-size: 0.95rem; color: #555; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; }
-        
+
         /* --- 鍠瓧榛炴搳鍕曠暙 --- */
 @keyframes pop-effect {
     0% { transform: scale(1); }
-    50% { 
+    50% {
         transform: scale(1.25); /* 绋嶅井鏀惧ぇ涓€榛為粸锛岄厤鍚堥暦涓€榛炵殑鏅傞枔 */
-        background-color: #fff; 
+        background-color: #fff;
         border-color: var(--pop-color); /* 閭婃璁婅壊 */
         box-shadow: 0 0 15px var(--pop-color); /* 發光變色 */
     }
@@ -450,7 +450,7 @@
             background: white;
             border-bottom: 1px solid #eee;
         }
-        
+
         /* 鐣舵悳灏嬫瑒鎵撻枊鏅傜殑鐙€鎱?*/
         .search-bar-wrapper.open {
             max-height: 70px; /* 鎵撻枊鐨勯珮搴?*/
@@ -584,20 +584,20 @@
     font-size: 0.95rem;
     line-height: 1.6;
     color: #2c3e50;
-    
+
     display: none; /* 預設隱藏 */
     white-space: pre-wrap;
     text-align: left;
-    
+
     /* 鉁?鏀圭敤鏂板嫊鐣細鏅傞枔 0.5秒，使用 ease-out 浠ょ祼灏炬笡閫?*/
-    animation: aiPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+    animation: aiPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     transform-origin: top center; /* 瑷畾璁婂舰璧烽粸鍦ㄩ爞閮?*/
     overflow: hidden; /* 纰轰繚灞曢枊鏅傚収瀹瑰敂鏈冩孩鍑?*/
-    
+
     width: 100%;
     box-sizing: border-box;
 }
-        
+
         .ai-loading { color: #9b59b6; font-weight: bold; margin-top: 5px; display: none; }
         /* --- 馃 AI 助手專用樣式 (仿照日文Game) --- */
         .ai-btn {
@@ -629,16 +629,16 @@
     font-size: 0.95rem;
     line-height: 1.6;
     color: #2c3e50;
-    
+
     display: none; /* 預設隱藏 */
     white-space: pre-wrap;
     text-align: left;
-    
+
     /* 鉁?鏀圭敤鏂板嫊鐣細鏅傞枔 0.5秒，使用 ease-out 浠ょ祼灏炬笡閫?*/
-    animation: aiPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards; 
+    animation: aiPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
     transform-origin: top center; /* 瑷畾璁婂舰璧烽粸鍦ㄩ爞閮?*/
     overflow: hidden; /* 纰轰繚灞曢枊鏅傚収瀹瑰敂鏈冩孩鍑?*/
-    
+
     width: 100%;
     box-sizing: border-box;
 }
@@ -1093,8 +1093,8 @@
 </head>
 <body>
 
-    <h1>&#128123;&#21516;&#32681;&#35422;&#12398;&#39740;&#128123;</h1>
-    <p>Presented by Enguistics Learning Centre</p>
+    <h1 id="gameTitle">&#128123;&#21516;&#32681;&#35422;&#12398;&#39740;&#128123;</h1>
+    <p id="gameSubtitle">Presented by Enguistics Learning Centre</p>
 
     <script src="vendor/firebase-app-compat.js"></script>
     <script src="vocab.js"></script>
@@ -1106,7 +1106,7 @@
             <span id="accountDaysDisplay"></span>
             <button class="logout-btn" onclick="logout()">&#30331;&#20986;</button>
         </div>
-        <div class="stat-box connection-status" id="connectionStatus" role="status" aria-live="polite">&#24050;&#36899;&#32218;</div>
+        <div class="stat-box connection-status" id="connectionStatus" role="status" aria-live="polite" style="display:none;">&#24050;&#36899;&#32218;</div>
         <div class="info-group" id="gameStatsGroup">
             <div class="stat-box">LEVEL <span id="level-display">1</span></div>
             <div class="stat-box">⏱️ <span id="timer">100</span>s</div>
@@ -1260,29 +1260,29 @@
 // =========================================================
     // 鈽?鏂?askAI (OpenRouter 鐗?- Gemini 2.5 Flash)
     // =========================================================
-    
+
 // =========================================================
     // 鈽?灏堢敤淇京鐗?askGemini (OpenRouter + English Synonym Game)
     // =========================================================
-    
+
 // =========================================================
     // 鈽?askGemini (寮峰姏闄ら尟鐗堬細寮疯椤ず Loading + 彈窗報錯)
     // =========================================================
-    
+
     // =========================================================
     // 鈽?askGemini (楂樺害鑷嫊淇鐗?
     // =========================================================
-    
+
    // =========================================================
     // 鈽?askGemini (打字機特效版)
     // =========================================================
-    
+
     // 1. 灏?Key 分開兩截
     const keyPart1 = "sk-or-v1-";
-    
+
     // 👇 你的 OpenRouter Key
-    const keyPart2 = "99843d0bae6f77f25b0bf50875a3cc23d9556e7e77d73b2a8828e9b690319381"; 
-    
+    const keyPart2 = "99843d0bae6f77f25b0bf50875a3cc23d9556e7e77d73b2a8828e9b690319381";
+
     // 鍚堥珨锛?
     const OPENROUTER_API_KEY = keyPart1 + keyPart2;
 
@@ -1293,11 +1293,11 @@
             return;
         }
         let responseBox = parentContainer.querySelector('.ai-response-box');
-        
+
         if (!responseBox) {
             responseBox = document.createElement('div');
             responseBox.className = 'ai-response-box';
-            parentContainer.appendChild(responseBox); 
+            parentContainer.appendChild(responseBox);
         }
 
         if (!isAppOnline()) {
@@ -1316,16 +1316,16 @@
 
         const originalText = btn.innerHTML;
         btn.disabled = true;
-        btn.innerHTML = '\u2728 \u5206\u6790\u4e2d...'; 
-        
+        btn.innerHTML = '\u2728 \u5206\u6790\u4e2d...';
+
         // 重置樣式
         responseBox.style.display = 'block';
-        responseBox.style.animation = ''; 
-        responseBox.style.height = '';    
-        responseBox.style.maxHeight = ''; 
+        responseBox.style.animation = '';
+        responseBox.style.height = '';
+        responseBox.style.maxHeight = '';
         responseBox.style.color = '';
         responseBox.style.fontWeight = '';
-        
+
         responseBox.innerHTML = '<div style="color:#9b59b6; font-weight:bold; padding:5px;">\u2728 AI \u6b63\u5728\u5206\u6790\u540c\u7fa9\u8a5e...</div>';
 
         const wordsList = wordsArray.map(w => (typeof w === 'string' ? w : w.t)).join(', ');
@@ -1355,7 +1355,7 @@
                 headers: {
                     "Authorization": `Bearer ${OPENROUTER_API_KEY}`,
                     "Content-Type": "application/json",
-                    "HTTP-Referer": window.location.href, 
+                    "HTTP-Referer": window.location.href,
                     "X-Title": "English Synonym Game"
                 },
                 body: JSON.stringify({
@@ -1387,24 +1387,24 @@
             }
 
             const data = await response.json();
-            
+
             if (!data.choices || data.choices.length === 0) throw new Error("AI \u6c92\u6709\u56de\u61c9");
 
             let aiText = data.choices[0].message.content;
-            
+
             // 鏍煎紡鍖栨枃瀛?
             aiText = aiText.replace(/### (.*?)\n/g, '<h4 style="margin:10px 0 5px; color:#6f42c1;">$1</h4>');
             aiText = aiText.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-            aiText = aiText.replace(/^\* /gm, '• '); 
-            
+            aiText = aiText.replace(/^\* /gm, '• ');
+
             // --- 婧栧倷鎾斁鍕曠暙 ---
-            
+
             // 1. 解除 CSS 楂樺害闄愬埗锛岃畵鎵撳瓧姗熷彲浠ョ劇闄愬欢浼?
-            responseBox.style.animation = 'none';      
-            responseBox.style.maxHeight = 'none';      
-            responseBox.style.height = 'auto';         
-            responseBox.style.overflow = 'visible';    
-            
+            responseBox.style.animation = 'none';
+            responseBox.style.maxHeight = 'none';
+            responseBox.style.height = 'auto';
+            responseBox.style.overflow = 'visible';
+
             // 2. 鍛煎彨鎵撳瓧姗熷嚱鏁?(await 等待打完)
             await typeWriter(responseBox, aiText, 10); // 閫熷害瑷偤 10ms锛屾劅瑕虹埥蹇暡
 
@@ -1429,10 +1429,10 @@
             messagingSenderId: "404253544634",
             appId: "1:404253544634:web:fcaacd682ecb2a2164f283"
         };
-        
+
         let db = null;
-        let currentPlayer = null; 
-        
+        let currentPlayer = null;
+
         try {
             if (!firebase.apps.length) {
                 firebase.initializeApp(firebaseConfig);
@@ -1444,7 +1444,7 @@
         }
 
         const LEADERBOARD_PATH = 'leaderboards/synonym_hunter';
-        const USERS_PATH = 'users'; 
+        const USERS_PATH = 'users';
 
         // --- 2. 鏁告摎搴?---
         // --- 2. 題庫資料 ---
@@ -1458,9 +1458,9 @@
         let lives = 10, timer, timeLimit = 100, remainingTime = 100;
         let currentLevel = 1, totalScore = 0;
         let sessionHistory = [];
-        let globalPairDeck = []; 
+        let globalPairDeck = [];
         let lastGameEndReason = "";
-        let lastGameRank = "瑷堢畻涓?.."; 
+        let lastGameRank = "瑷堢畻涓?..";
         let lastGameRankUsesCurrentScore = false;
         let lastGameBestScoreUsed = 0;
         let currentScoreRunId = null;
@@ -1504,7 +1504,6 @@
         const MISTAKE_DIRTY_PREFIX = 'synonym_mistake_dirty_';
         const PENDING_SCORES_KEY = 'synonym_pending_scores_v1';
         const ACCOUNT_ACCESS_PREFIX = 'synonym_account_access_';
-        const ACCOUNT_ACCESS_DURATION_MS = 30 * 24 * 60 * 60 * 1000;
 
         let mistakeReplayQueue = [];
         let currentRunMistakeQueue = [];
@@ -1572,20 +1571,17 @@
         }
 
         function getAccountExpiry(access) {
-            return Number(access?.firstLoginAt || 0) + ACCOUNT_ACCESS_DURATION_MS;
+            return Number.POSITIVE_INFINITY;
         }
 
         function isAccountExpired(access) {
-            const effectiveNow = Math.max(Date.now(), Number(access?.lastVerifiedAt || 0));
-            return !access || effectiveNow >= getAccountExpiry(access);
+            return !access;
         }
 
         function renderAccountDaysRemaining() {
             const display = document.getElementById('accountDaysDisplay');
             if (!display || !accountAccessState) return;
-            const effectiveNow = Math.max(Date.now(), Number(accountAccessState.lastVerifiedAt || 0));
-            const days = Math.max(0, Math.ceil((getAccountExpiry(accountAccessState) - effectiveNow) / (24 * 60 * 60 * 1000)));
-            display.innerText = `\u00b7 ${days}\u65e5`;
+            display.innerText = '\u00b7 \u7121\u9650\u671f';
         }
 
         function createAccountAccessError(code, message) {
@@ -1631,14 +1627,14 @@
             }
 
             if (isAccountExpired(access)) {
-                throw createAccountAccessError('account-expired', '\u6b64\u5e33\u6236\u7684 30 \u65e5\u4f7f\u7528\u671f\u5df2\u7d50\u675f\uff0c\u8acb\u806f\u7d61\u8001\u5e2b\u3002');
+                throw createAccountAccessError('account-expired', '\u6b64\u5e33\u6236\u7121\u6cd5\u4f7f\u7528\uff0c\u8acb\u806f\u7d61\u8001\u5e2b\u3002');
             }
             return access;
         }
 
         function ensureAccountIsActive() {
             if (accountAccessState && !isAccountExpired(accountAccessState)) return true;
-            alert('\u6b64\u5e33\u6236\u7684 30 \u65e5\u4f7f\u7528\u671f\u5df2\u7d50\u675f\uff0c\u8acb\u806f\u7d61\u8001\u5e2b\u3002');
+            alert('\u6b64\u5e33\u6236\u7121\u6cd5\u4f7f\u7528\uff0c\u8acb\u806f\u7d61\u8001\u5e2b\u3002');
             localStorage.removeItem('synonym_player');
             location.reload();
             return false;
@@ -2107,7 +2103,7 @@
         async function loginSuccess(name, knownUserData = null) {
             accountAccessState = await activateOrVerifyAccount(name, knownUserData);
             currentPlayer = name;
-            localStorage.setItem('synonym_player', name); 
+            localStorage.setItem('synonym_player', name);
             document.getElementById('loginModal').classList.add('hidden');
             showGameUI();
             await Promise.all([
@@ -2125,14 +2121,14 @@
                 mistakeReplayQueueLoaded = false;
                 learningProgressState = { unlockedLevel: 1, awards: {}, planVersion: CURRENT_LEARNING_PLAN_VERSION };
                 accountAccessState = null;
-                location.reload(); 
+                location.reload();
             }
         }
 
         function showGameUI() {
             document.getElementById('userPanel').style.display = 'flex';
             document.getElementById('currentUserDisplay').innerText = currentPlayer;
-            document.getElementById('loginModal').classList.add('hidden'); 
+            document.getElementById('loginModal').classList.add('hidden');
             renderAccountDaysRemaining();
             markAppActivity();
             maybeShowComebackReminder();
@@ -2157,12 +2153,12 @@
                 gain.connect(audioCtx.destination);
                 osc.type = type;
                 osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
-                
+
                 // 闊抽噺鎺у埗锛氬揩閫熼€插叆 -> 保持 -> 衰減
                 gain.gain.setValueAtTime(0, audioCtx.currentTime);
                 gain.gain.linearRampToValueAtTime(vol, audioCtx.currentTime + 0.02);
                 gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
-                
+
                 osc.start();
                 osc.stop(audioCtx.currentTime + duration);
             },
@@ -2203,7 +2199,7 @@ tick: () => {
                 // 鍙?龍！(C6 -> E6 -> G6) 更加興奮
                 const now = audioCtx.currentTime;
                 // 绗竴鑱?
-                cuteSfx.playTone(1046.50, 'triangle', 0.4, 0.4); 
+                cuteSfx.playTone(1046.50, 'triangle', 0.4, 0.4);
                 // 绗簩鑱?(寤堕伈涓€榛?
                 setTimeout(() => cuteSfx.playTone(1318.51, 'triangle', 0.4, 0.4), 80);
                 // 绗笁鑱?(和音)
@@ -2254,7 +2250,7 @@ tick: () => {
             const attachSounds = () => {
                 // 鎹変綇鎵€鏈?button, 選項, 婧繏鍗?
                 const targets = document.querySelectorAll('button, .option-btn, .word-badge, .study-tag, .learning-word-chip, .route-node, .close-btn');
-                
+
                 targets.forEach(el => {
                     if (el.dataset.soundReady) return; // 閬垮厤閲嶈鍔?
                     el.dataset.soundReady = "true";
@@ -2280,34 +2276,53 @@ tick: () => {
             observer.observe(document.body, { childList: true, subtree: true });
         })();
 
-        // --- 鍎寲鐗堢櫦闊崇郴绲?---
+        // --- 發音功能：瀏覽器支援時使用，Android WebView 不支援時靜默略過 ---
         let allVoices = [];
-        function loadVoices() {
-            allVoices = window.speechSynthesis.getVoices();
+        function canSpeakWord() {
+            return Boolean(
+                window.speechSynthesis &&
+                typeof window.speechSynthesis.getVoices === 'function' &&
+                typeof window.speechSynthesis.speak === 'function'
+            );
         }
-        if ('speechSynthesis' in window) {
+
+        function loadVoices() {
+            if (!canSpeakWord()) {
+                allVoices = [];
+                return;
+            }
+            try {
+                allVoices = window.speechSynthesis.getVoices() || [];
+            } catch (error) {
+                allVoices = [];
+                console.info('[Speech] Voice list unavailable:', error);
+            }
+        }
+
+        if (canSpeakWord()) {
             window.speechSynthesis.onvoiceschanged = loadVoices;
         }
 
         function speakWord(text) {
-            if (!('speechSynthesis' in window)) {
-                alert("浣犵殑鐎忚鍣ㄤ笉鏀彺鐧奸煶鍔熻兘");
-                return;
+            if (!canSpeakWord()) return;
+            if (allVoices.length === 0) loadVoices();
+
+            try {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+
+                const preferredVoice = allVoices.find(v => v.name.includes("Google US English")) ||
+                                       allVoices.find(v => v.name.includes("Google UK English Female")) ||
+                                       allVoices.find(v => v.name.includes("Microsoft Zira")) ||
+                                       allVoices.find(v => v.lang === 'en-US' && !v.name.includes("Chinese")) ||
+                                       allVoices.find(v => v.lang === 'en-GB');
+
+                if (preferredVoice) u.voice = preferredVoice;
+                u.lang = 'en-US'; u.rate = 0.9; u.pitch = 1;
+                window.speechSynthesis.speak(u);
+            } catch (error) {
+                console.info('[Speech] Word pronunciation unavailable:', error);
             }
-            if (allVoices.length === 0) allVoices = window.speechSynthesis.getVoices();
-
-            window.speechSynthesis.cancel();
-            const u = new SpeechSynthesisUtterance(text);
-            
-            let preferredVoice = allVoices.find(v => v.name.includes("Google US English")) ||
-                                 allVoices.find(v => v.name.includes("Google UK English Female")) ||
-                                 allVoices.find(v => v.name.includes("Microsoft Zira")) ||
-                                 allVoices.find(v => v.lang === 'en-US' && !v.name.includes("Chinese")) ||
-                                 allVoices.find(v => v.lang === 'en-GB');
-
-            if (preferredVoice) u.voice = preferredVoice;
-            u.lang = 'en-US'; u.rate = 0.9; u.pitch = 1;
-            window.speechSynthesis.speak(u);
         }
         loadVoices();
 
@@ -2543,6 +2558,16 @@ tick: () => {
             const gameStatsGroup = document.getElementById('gameStatsGroup');
             const overviewStatsGroup = document.getElementById('overviewStatsGroup');
             if (!gameStatsGroup || !overviewStatsGroup) return;
+
+            const gameTitle = document.getElementById('gameTitle');
+            const gameSubtitle = document.getElementById('gameSubtitle');
+            const userPanel = document.getElementById('userPanel');
+            const connectionStatus = document.getElementById('connectionStatus');
+            const isMainMenu = currentMode === 'menu';
+            if (gameTitle) gameTitle.hidden = !isMainMenu;
+            if (gameSubtitle) gameSubtitle.hidden = !isMainMenu;
+            if (userPanel) userPanel.style.display = isMainMenu && currentPlayer ? 'flex' : 'none';
+            if (connectionStatus) connectionStatus.style.display = isMainMenu && currentPlayer ? 'flex' : 'none';
 
             if (isGameplayInfoMode()) {
                 gameStatsGroup.style.display = 'flex';
@@ -3232,7 +3257,7 @@ tick: () => {
  // ------------------------------------------------------------------
         // 馃 Google Gemini AI 瑷畾 (鏈€鏂颁慨寰╃増)
         // ------------------------------------------------------------------
-        
+
         // ------------------------------------------------------------------
         // 🎮 遊戲核心邏輯 (瀹屾暣淇京鐗?
         // ------------------------------------------------------------------
@@ -3248,24 +3273,24 @@ tick: () => {
             });
             return tempDeck.sort(() => 0.5 - Math.random());
         }
-        
+
         function initGame(isNextLevel = false) {
-            if (!currentPlayer) return; 
+            if (!currentPlayer) return;
 
             const grid = document.getElementById('gameGrid');
             grid.style.display = 'grid';
             grid.innerHTML = '';
             hasFlippedCard = false; lockBoard = false; firstCard = null; secondCard = null; matchedPairs = 0;
-            
-if (!isNextLevel) { 
+
+if (!isNextLevel) {
         currentLevel = 1; totalScore = 0; lives = 10; // 鉁?10條命
         currentScoreRunId = createPendingScoreId();
         if (!useFiniteDeck) globalPairDeck = [];
-        sessionHistory = []; 
+        sessionHistory = [];
         currentRunMistakeQueue = [];
         currentRunMistakeCounts = {};
     } else { // 鉁?淇锛氱洿鎺?else锛屽敂濂藉姞澶氬€?}
-        currentLevel++; 
+        currentLevel++;
         lives = Math.min(lives + 3, 10); // 鉁?過關 +3 琛€
     }
 
@@ -3297,7 +3322,7 @@ if (!isNextLevel) {
                 level: currentLevel,
                 pairs: selectedPairs.map(p => ({
                     gid: p.gid,
-                    words: [p.i1.t, p.i2.t], 
+                    words: [p.i1.t, p.i2.t],
                     color: p.c,
                     meaning: p.i1.m
                 }))
@@ -3307,20 +3332,20 @@ if (!isNextLevel) {
             selectedPairs.forEach(p => {
                 deck.push({t:p.i1.t, m:p.i1.m, gid:p.gid, c:p.c}, {t:p.i2.t, m:p.i2.m, gid:p.gid, c:p.c});
             });
-            
+
             deck.sort(()=>0.5-Math.random());
 
 deck.forEach(item => {
                 const card = document.createElement('div');
                 card.classList.add('card');
-                
-                card.dataset.group = item.gid; 
-                card.dataset.word = item.t; 
-                card.dataset.color = item.c; 
+
+                card.dataset.group = item.gid;
+                card.dataset.word = item.t;
+                card.dataset.color = item.c;
                 card.dataset.failCount = 1;
 
                 const displayWord = item.t.charAt(0).toUpperCase() + item.t.slice(1);
-                
+
                 let hintLetter = "";
 
                 if (item.t.charAt(1) === ' ') {
@@ -3329,7 +3354,7 @@ deck.forEach(item => {
                     hintLetter = item.t.charAt(0).toUpperCase() + item.t.charAt(1).toLowerCase();
                 }
                 const textClass = item.t.length > 12 ? 'word-text long-text' : 'word-text';
-                
+
                 card.innerHTML = `<div class="card-inner">
                     <div class="card-front">
                         <div class="${textClass}">${displayWord}</div>
@@ -3337,7 +3362,7 @@ deck.forEach(item => {
                     </div>
                     <div class="card-back">${hintLetter}</div>
                 </div>`;
-                
+
                 card.addEventListener('click', flipCard);
                 grid.appendChild(card);
             });
@@ -3381,7 +3406,7 @@ function checkForMatch() {
             if (wa === wb) return true;
             for (let group of synonymData) {
                 const wordsInGroup = group.words.map(w => (typeof w === 'string' ? w : w.t).toLowerCase());
-                if (wordsInGroup.includes(wa) && wordsInGroup.includes(wb)) return true; 
+                if (wordsInGroup.includes(wa) && wordsInGroup.includes(wb)) return true;
             }
             return false;
         }
@@ -3396,27 +3421,27 @@ function checkForMatch() {
                 { gid: c2.dataset.group, word: c2.dataset.word, color: color }
             );
 
-            c1.removeEventListener('click', flipCard); 
+            c1.removeEventListener('click', flipCard);
             c2.removeEventListener('click', flipCard);
 
             setTimeout(() => {
-                playSound('match'); 
-                c1.classList.add('matched'); 
+                playSound('match');
+                c1.classList.add('matched');
                 c2.classList.add('matched');
-                
+
                 [c1, c2].forEach(c => {
                     const f = c.querySelector('.card-front');
                     const w = c.querySelector('.word-text');
                     const m = c.querySelector('.meaning-text');
                     f.setAttribute('style', `background-color:#fff!important; border:3px solid ${color}!important; color:${color}!important; transform:rotateY(180deg); box-shadow:inset 0 0 0 1px ${color}20;`);
-                    w.style.color = color; 
+                    w.style.color = color;
                     if(m) m.style.cssText = `color:${color}!important; opacity:1!important; transform:translateY(0)!important; display:block!important;`;
                 });
             }, 300);
 
             matchedPairs++;
-            totalScore += 10; 
-            updateUI(); 
+            totalScore += 10;
+            updateUI();
 
             if (matchedPairs === pairsThisLevel) {
                 clearInterval(timer);
@@ -3436,7 +3461,7 @@ function checkForMatch() {
         }
 
         function unflipCards() {
-            lockBoard = true; 
+            lockBoard = true;
             const c1 = firstCard;
             const c2 = secondCard;
 
@@ -3448,14 +3473,14 @@ function checkForMatch() {
                 { gid: c1.dataset.group, word: c1.dataset.word, color: c1.dataset.color },
                 { gid: c2.dataset.group, word: c2.dataset.word, color: c2.dataset.color }
             );
-            
+
             [c1, c2].forEach(c => {
-                let cnt = parseInt(c.dataset.failCount||1)+1; 
+                let cnt = parseInt(c.dataset.failCount||1)+1;
                 c.dataset.failCount = cnt;
                 let w = c.dataset.word;
                 let rawHint = w.substring(0, Math.min(cnt, w.length));
                 let hint = rawHint.charAt(0).toUpperCase() + rawHint.slice(1);
-                let b = c.querySelector('.card-back'); 
+                let b = c.querySelector('.card-back');
                 if(b) {
                     b.innerText = hint;
                     b.style.fontSize = hint.length>3?'1rem':(hint.length>1?'1.5rem':'2.5rem');
@@ -3463,35 +3488,35 @@ function checkForMatch() {
                 }
             });
 
-            lives--; 
+            lives--;
             updateUI();
 
             if (lives === 0) {
-                revealAndEndGame('HP 歸零'); 
+                revealAndEndGame('HP 歸零');
                 return;
             }
 
-            setTimeout(() => { 
-                playSound('fail'); 
-                c1.classList.add('shake'); 
-                c2.classList.add('shake'); 
+            setTimeout(() => {
+                playSound('fail');
+                c1.classList.add('shake');
+                c2.classList.add('shake');
             }, 400);
-            
-            setTimeout(() => { 
-                c1.classList.remove('flipped','shake'); 
-                c2.classList.remove('flipped','shake'); 
-                resetBoard(); 
+
+            setTimeout(() => {
+                c1.classList.remove('flipped','shake');
+                c2.classList.remove('flipped','shake');
+                resetBoard();
             }, 1200);
         }
 
         function resetBoard() { [hasFlippedCard, lockBoard] = [false, false]; [firstCard, secondCard] = [null, null]; }
-        
+
 function startTimer() {
             // 閲嶇疆鏅傞枔椤ず椤忚壊
             const timerDisplay = document.getElementById('timer');
-            timerDisplay.style.color = ''; 
-            
-            remainingTime = timeLimit; 
+            timerDisplay.style.color = '';
+
+            remainingTime = timeLimit;
             timerDisplay.innerText = remainingTime;
 
             timer = setInterval(() => {
@@ -3507,7 +3532,7 @@ function startTimer() {
                     timerDisplay.style.color = ''; // 正常顏色
                 }
 
-                if (remainingTime <= 0) { 
+                if (remainingTime <= 0) {
                     revealAndEndGame('\u6642\u9593\u5230');
                 }
             }, 1000);
@@ -3523,33 +3548,33 @@ function startTimer() {
             flushCurrentRunMistakesToReplayQueue();
             currentMode = isLearningFlow() ? 'learning-ended' : 'post-game';
             renderTopInfoBar();
-            
+
             playSound('gameover');
             lockBoard = true;
 
             const giveUpBtn = document.getElementById('btn-giveup');
             if(giveUpBtn) giveUpBtn.style.display = 'none';
-            
+
             const reviewBtn = document.getElementById('btn-review-level');
             if(reviewBtn) {
                 reviewBtn.style.display = 'flex';
                 reviewBtn.classList.remove('pop-active');
                 void reviewBtn.offsetWidth; // Trigger reflow
-                reviewBtn.classList.add('breathing-btn'); 
+                reviewBtn.classList.add('breathing-btn');
             }
 
             const unmatchedCards = document.querySelectorAll('.card:not(.matched)');
             unmatchedCards.forEach(card => {
-                card.classList.add('flipped'); 
+                card.classList.add('flipped');
                 const color = card.dataset.color;
                 const front = card.querySelector('.card-front');
                 const wordText = card.querySelector('.word-text');
                 const meaningText = card.querySelector('.meaning-text');
 
                 front.setAttribute('style', `
-                    background-color: #fff !important; 
-                    border: 3px solid ${color} !important; 
-                    color: ${color} !important; 
+                    background-color: #fff !important;
+                    border: 3px solid ${color} !important;
+                    color: ${color} !important;
                     transform: rotateY(180deg);
                     box-shadow: 0 0 15px rgba(0,0,0,0.1);
                 `);
@@ -3557,9 +3582,9 @@ function startTimer() {
                 if(wordText) wordText.style.color = color;
                 if(meaningText) {
                     meaningText.style.cssText = `
-                        color: ${color} !important; 
-                        opacity: 1 !important; 
-                        transform: translateY(0) !important; 
+                        color: ${color} !important;
+                        opacity: 1 !important;
+                        transform: translateY(0) !important;
                         display: block !important;
                     `;
                 }
@@ -3575,15 +3600,15 @@ function startTimer() {
 
         // 3. 椤ず绲愭灉闋?(新版)
         function showResultPage(reason) {
-            closeModal('rankModal'); 
-            
+            closeModal('rankModal');
+
             const container = document.getElementById('resultListContainer');
-            container.innerHTML = ''; 
+            container.innerHTML = '';
 
             // A. 分數面板
             const dashboard = document.createElement('div');
             dashboard.style.cssText = "text-align: center; margin-bottom: 25px; padding-bottom: 15px; border-bottom: 2px dashed #ddd;";
-            
+
             let rankDisplay = `#${lastGameRank}`;
             if(lastGameRank == 1) rankDisplay = "\ud83c\udfc6 \u51a0\u8ecd";
             if(lastGameRank == 2) rankDisplay = "\ud83e\udd48 \u4e9e\u8ecd";
@@ -3616,7 +3641,7 @@ function startTimer() {
 
                 record.pairs.forEach(pair => {
                     const fullGroupData = synonymData.find(g => g.id === pair.gid);
-                    
+
                     const groupBox = document.createElement('div');
                     groupBox.className = 'result-group-box';
                     groupBox.style.borderColor = pair.color;
@@ -3632,16 +3657,16 @@ function startTimer() {
                     // 2. 寤虹珛涓枃鎰忔€濈殑 Span (閫欐槸宸﹂倞鐨勫厓绱?
                     const textSpan = document.createElement('span');
                     textSpan.innerText = meaningText;
-                    meaningDiv.appendChild(textSpan); 
+                    meaningDiv.appendChild(textSpan);
 
                     // 3. 建立 AI 按鈕 (閫欐槸鍙抽倞鐨勫厓绱?
                     const aiBtn = document.createElement('button');
                     aiBtn.className = 'ai-btn';
                     aiBtn.innerHTML = '\u2728 \u4f5c\u6587\u9ede\u7528';
                     aiBtn.onclick = function() { askGemini(this, meaningText, allWordsInGroup); };
-                    
+
                     // 4. 灏囨寜閳曟斁鍏?meaningDiv
-                    meaningDiv.appendChild(aiBtn); 
+                    meaningDiv.appendChild(aiBtn);
 
                     groupBox.appendChild(meaningDiv);
 
@@ -3757,7 +3782,7 @@ function startTimer() {
         function autoSubmitScore(isSilent = false) {
             if (!currentPlayer) return;
             if (isLearningFlow()) return;
-            
+
             if (totalScore === 0) {
                  if (!isSilent) {
                      alert("\ud83d\udc80 Game Over!\n0 \u5206\u3002\u4e0b\u6b21\u518d\u52aa\u529b\uff01");
@@ -3778,10 +3803,10 @@ function startTimer() {
 
         function calculateMyRank() {
             if (!db || !isAppOnline()) return;
-            lastGameRank = "..."; 
+            lastGameRank = "...";
             lastGameRankUsesCurrentScore = false;
             lastGameBestScoreUsed = 0;
-            
+
             db.ref(LEADERBOARD_PATH).orderByChild('score').once('value', snapshot => {
                 let rawScores = [];
                 snapshot.forEach(child => {
@@ -3799,7 +3824,7 @@ function startTimer() {
                         break;
                     }
                 }
-                
+
                 lastGameRank = myRank;
                 lastGameRankUsesCurrentScore = (typeof myRank === 'number') && (lastGameBestScoreUsed === totalScore);
 
@@ -3807,11 +3832,11 @@ function startTimer() {
                 const displayDiv = document.getElementById('resultPageRankDisplay');
                 if (displayDiv) {
                     let rankText = (typeof myRank === 'number') ? `#${myRank}` : myRank;
-                    
+
                     if(myRank == 1) rankText = "\ud83c\udfc6 \u51a0\u8ecd";
                     if(myRank == 2) rankText = "\ud83e\udd48 \u4e9e\u8ecd";
                     if(myRank == 3) rankText = "\ud83e\udd49 \u5b63\u8ecd";
-                    
+
                     displayDiv.innerText = lastGameRankUsesCurrentScore
                         ? `\u672c\u6b21\u6392\u540d: ${rankText}`
                         : `\u672a\u5237\u65b0\u500b\u4eba\u6700\u4f73\uff0c\u6392\u884c\u699c\u4ecd\u4ee5\u6700\u9ad8\u5206\u8a08: ${rankText}`;
@@ -3828,7 +3853,7 @@ function startTimer() {
        function fetchLeaderboard() {
             const listBody = document.getElementById('rankListBody');
             const loading = document.getElementById('loadingRank');
-            
+
             // 椤ず杓夊叆涓?
             loading.style.display = 'block';
             listBody.innerHTML = '';
@@ -3843,7 +3868,7 @@ function startTimer() {
             db.ref(LEADERBOARD_PATH).orderByChild('score').once('value')
             .then(snapshot => {
                 loading.style.display = 'none';
-                
+
                 let rawScores = [];
                 snapshot.forEach(child => { rawScores.push(child.val()); });
                 let uniqueScores = getUniqueScores(rawScores);
@@ -3858,7 +3883,7 @@ uniqueScores = uniqueScores.slice(0, 100);
                 uniqueScores.forEach((s, index) => {
                     const row = document.createElement('tr');
                     row.className = 'rank-row';
-                    
+
                     let rankIcon = `<span class="rank-num">${index + 1}</span>`;
                     if(index===0) rankIcon = '\ud83c\udfc6';
                     if(index===1) rankIcon = '\ud83e\udd48';
@@ -3885,14 +3910,14 @@ uniqueScores = uniqueScores.slice(0, 100);
             clearInterval(timer);
             lockBoard = false; hasFlippedCard = false;
             currentMode = 'menu';
-            document.getElementById('gameGrid').innerHTML = ''; 
+            document.getElementById('gameGrid').innerHTML = '';
             document.getElementById('gameGrid').style.display = 'grid';
-            document.getElementById('startOverlay').style.display = 'block'; 
+            document.getElementById('startOverlay').style.display = 'block';
             document.getElementById('preGameButtons').style.display = 'flex';
             document.getElementById('inGameButtons').style.display = 'none';
             document.getElementById('timer').innerText = timeLimit;
 document.getElementById('lives').innerText = "❤️❤️❤️❤️❤️❤️❤️❤️❤️❤️";
-    lives = 10; 
+    lives = 10;
     hideLearningPanel();
     resetLearningState();
     updateUI();
@@ -3927,9 +3952,9 @@ document.getElementById('lives').innerText = "❤️❤️❤️❤️❤️❤�
             document.getElementById('preGameButtons').style.display = 'none';
             document.getElementById('gameGrid').style.display = 'grid';
             const inGameBtns = document.getElementById('inGameButtons');
-            inGameBtns.style.display = 'flex';    
-            document.getElementById('btn-giveup').style.display = 'flex'; 
-            document.getElementById('btn-review-level').style.display = 'none'; 
+            inGameBtns.style.display = 'flex';
+            document.getElementById('btn-giveup').style.display = 'flex';
+            document.getElementById('btn-review-level').style.display = 'none';
 
             renderTopInfoBar();
             initGame(false);
@@ -3945,7 +3970,7 @@ document.getElementById('lives').innerText = "❤️❤️❤️❤️❤️❤�
 
         function closeResultAndReset() {
             document.getElementById('resultModal').classList.add('hidden');
-            backToLobby(); 
+            backToLobby();
         }
 
         document.addEventListener('visibilitychange', () => {
@@ -3985,7 +4010,7 @@ function openStudyModal() {
             if (!ensureAccountIsActive()) return;
             const container = document.getElementById('studyListContainer');
             container.innerHTML = '';
-            
+
             const searchWrapper = document.getElementById('searchBarWrapper');
             const searchInput = document.getElementById('studySearchInput');
             if(searchWrapper) searchWrapper.classList.remove('open');
@@ -4001,7 +4026,7 @@ function openStudyModal() {
                 const meaningDiv = document.createElement('div');
                 meaningDiv.className = 'study-meaning'; // 姝?class 已有 space-between
                 meaningDiv.style.color = group.color;
-                
+
                 // 1. 建立左邊文字 Span
                 const textSpan = document.createElement('span');
                 textSpan.innerText = group.meaning;
@@ -4012,8 +4037,8 @@ function openStudyModal() {
                 aiBtn.className = 'ai-btn';
                 aiBtn.innerHTML = '\u2728 \u4f5c\u6587\u9ede\u7528';
                 aiBtn.onclick = function() { askGemini(this, group.meaning, group.words); };
-                
-                meaningDiv.appendChild(aiBtn); 
+
+                meaningDiv.appendChild(aiBtn);
                 groupDiv.appendChild(meaningDiv);
 
                 const wordsDiv = document.createElement('div');
@@ -4076,8 +4101,8 @@ function openStudyModal() {
         element.innerHTML = '';
         // 纰轰繚鍏冪礌鍙涓旈珮搴﹁嚜鍕曪紝鏂逛究鎵撳瓧鏅傛拹闁?
         element.style.display = 'block';
-        element.style.height = 'auto'; 
-        
+        element.style.height = 'auto';
+
         // 1. 灏?HTML 瀛椾覆杞夊仛鐪熸鐨?DOM 绡€榛?
         const tempDiv = document.createElement('div');
         tempDiv.innerHTML = htmlContent;
@@ -4089,10 +4114,10 @@ function openStudyModal() {
                 const text = node.textContent;
                 const textNode = document.createTextNode('');
                 parent.appendChild(textNode);
-                
+
                 for (let i = 0; i < text.length; i++) {
                     textNode.textContent += text[i];
-                    
+
                     // --- 鑷嫊鎹插嫊閭忚集 (適配 Modal) ---
                     // 鍢楄│鎼靛嚭鏈€杩戠殑鍙嵅鍕曞鍣?(Modal Content)
                     const scrollableParent = element.closest('.modal-content') || element.closest('.result-list-container');
@@ -4114,7 +4139,7 @@ function openStudyModal() {
                     el.setAttribute(attr.name, attr.value);
                 });
                 parent.appendChild(el);
-                
+
                 // 绻肩簩铏曠悊瀛愬収瀹?
                 const children = Array.from(node.childNodes);
                 for (const child of children) {
