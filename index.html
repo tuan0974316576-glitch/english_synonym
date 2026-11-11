@@ -1089,6 +1089,13 @@
                 border-radius: 16px;
             }
         }
+        .synonym-examples { margin-top: 12px; border-top: 1px solid #ddd; padding-top: 10px; text-align: left; }
+        .synonym-examples summary { cursor: pointer; color: #555; font-size: 14px; font-weight: 700; padding: 6px 0; }
+        .synonym-example { padding: 12px 0; border-bottom: 1px solid #eee; overflow-wrap: anywhere; }
+        .synonym-example strong { color: #333; font-size: 15px; }
+        .synonym-example small { display: block; margin-top: 4px; color: #666; line-height: 1.5; }
+        .synonym-example p { margin: 6px 0 0; font-size: 15px; line-height: 1.6; color: #333; }
+        .synonym-example p[lang="zh-Hant"] { font-size: 14px; color: #666; }
     </style>
 </head>
 <body>
@@ -1097,7 +1104,7 @@
     <p id="gameSubtitle">Presented by Enguistics Learning Centre</p>
 
     <script src="vendor/firebase-app-compat.js"></script>
-    <script src="vocab.js"></script>
+    <script src="vocab.js?v=20261112-synonyms-examples"></script>
     <script src="vendor/firebase-database-compat.js"></script>
     <script src="vendor/firebase-messaging-compat.js"></script>
     <div class="info-panel">
@@ -2743,6 +2750,16 @@ tick: () => {
             renderLearningStudyStep();
         }
 
+        function renderSynonymExamples(group) {
+            const examples = group.examples || [];
+            if (!examples.length) return '';
+            const escape = value => String(value || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+            return `<details class="synonym-examples"><summary>例句 / EXAMPLES (${examples.length})</summary>${examples.map(example => {
+                const word = group.words.find(w => getWordText(w).toLowerCase() === String(example.anchor).toLowerCase());
+                return `<div class="synonym-example"><strong>${escape(example.anchor)}</strong><small>${escape(word ? getWordMeaning(word, group.meaning) : '')}</small><p lang="en">${escape(example.source)}</p><p lang="zh-Hant">${escape(example.target)}</p></div>`;
+            }).join('')}</details>`;
+        }
+
         function renderLearningStudyStep() {
             const cardsHtml = learningCoreGroups.map((group, index) => {
                 const wordsHtml = group.words
@@ -2755,6 +2772,7 @@ tick: () => {
                             <button class="ai-btn" onclick="askGemini(this, '${group.meaning.replace(/\\/g, "\\\\").replace(/'/g, "\\'")}', learningGroups[${index}].words)">\u2728 \u4f5c\u6587\u9ede\u7528</button>
                         </div>
                         <div class="learning-words">${wordsHtml}</div>
+                        ${renderSynonymExamples(group)}
                     </div>
                 `;
             }).join('');
@@ -4063,6 +4081,7 @@ function openStudyModal() {
                 });
 
                 groupDiv.appendChild(wordsDiv);
+                groupDiv.insertAdjacentHTML('beforeend', renderSynonymExamples(group));
                 container.appendChild(groupDiv);
             });
 

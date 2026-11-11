@@ -1,7 +1,7 @@
 importScripts('./vendor/firebase-app-compat.js');
 importScripts('./vendor/firebase-messaging-compat.js');
 
-const CACHE_VERSION = 'synonym-shell-v2';
+const CACHE_VERSION = 'synonym-shell-v3-examples-20261112';
 const APP_SHELL = [
   './',
   './index.html',
