@@ -151,26 +151,6 @@ window.synonymData = [
         "t": "Virtue",
         "m": "優點；好處（此處不是「美德」）"
       }
-    ],
-    "examples": [
-      {
-        "anchor": "Merit",
-        "source": "The main merit of this plan is that it saves a lot of time.",
-        "target": "這個計劃的主要優點是它節省了很多時間。",
-        "level": "C1"
-      },
-      {
-        "anchor": "Merit",
-        "source": "His proposal has some merit, but it needs further improvement.",
-        "target": "他的建議有可取之處，但仍需進一步完善。",
-        "level": "C1"
-      },
-      {
-        "anchor": "Virtue",
-        "source": "One virtue of the new system is that it makes public spending easier to track.",
-        "target": "新制度的一個優點，是讓公眾更容易追蹤公共開支。",
-        "level": "B2"
-      }
     ]
   },
   {
@@ -367,44 +347,6 @@ window.synonymData = [
         "t": "Vast",
         "m": "廣大的；大量的（常指面積、範圍或數量）"
       }
-    ],
-    "examples": [
-      {
-        "anchor": "Tremendous",
-        "source": "There has been a tremendous increase in the number of students using the library.",
-        "target": "使用圖書館的學生人數有了極大的增長。",
-        "level": "C1"
-      },
-      {
-        "anchor": "Immense",
-        "source": "The project required an immense amount of time and effort to complete.",
-        "target": "這個項目需要花費巨大的時間和精力才能完成。",
-        "level": "C1"
-      },
-      {
-        "anchor": "Tremendous",
-        "source": "We felt a tremendous sense of relief when we heard the good news.",
-        "target": "聽到這個好消息時，我們感到如釋重負。",
-        "level": "C1"
-      },
-      {
-        "anchor": "Immense",
-        "source": "There is an immense difference between his performance today and last week.",
-        "target": "他今天的表現與上週相比有巨大的差別。",
-        "level": "C1"
-      },
-      {
-        "anchor": "Gigantic",
-        "source": "A gigantic crane was needed to lift the damaged section of the bridge.",
-        "target": "需要一部巨型起重機，才能吊起大橋受損的部分。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Vast",
-        "source": "The project requires a vast amount of data from hospitals across the country.",
-        "target": "這個項目需要來自全國各地醫院的大量數據。",
-        "level": "B2"
-      }
     ]
   },
   {
@@ -524,44 +466,6 @@ window.synonymData = [
       {
         "t": "Escalate",
         "m": "上升；加劇（常指成本或衝突）"
-      }
-    ],
-    "examples": [
-      {
-        "anchor": "Surge",
-        "source": "There has been a sudden surge in the number of students joining the club.",
-        "target": "加入學會的學生人數突然激增。",
-        "level": "C1"
-      },
-      {
-        "anchor": "Soar",
-        "source": "Temperatures are expected to soar to over thirty degrees tomorrow.",
-        "target": "預計明日氣溫會急升至三十度以上。",
-        "level": "C1"
-      },
-      {
-        "anchor": "Surge",
-        "source": "A surge of excitement ran through the crowd when the team scored.",
-        "target": "當球隊得分時，人群中湧起了一陣激動。",
-        "level": "C1"
-      },
-      {
-        "anchor": "Surge",
-        "source": "The city experienced a surge in electricity demand during the heatwave.",
-        "target": "熱浪期間，該市的電力需求急升。",
-        "level": "C1"
-      },
-      {
-        "anchor": "Elevate",
-        "source": "Better training can elevate the quality of care provided to elderly residents.",
-        "target": "更好的培訓可以提升向長者提供的護理質素。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Escalate",
-        "source": "Without early intervention, a minor disagreement can escalate into a serious conflict.",
-        "target": "若不及早介入，小分歧可能會升級為嚴重衝突。",
-        "level": "B2"
       }
     ]
   },
@@ -2964,32 +2868,6 @@ window.synonymData = [
         "t": "Obscure",
         "m": "模糊難懂的；不清楚的"
       }
-    ],
-    "examples": [
-      {
-        "anchor": "Vague",
-        "source": "The instructions he gave were so vague that I didn't know where to start.",
-        "target": "他給的指示太模糊了，我根本不知道該從哪裡開始。",
-        "level": "C1"
-      },
-      {
-        "anchor": "Vague",
-        "source": "I only have a vague idea of what happened at the meeting.",
-        "target": "對於會議上發生的事情，我只有一個模糊的概念。",
-        "level": "C1"
-      },
-      {
-        "anchor": "Vague",
-        "source": "She gave a vague answer when I asked about her future plans.",
-        "target": "當我問起她未來的計劃時，她給出了一個模糊的回答。",
-        "level": "C1"
-      },
-      {
-        "anchor": "Obscure",
-        "source": "The instructions were so obscure that even experienced users struggled to follow them.",
-        "target": "這些指示十分晦澀難懂，連有經驗的使用者也難以跟從。",
-        "level": "B2"
-      }
     ]
   },
   {
@@ -3881,26 +3759,6 @@ window.synonymData = [
         "t": "Reflect on",
         "m": "反思；仔細回想"
       }
-    ],
-    "examples": [
-      {
-        "anchor": "Ponder over",
-        "source": "Before making a decision, we should ponder over the long-term consequences.",
-        "target": "作決定前，我們應仔細思考長遠的後果。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Contemplate",
-        "source": "The council must contemplate the impact of closing the public library.",
-        "target": "議會必須深入考慮關閉公共圖書館的影響。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Reflect on",
-        "source": "Students should reflect on their mistakes instead of simply memorising the answers.",
-        "target": "學生應反思自己的錯誤，而不是只背誦答案。",
-        "level": "B2"
-      }
     ]
   },
   {
@@ -3916,20 +3774,6 @@ window.synonymData = [
         "t": "Do wonders",
         "m": "產生顯著好處（常接 for）"
       }
-    ],
-    "examples": [
-      {
-        "anchor": "Work like a charm",
-        "source": "This simple breathing exercise can work like a charm when you feel stressed.",
-        "target": "當你感到壓力時，這個簡單的呼吸練習可以非常奏效。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Do wonders",
-        "source": "Regular encouragement can do wonders for a student's confidence.",
-        "target": "經常給予鼓勵，可以大大提升學生的信心。",
-        "level": "B2"
-      }
     ]
   },
   {
@@ -3944,20 +3788,6 @@ window.synonymData = [
       {
         "t": "Enlighten",
         "m": "啟迪；使明白（常接 on/about）"
-      }
-    ],
-    "examples": [
-      {
-        "anchor": "Inspire",
-        "source": "The scientist hopes to inspire young people to explore the natural world.",
-        "target": "這位科學家希望啟發年輕人探索自然世界。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Enlighten",
-        "source": "The exhibition aims to enlighten visitors about the history of migration.",
-        "target": "這個展覽旨在讓訪客了解移民的歷史。",
-        "level": "B2"
       }
     ]
   },
@@ -3978,26 +3808,6 @@ window.synonymData = [
         "t": "Convincing",
         "m": "令人信服的"
       }
-    ],
-    "examples": [
-      {
-        "anchor": "Persuasive",
-        "source": "She presented a persuasive argument for protecting the historic market.",
-        "target": "她提出了一個有說服力的論點，支持保護這個歷史悠久的市場。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Compelling",
-        "source": "The report provides compelling evidence that air pollution harms children.",
-        "target": "這份報告提供了極具說服力的證據，證明空氣污染危害兒童。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Convincing",
-        "source": "Without reliable data, the explanation was not convincing enough.",
-        "target": "缺乏可靠數據，這個解釋不夠令人信服。",
-        "level": "B2"
-      }
     ]
   },
   {
@@ -4012,20 +3822,6 @@ window.synonymData = [
       {
         "t": "Bond",
         "m": "緊密關係；情感連繫"
-      }
-    ],
-    "examples": [
-      {
-        "anchor": "Relationship",
-        "source": "Open communication is essential for a healthy relationship between parents and children.",
-        "target": "坦誠溝通對維繫健康的親子關係至關重要。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Bond",
-        "source": "Working together during the crisis created a strong bond among the neighbours.",
-        "target": "危機期間共同合作，讓鄰居之間建立了緊密的情誼。",
-        "level": "B2"
       }
     ]
   },
@@ -4042,20 +3838,6 @@ window.synonymData = [
         "t": "Lesser-known",
         "m": "較少人認識的"
       }
-    ],
-    "examples": [
-      {
-        "anchor": "Obscure",
-        "source": "The documentary introduced an obscure artist whose work deserves wider recognition.",
-        "target": "這套紀錄片介紹了一位鮮為人知、作品值得獲得更多肯定的藝術家。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Lesser-known",
-        "source": "The guide takes visitors to lesser-known neighbourhoods beyond the usual tourist areas.",
-        "target": "導遊帶領訪客前往常見旅遊區以外、較少人認識的社區。",
-        "level": "B2"
-      }
     ]
   },
   {
@@ -4070,20 +3852,6 @@ window.synonymData = [
       {
         "t": "Synthetic",
         "m": "人工合成的（常指材料）"
-      }
-    ],
-    "examples": [
-      {
-        "anchor": "Artificial",
-        "source": "The researchers used artificial light to study how plants grow indoors.",
-        "target": "研究人員利用人造光，研究植物如何在室內生長。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Synthetic",
-        "source": "The jacket contains synthetic fibres that dry more quickly than cotton.",
-        "target": "這件外套含有比棉乾得更快的合成纖維。",
-        "level": "B2"
       }
     ]
   },
@@ -4104,26 +3872,6 @@ window.synonymData = [
         "t": "Consistent with",
         "m": "與……一致；相符（常接在 be 後）"
       }
-    ],
-    "examples": [
-      {
-        "anchor": "Align with",
-        "source": "The new policy should align with the school's commitment to equal opportunities.",
-        "target": "新政策應與學校對平等機會的承諾一致。",
-        "level": "B2"
-      },
-      {
-        "anchor": "In line with",
-        "source": "The proposed changes are in line with international safety standards.",
-        "target": "建議的改動符合國際安全標準。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Consistent with",
-        "source": "Her account of the incident is consistent with the evidence collected by investigators.",
-        "target": "她對事件的描述與調查人員收集的證據相符。",
-        "level": "B2"
-      }
     ]
   },
   {
@@ -4138,20 +3886,6 @@ window.synonymData = [
       {
         "t": "Assume",
         "m": "假定；未經證實便認為"
-      }
-    ],
-    "examples": [
-      {
-        "anchor": "Suppose",
-        "source": "Suppose the last bus is cancelled; how would you get home safely?",
-        "target": "假設尾班巴士取消了，你會如何安全回家？",
-        "level": "B2"
-      },
-      {
-        "anchor": "Assume",
-        "source": "We should not assume that every student has access to a computer at home.",
-        "target": "我們不應假定每個學生在家中都有電腦可用。",
-        "level": "B2"
       }
     ]
   },
@@ -4172,26 +3906,6 @@ window.synonymData = [
         "t": "Separate",
         "m": "分開；使分離"
       }
-    ],
-    "examples": [
-      {
-        "anchor": "Split",
-        "source": "The organisers decided to split the workshop into two shorter sessions.",
-        "target": "主辦者決定把工作坊分為兩節較短的課程。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Divide",
-        "source": "The teacher will divide the class into groups with different responsibilities.",
-        "target": "老師會把全班分成職責不同的小組。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Separate",
-        "source": "Please separate recyclable materials from general waste before leaving.",
-        "target": "離開前，請把可回收物料與一般垃圾分開。",
-        "level": "B2"
-      }
     ]
   },
   {
@@ -4211,26 +3925,6 @@ window.synonymData = [
         "t": "Laugh at",
         "m": "嘲笑（此處指嘲弄人）"
       }
-    ],
-    "examples": [
-      {
-        "anchor": "Tease",
-        "source": "It is hurtful to tease someone about an accent they cannot easily change.",
-        "target": "取笑別人難以改變的口音，會傷害對方。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Make fun of",
-        "source": "Nobody should make fun of a classmate for asking an honest question.",
-        "target": "沒有人應該因同學真誠提問而取笑對方。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Laugh at",
-        "source": "When others laugh at his mistakes, he becomes afraid to speak in class.",
-        "target": "當別人嘲笑他的錯誤時，他會變得不敢在課堂上發言。",
-        "level": "B2"
-      }
     ]
   },
   {
@@ -4245,20 +3939,6 @@ window.synonymData = [
       {
         "t": "Unsettling",
         "m": "令人不安的"
-      }
-    ],
-    "examples": [
-      {
-        "anchor": "Disconcerting",
-        "source": "It was disconcerting to discover that the confidential files had disappeared.",
-        "target": "發現機密檔案不翼而飛，令人感到不安。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Unsettling",
-        "source": "The sudden silence in the normally busy hospital was unsettling.",
-        "target": "平日繁忙的醫院突然一片寂靜，令人不安。",
-        "level": "B2"
       }
     ]
   },
@@ -4275,20 +3955,6 @@ window.synonymData = [
         "t": "Anxious",
         "m": "感到擔憂或焦慮的"
       }
-    ],
-    "examples": [
-      {
-        "anchor": "Uneasy",
-        "source": "She felt uneasy about sharing personal information with an unfamiliar website.",
-        "target": "她對向陌生網站提供個人資料感到不安。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Anxious",
-        "source": "Parents were anxious about their children travelling alone during the storm.",
-        "target": "家長對子女在暴風雨期間獨自出行感到擔憂。",
-        "level": "B2"
-      }
     ]
   },
   {
@@ -4303,20 +3969,6 @@ window.synonymData = [
       {
         "t": "To a certain extent",
         "m": "在某種程度上"
-      }
-    ],
-    "examples": [
-      {
-        "anchor": "Somewhat",
-        "source": "The results were somewhat disappointing, although the team had made real progress.",
-        "target": "雖然團隊確實取得進展，但結果仍有點令人失望。",
-        "level": "B2"
-      },
-      {
-        "anchor": "To a certain extent",
-        "source": "To a certain extent, flexible working hours can reduce the pressure on parents.",
-        "target": "在某種程度上，彈性工作時間可以減輕家長的壓力。",
-        "level": "B2"
       }
     ]
   },
@@ -4333,20 +3985,6 @@ window.synonymData = [
         "t": "Genre",
         "m": "類型（主要指文學、電影或音樂）"
       }
-    ],
-    "examples": [
-      {
-        "anchor": "Category",
-        "source": "Each application is placed in a category according to the applicant's experience.",
-        "target": "每份申請會按照申請人的經驗歸入相應類別。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Genre",
-        "source": "Science fiction is a genre that often explores the consequences of new technology.",
-        "target": "科幻是一種經常探討新科技後果的作品類型。",
-        "level": "B2"
-      }
     ]
   },
   {
@@ -4361,20 +3999,6 @@ window.synonymData = [
       {
         "t": "Background",
         "m": "背景資料；背景情況"
-      }
-    ],
-    "examples": [
-      {
-        "anchor": "Context",
-        "source": "A quotation can be misleading when it is removed from its original context.",
-        "target": "引文一旦脫離原本的上下文，便可能造成誤導。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Background",
-        "source": "The article provides the historical background needed to understand the dispute.",
-        "target": "這篇文章提供了理解這場爭議所需的歷史背景。",
-        "level": "B2"
       }
     ]
   },
@@ -4391,20 +4015,6 @@ window.synonymData = [
         "t": "In progress",
         "m": "正在進行中"
       }
-    ],
-    "examples": [
-      {
-        "anchor": "In the pipeline",
-        "source": "Several affordable housing projects are in the pipeline, but construction has not begun.",
-        "target": "數個可負擔房屋項目正在籌備中，但尚未動工。",
-        "level": "B2"
-      },
-      {
-        "anchor": "In progress",
-        "source": "Repairs are in progress, so the footbridge will remain closed until Friday.",
-        "target": "維修正在進行，因此行人天橋將關閉至星期五。",
-        "level": "B2"
-      }
     ]
   },
   {
@@ -4419,20 +4029,6 @@ window.synonymData = [
       {
         "t": "Trajectory",
         "m": "發展軌跡；走向"
-      }
-    ],
-    "examples": [
-      {
-        "anchor": "Trend",
-        "source": "The survey reveals a growing trend towards using public transport.",
-        "target": "調查顯示，使用公共交通的趨勢日益明顯。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Trajectory",
-        "source": "Access to education can change the trajectory of a young person's life.",
-        "target": "接受教育的機會，可以改變一個年輕人的人生軌跡。",
-        "level": "B2"
       }
     ]
   },
@@ -4453,26 +4049,6 @@ window.synonymData = [
         "t": "Consistently",
         "m": "一貫地；持續穩定地（強調一致）"
       }
-    ],
-    "examples": [
-      {
-        "anchor": "Continuously",
-        "source": "The sensors monitor air quality continuously throughout the day and night.",
-        "target": "感應器日夜不停地監測空氣質素。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Constantly",
-        "source": "Teachers must constantly adapt their methods as students' needs change.",
-        "target": "隨著學生的需要改變，老師必須不斷調整教學方法。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Consistently",
-        "source": "The team has consistently met its targets despite limited resources.",
-        "target": "儘管資源有限，團隊仍一直穩定地達成目標。",
-        "level": "B2"
-      }
     ]
   },
   {
@@ -4487,20 +4063,6 @@ window.synonymData = [
       {
         "t": "Pollute",
         "m": "污染（常指環境）"
-      }
-    ],
-    "examples": [
-      {
-        "anchor": "Contaminate",
-        "source": "Chemicals from the damaged containers could contaminate the drinking water.",
-        "target": "破損容器流出的化學物質可能會污染飲用水。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Pollute",
-        "source": "Factories must not pollute the river that supplies water to nearby villages.",
-        "target": "工廠不得污染那條為附近村落供水的河流。",
-        "level": "B2"
       }
     ]
   },
@@ -4517,20 +4079,6 @@ window.synonymData = [
         "t": "Defrost",
         "m": "解凍食物；除霜"
       }
-    ],
-    "examples": [
-      {
-        "anchor": "Thaw",
-        "source": "As temperatures rise, the frozen soil begins to thaw and release trapped gases.",
-        "target": "隨著氣溫上升，凍土開始解凍，釋放被困的氣體。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Defrost",
-        "source": "You should defrost frozen food in the refrigerator rather than leave it on the counter.",
-        "target": "你應在雪櫃內解凍冷藏食品，而不是把它放在廚房枱面。",
-        "level": "B2"
-      }
     ]
   },
   {
@@ -4546,20 +4094,6 @@ window.synonymData = [
         "t": "Drive away",
         "m": "驅走；消除（此處指恐懼等感受）"
       }
-    ],
-    "examples": [
-      {
-        "anchor": "Dispel",
-        "source": "The independent investigation helped dispel rumours about the charity's finances.",
-        "target": "獨立調查有助消除有關這間慈善機構財務狀況的謠言。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Drive away",
-        "source": "Talking to a trusted friend can help drive away feelings of loneliness.",
-        "target": "與可信任的朋友傾談，有助驅走孤獨感。",
-        "level": "B2"
-      }
     ]
   },
   {
@@ -4574,20 +4108,6 @@ window.synonymData = [
       {
         "t": "Drive away",
         "m": "趕走；逼走"
-      }
-    ],
-    "examples": [
-      {
-        "anchor": "Expel",
-        "source": "The school may expel students who repeatedly put others in serious danger.",
-        "target": "學校可能會開除多次嚴重危害他人安全的學生。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Drive away",
-        "source": "Excessive noise can drive away customers who want a quiet place to read.",
-        "target": "過大的噪音會趕走想找安靜地方閱讀的顧客。",
-        "level": "B2"
       }
     ]
   },
@@ -4607,26 +4127,6 @@ window.synonymData = [
       {
         "t": "Ill-intentioned",
         "m": "不懷好意的"
-      }
-    ],
-    "examples": [
-      {
-        "anchor": "Evil",
-        "source": "The novel examines how ordinary people resist an evil regime.",
-        "target": "這本小說探討普通人如何反抗邪惡政權。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Malicious",
-        "source": "A malicious rumour can damage someone's reputation even after it is disproved.",
-        "target": "惡意謠言即使被證實不實，仍可能損害一個人的聲譽。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Ill-intentioned",
-        "source": "Ill-intentioned callers may pretend to be bank staff to obtain personal details.",
-        "target": "不懷好意的來電者可能會冒充銀行職員，以取得個人資料。",
-        "level": "B2"
       }
     ]
   },
@@ -4655,38 +4155,6 @@ window.synonymData = [
         "t": "Goliath",
         "m": "巨頭；實力強大的公司；巨人"
       }
-    ],
-    "examples": [
-      {
-        "anchor": "Juggernaut",
-        "source": "The small start-up grew into a technological juggernaut within a decade.",
-        "target": "這間小型初創公司在十年內發展成科技巨頭。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Heavyweight",
-        "source": "As an industry heavyweight, the company can influence international standards.",
-        "target": "作為業界巨頭，這間公司能影響國際標準。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Behemoth",
-        "source": "Local shops struggle to compete with the retail behemoth on price.",
-        "target": "本地商店難以在價格上與這間零售巨企競爭。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Giant",
-        "source": "The energy giant has promised to invest more in renewable power.",
-        "target": "這間能源巨頭承諾增加對可再生能源的投資。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Goliath",
-        "source": "The family business faced a corporate Goliath in a lengthy legal battle.",
-        "target": "這間家族企業在漫長的法律訴訟中，對抗一間企業巨頭。",
-        "level": "B2"
-      }
     ]
   },
   {
@@ -4701,20 +4169,6 @@ window.synonymData = [
       {
         "t": "Terrace",
         "m": "露台；較大的戶外平台（可在地面或屋頂）"
-      }
-    ],
-    "examples": [
-      {
-        "anchor": "Balcony",
-        "source": "Residents can grow herbs on the balcony even if their flat has no garden.",
-        "target": "即使單位沒有花園，住戶仍可以在陽台種植香草。",
-        "level": "B2"
-      },
-      {
-        "anchor": "Terrace",
-        "source": "The restaurant opened a rooftop terrace overlooking the harbour.",
-        "target": "這間餐廳開設了一個可俯瞰海港的天台露台。",
-        "level": "B2"
       }
     ]
   }
